@@ -2,12 +2,13 @@ import gudhi
 
 # Class for single rectangles.
 class Rectangle:
-    def __init__(self, bottom_left, top_right, dim):
+    def __init__(self, bottom_left, top_right, dim ):
         # bottom_left and top_right are (x,y) coordinate tuples, and dim is a non-negative integer representing the dimension of this rectangle.
         self.bottom_left = bottom_left
         self.top_right = top_right
         self.dim = dim
-        #add error message when format is not good 
+        #add error message when format is not good
+
 
     def find_bl(self):
         """Returns the bottom left corner."""
@@ -29,6 +30,9 @@ class Rectangle:
         y = self.bottom_left[1]
         return (x,y)
 
+## TODO: method to find intersection points of two rectangles --> gives all the critical poitns of the module
+
+
 # Class for rectangle modules (i.e. direct sums of rectangles).
 class RectangleModule:
     def __init__(self, rect_list):
@@ -49,7 +53,10 @@ class RectangleModule:
 
     def find_intersection(self, line):
         """Find the intersection of the given line with self, in the appropriate notation."""
+        ## finding intersections with all rectangles 
         return None
+
+    ## find value of parameter on the line 
 
 # Class for lines in the appropriate notation.
 class Line:
@@ -57,5 +64,6 @@ class Line:
     def __init__(self,m,b):
         self.m = m 
         self.b = b
-        ## check right format for m and b 
+        ## check right format for m and b
+        ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) . 
         
