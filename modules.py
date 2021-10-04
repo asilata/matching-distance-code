@@ -8,8 +8,8 @@ class Rectangle:
         self.top_right = top_right
         self.dim = dim
         #add error message when format is not good
-
-
+       
+        
     def find_bl(self):
         """Returns the bottom left corner."""
         return self.bottom_left
@@ -29,14 +29,65 @@ class Rectangle:
         x = self.top_right[0]
         y = self.bottom_left[1]
         return (x,y)
-
-## TODO: method to find intersection points of two rectangles --> gives all the critical poitns of the module
-
+    
+    def find_intersection(self, line):
+        """Find the intersection of the given line with self, in the appropriate notation."""
+        ## finding intersections of this rectangle and a given line
+        b = line.b[0]
+        m1 = line.m[0]
+        m2 = line.m[1]
+        
+        ## intersection with bottom side: 
+        bl = self.bottom_left[1]
+        t_bs = (bl+b)/m2
+        pt_bs = (m1*t_bs +b, bl)
+        
+        ## intersection with top side: 
+        tl = self.find_tl()[1]
+        t_ts = (tl+b)/m2
+        pt_ts = (m1*t_ts +b, tl)
+       
+        
+        ## intersection with right side: 
+        br= self.find_br()[0]
+        t_rs = (br-b)/m1
+        pt_rs = (br, m2*t_rs-b)
+        
+        
+        ## intersection with left side:
+        bl = self.bottom_left[0]
+        t_ls = (bl-b)/m1
+        pt_ls = (bl, m2*t_ls-b)
+        
+        
+        inter = []
+        params = []
+        
+        if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
+            inter.append(pt_bs)
+            params.append(t_bs)
+            
+        if self.find_tl()[0] <= pt_ts[0] <= self.top_right[0]: 
+            if pt_ts not in inter: 
+                inter.append(pt_ts)
+                params.append(t_ts)
+              
+        if self.bottom_left[1] <= pt_ls[1] <= self.find_tl()[1]: 
+            if pt_ls not in inter: 
+                inter.append(pt_ls)
+                params.append(t_ls) 
+        if self.find_br()[1] <= pt_rs[1] <= self.top_right[1]: 
+            if pt_rs not in inter:
+                inter.append(pt_rs)
+                params.append(t_rs)
+      
+        return inter, params
 
 # Class for rectangle modules (i.e. direct sums of rectangles).
 class RectangleModule:
     def __init__(self, rect_list):
         self.rectangles = rect_list
+         ## add a method to check if  the same rectangle is there several times and change mul
 
     def add_rectangle(self, rect):
         """Add the given rectangle to the list of rectangles"""
@@ -50,20 +101,54 @@ class RectangleModule:
             if rect.bottom_left[0] <= point[0] <= rect.top_right[0] and rect.bottom_left[1] <= point[1] <= rect.top_right[1]:
                 d+=rect.dim
         return d
+    
 
     def find_intersection(self, line):
         """Find the intersection of the given line with self, in the appropriate notation."""
         ## finding intersections with all rectangles 
-        return None
+        inter = []
+        params= []
+        for rect in self.rectangles: 
+            pts, t = rect.find_intersection(line)
+            inter.append(pts)
+            params.append(t)
+      
+        return inter, params
+    
+    def find_critical_pts(self):
+        #method to find intersection points of two rectangles --> gives all the critical poitns of the module
+        return None 
 
-    ## find value of parameter on the line 
+    def compute_barcode(self, line): 
+        Int, params = self.find_intersection(line)
+        dgm = []
+        for rect, i in zip(self.rectangles, range(len(self.rectangles))): 
+            dim = rect.dim
+            for d in range(dim):
+                dgm.append([params[i][0],params[i][1]])
+        return dgm 
 
 # Class for lines in the appropriate notation.
 class Line:
     # Unimplemented
+    ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
     def __init__(self,m,b):
-        self.m = m 
+        """ Format for 
+        m = (m1,m2) direction of the line 
+        b=(b1,b2)
+        We want max(m1,m2) = 1 and positive slope
+        and b1=-b2
+        """
         self.b = b
-        ## check right format for m and b
+        self.m = m 
+        if b[0]!= -b[1]: 
+            self.b=(-m[0] *(m[0]+m[1])/(b[0]+b[1]) +b[0],m[0]*(m[0]+m[1])/(b[0]+b[1])-b[0])
+        maxm = max(m[0],m[1]) 
+        if maxm !=1:
+            self.m = (m[0]/maxm,m[1]/maxm)
+            
+## function parallel transporting a line 
+## function rotating a line 
+           
         ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) . 
         
