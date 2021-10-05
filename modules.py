@@ -125,8 +125,9 @@ class RectangleModule:
         dgm = []
         for rect, i in zip(self.rectangles, range(len(self.rectangles))): 
             dim = rect.dim
-            for d in range(dim):
-                dgm.append([params[i][0],params[i][1]])
+            if len(params[i]) ==2: 
+                for d in range(dim):
+                    dgm.append([params[i][0],params[i][1]])
         return dgm 
 
 # Class for lines in the appropriate notation.
@@ -143,8 +144,12 @@ class Line:
         self.b = b
         self.m = m 
         if b[0]!= -b[1]: 
-            self.b=(-m[0] *(m[0]+m[1])/(b[0]+b[1]) +b[0],m[0]*(m[0]+m[1])/(b[0]+b[1])-b[0])
+            
+            self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
+            #print(self.b)
         maxm = max(m[0],m[1]) 
+        #print(m[0])
+        #print(m[1])
         if maxm !=1:
             self.m = (m[0]/maxm,m[1]/maxm)
     
@@ -200,7 +205,6 @@ def line_through_2points(pt1, pt2):
     line = Line(direction,pt1) 
     
     return line
-
 
 
 #### plotting function for lines and modules 
