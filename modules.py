@@ -117,6 +117,7 @@ class RectangleModule:
     
     def find_critical_pts(self):
         #method to find intersection points of two rectangles --> gives all the critical poitns of the module
+        #
         return None 
 
     def compute_barcode(self, line): 
@@ -146,9 +147,72 @@ class Line:
         maxm = max(m[0],m[1]) 
         if maxm !=1:
             self.m = (m[0]/maxm,m[1]/maxm)
-            
-## function parallel transporting a line 
-## function rotating a line 
+    
+    
+    def translate(self,s):
+    ## translate a line of direction (m1,m2) in the direction s*(1,-1) 
+    ## L: (x,y) = (m1, m2)*t +(b,-b) ---> L': (x,y) = (m1, m2)*t +(b,-b)+s*(1,-1)     
+        self.b = (self.b[0]+s, self.b[1]-s)
+        return None
+    
+    def rotate(self, theta): 
+        ## implement rotation
+        return None
+
            
-        ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) . 
+ ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) . 
+
+
+
+###################  Functions   ##################
+
+
+def translate_line(line,s):
+    ## translate a line of direction (m1,m2) in the direction s*(1,-1) 
+    ## L: (x,y) = (m1, m2)*t +(b,-b) ---> L': (x,y) = (m1, m2)*t +(b,-b)+s*(1,-1) 
+    L_tr = Line(line.m,(line.b[0]+s, line.b[1]-s) )
+    return L_tr 
+
+def rotate_line(line, theta): 
+        ## implement rotation to get a new line 
+        return None
+
+
+def compute_bottleneck(M,N,line): 
+    dgmM = M.compute_barcode(line)
+    dgmN = N.compute_barcode(line) 
+    db= gudhi.bottleneck_distance(dgmN,dgmM)
+    
+    return db
+
+
+def compute_weighted_bottleneck(M,N,line): 
+    dgmM = M.compute_barcode(line)
+    dgmN = N.compute_barcode(line) 
+    db= gudhi.bottleneck_distance(dgmN,dgmM)
+    w = min(line.m) 
+    
+    return w*db
+
+def line_through_2points(pt1, pt2):
+    
+    direction = (pt2[0]-pt1[0], pt2[1]-pt1[1])
+    line = Line(direction,pt1) 
+    
+    return line
+
+
+
+#### plotting function for lines and modules 
+
+
+
+
+
+
+
+
+
+
+
         
