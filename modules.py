@@ -8,7 +8,6 @@ class Rectangle:
         self.top_right = top_right
         self.dim = dim
         #add error message when format is not good
-       
         
     def find_bl(self):
         """Returns the bottom left corner."""
@@ -47,18 +46,15 @@ class Rectangle:
         t_ts = (tl+b)/m2
         pt_ts = (m1*t_ts +b, tl)
        
-        
         ## intersection with right side: 
         br= self.find_br()[0]
         t_rs = (br-b)/m1
         pt_rs = (br, m2*t_rs-b)
         
-        
         ## intersection with left side:
         bl = self.bottom_left[0]
         t_ls = (bl-b)/m1
         pt_ls = (bl, m2*t_ls-b)
-        
         
         inter = []
         params = []
@@ -82,12 +78,12 @@ class Rectangle:
                 params.append(t_rs)
       
         return inter, params
-
+##################################################################
 # Class for rectangle modules (i.e. direct sums of rectangles).
 class RectangleModule:
     def __init__(self, rect_list):
         self.rectangles = rect_list
-         ## add a method to check if  the same rectangle is there several times and change mul
+         ## add a method to check if  the same rectangle is there several times and change multiplicity
 
     def add_rectangle(self, rect):
         """Add the given rectangle to the list of rectangles"""
@@ -129,7 +125,8 @@ class RectangleModule:
                 for d in range(dim):
                     dgm.append([params[i][0],params[i][1]])
         return dgm 
-
+    
+################################
 # Class for lines in the appropriate notation.
 class Line:
     # Unimplemented
@@ -144,7 +141,6 @@ class Line:
         self.b = b
         self.m = m 
         if b[0]!= -b[1]: 
-            
             self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
             #print(self.b)
         maxm = max(m[0],m[1]) 
@@ -153,14 +149,13 @@ class Line:
         if maxm !=1:
             self.m = (m[0]/maxm,m[1]/maxm)
     
-    
     def translate(self,s):
     ## translate a line of direction (m1,m2) in the direction s*(1,-1) 
     ## L: (x,y) = (m1, m2)*t +(b,-b) ---> L': (x,y) = (m1, m2)*t +(b,-b)+s*(1,-1)     
         self.b = (self.b[0]+s, self.b[1]-s)
         return None
     
-    def rotate(self, theta): 
+    def rotate(self, center, theta): 
         ## implement rotation
         return None
 
@@ -178,7 +173,7 @@ def translate_line(line,s):
     L_tr = Line(line.m,(line.b[0]+s, line.b[1]-s) )
     return L_tr 
 
-def rotate_line(line, theta): 
+def rotate_line(line, center, theta): 
         ## implement rotation to get a new line 
         return None
 
