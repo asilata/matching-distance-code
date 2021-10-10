@@ -62,16 +62,17 @@ class Rectangle:
         if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
             inter.append(pt_bs)
             params.append(t_bs)
-            
-        if self.find_tl()[0] <= pt_ts[0] <= self.top_right[0]: 
-            if pt_ts not in inter: 
-                inter.append(pt_ts)
-                params.append(t_ts)
-              
+        
         if self.bottom_left[1] <= pt_ls[1] <= self.find_tl()[1]: 
             if pt_ls not in inter: 
                 inter.append(pt_ls)
                 params.append(t_ls) 
+            
+        if self.find_tl()[0] <= pt_ts[0] <= self.top_right[0]: 
+                inter.append(pt_ts)
+                params.append(t_ts)
+              
+        
         if self.find_br()[1] <= pt_rs[1] <= self.top_right[1]: 
             if pt_rs not in inter:
                 inter.append(pt_rs)
