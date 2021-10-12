@@ -8,7 +8,25 @@ class Rectangle:
         self.top_right = top_right
         self.dim = dim
         #add error message when format is not good
-        
+
+    def __eq__(self, other):
+        """Check equality of rectangles. Overrides the default."""
+        if self.bottom_left != other.find_bl():
+            return False
+        if self.top_right != other.find_tr():
+            return False
+        if self.dim != other.find_dim():
+            return False
+        return True
+
+    def eq_upto_dim(self, other):
+        """Check equality of rectangles up to dimension."""
+        if self.bottom_left != other.find_bl():
+            return False
+        if self.top_right != other.find_tr():
+            return False
+        return True
+
     def find_bl(self):
         """Returns the bottom left corner."""
         return self.bottom_left
@@ -28,6 +46,17 @@ class Rectangle:
         x = self.top_right[0]
         y = self.bottom_left[1]
         return (x,y)
+
+    def find_coordinates(self):
+        return [self.find_bl(), self.find_tl(), self.find_tr(), self.find_br()]
+
+    def find_dim(self):
+        """Returns the dimension."""
+        return self.dim
+
+    def update_dim(self, d):
+        """Sets dimension to d."""
+        self.dim = d
     
     def find_intersection(self, line):
         """Find the intersection of the given line with self, in the appropriate notation."""
@@ -79,6 +108,7 @@ class Rectangle:
                 params.append(t_rs)
       
         return inter, params
+
 ##################################################################
 # Class for rectangle modules (i.e. direct sums of rectangles).
 class RectangleModule:
@@ -90,6 +120,20 @@ class RectangleModule:
         """Add the given rectangle to the list of rectangles"""
         self.rectangles.append(rect)
         return None
+
+    def trim(self):
+        """Trims the list of rectangles to remove duplicates, updating dimensions as necessary."""
+        myrects = []
+        for r in self.rectangles:
+            print('first rect', r)
+            for s in myrects:
+                print(s)
+                if r.eq_upto_dim(s):
+                    s.update_dim(s.find_dim() + r.find_dim())
+                    break
+                myrects = myrects + [r]
+        self.rectangles = myrects
+        
 
     def find_dim(self, point):
         """Find the dimension at the given point"""
@@ -115,7 +159,11 @@ class RectangleModule:
     def find_critical_pts(self):
         #method to find intersection points of two rectangles --> gives all the critical poitns of the module
         #
-        return None 
+        coordinates = []
+        for r in self.rectangles:
+            coordinates += r.find_coordinates()
+        hull = ConvexHull(coordinates)
+        return hull.vertices
 
     def compute_barcode(self, line): 
         Int, params = self.find_intersection(line)
