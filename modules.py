@@ -1,4 +1,5 @@
 import gudhi
+from math import cos, sin, pi
 
 # Class for single rectangles.
 class Rectangle:
@@ -114,8 +115,37 @@ class RectangleModule:
     
     def find_critical_pts(self):
         #method to find intersection points of two rectangles --> gives all the critical poitns of the module
-        #
-        return None 
+        ## FINISH FINDING CRITICAL POINTS
+        Crit_pts = []
+        for ra in self.rect_list: 
+            bra = ra.find_br()
+            bla = ra.find_bl()
+            tra = ra.find_tr()
+            tla = ra.find_tl()
+            ta = [tla, tra]
+            ba = [bra,bla]
+            la = [bla,tla]
+            ra = [bra,tra]
+            Seg_a = [ta,ba,la,ra]
+            Crit_pts.append(bra)
+            ## fill in all the corners 
+            for rb in self.rect_list
+                brb = rb.find_br()
+                blb = rb.find_bl()
+                trb = rb.find_tr()
+                tlb = rb.find_tl()
+                tb = [tlb, trb]
+                bb = [brb,blb]
+                lb = [blb,tlb]
+                rb = [brb,trb]
+                Seg_b = [tb,bb,lb,rb]
+                ## find interections of all semgments
+                for p in Seg_a: 
+                    for q in Seg_b: 
+                        pt = intersect(p[0],p[1],q[0],q[1])
+                        if pt != None: 
+                            Crit_pts.append(pt)
+        return Crit_ptss 
 
     def compute_barcode(self, line): 
         Int, params = self.find_intersection(line)
@@ -139,16 +169,19 @@ class Line:
         We want max(m1,m2) = 1 and positive slope
         and b1=-b2
         """
+        self.positive = True
         self.b = b
         self.m = m 
         if b[0]!= -b[1]: 
             self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
-            #print(self.b)
-        maxm = max(m[0],m[1]) 
+            
+        maxm = max(abs(m[0]),abs(m[1])) 
         #print(m[0])
         #print(m[1])
         if maxm !=1:
             self.m = (m[0]/maxm,m[1]/maxm)
+        if self.m[0] <0 or self.m[1] <0:
+            self.positive = False
     
     def translate(self,s):
     ## translate a line of direction (m1,m2) in the direction s*(1,-1) 
@@ -158,6 +191,28 @@ class Line:
     
     def rotate(self, center, theta): 
         ## implement rotation
+        s =sin(theta)
+        c = cos(theta)
+        c1 = center[0]
+        c2 = center[1]
+        m1 = self.m[0]
+        m2 = self.m[1]
+        b1 = self.b[0]
+        b2 = self.b[1]
+        
+        m = (c*m1-s*m2 , s*m1+c*m2) 
+        b = (c*(b1-c1)-s*(b2-c2)+c1, s*(b1-c1)+ c*(b2-c2)+c2)
+        
+        if b[0]!= -b[1]: 
+            self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
+            #print(self.b)
+        maxm = max(abs(m[0]),abs(m[1])) 
+        print(maxm)
+        #print(m[0])
+        #print(m[1])
+        if maxm !=1:
+            self.m = (m[0]/maxm,m[1]/maxm)
+       
         return None
 
            
@@ -174,9 +229,22 @@ def translate_line(line,s):
     L_tr = Line(line.m,(line.b[0]+s, line.b[1]-s) )
     return L_tr 
 
-def rotate_line(line, center, theta): 
-        ## implement rotation to get a new line 
-        return None
+def rotate_line(line, center, theta):
+       
+        s =sin(theta)
+        c = cos(theta)
+        c1 = center[0]
+        c2 = center[1]
+        m1 = line.m[0]
+        m2 = line.m[1]
+        b1 = line.b[0]
+        b2 = line.b[1]
+        
+        m_rot = (c*m1-s*m2 , s*m1+c*m2) 
+        b_rot = (c*(b1-c1)-s*(b2-c2)+c1, s*(b1-c1)+ c*(b2-c2)+c2)
+        L_rot = Line(m_rot, b_rot)
+        
+        return L_rot
 
 
 def compute_bottleneck(M,N,line): 
@@ -203,13 +271,25 @@ def line_through_2points(pt1, pt2):
     return line
 
 
+def intersect(p1, p2, p3, p4):
+    x1,y1 = p1
+    x2,y2 = p2
+    x3,y3 = p3
+    x4,y4 = p4
+    denom = (y4-y3)*(x2-x1) - (x4-x3)*(y2-y1)
+    if denom == 0: # parallel
+        return None
+    ua = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / denom
+    if ua < 0 or ua > 1: # out of range
+        return None
+    ub = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / denom
+    if ub < 0 or ub > 1: # out of range
+        return None
+    x = x1 + ua * (x2-x1)
+    y = y1 + ua * (y2-y1)
+    return (x,y)
+
 #### plotting function for lines and modules 
-
-
-
-
-
-
 
 
 
