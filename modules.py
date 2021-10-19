@@ -1,10 +1,17 @@
 import gudhi
 from math import cos, sin, pi
 
+"""TODO: 
+    - implement algorithm to find all equivalence classes of a given module
+    - function to plot easily a module and some lines though the parameter space
+    - include "infinite rectangles", ie, open at the top and/or to the right 
+"""
+
 # Class for single rectangles.
 class Rectangle:
     def __init__(self, bottom_left, top_right, dim ):
-        # bottom_left and top_right are (x,y) coordinate tuples, and dim is a non-negative integer representing the dimension of this rectangle.
+        """bottom_left and top_right are (x,y) coordinate tuples, 
+        dim = a non-negative integer representing the dimension of this rectangle."""
         self.bottom_left = bottom_left
         self.top_right = top_right
         self.dim = dim
@@ -80,7 +87,8 @@ class Rectangle:
                 params.append(t_rs)
       
         return inter, params
-##################################################################
+    
+#################################################################
 # Class for rectangle modules (i.e. direct sums of rectangles).
 class RectangleModule:
     def __init__(self, rect_list):
@@ -114,22 +122,29 @@ class RectangleModule:
         return inter, params
     
     def find_critical_pts(self):
-        #method to find intersection points of two rectangles --> gives all the critical poitns of the module
-        ## FINISH FINDING CRITICAL POINTS
+        """method to find intersection points of two rectangles 
+        --> gives all the critical points of the module
+        """
+        
         Crit_pts = []
-        for ra in self.rect_list: 
+        for ra in self.rectangles:
+            ## corners of rectangles, add them to the list of critical points 
             bra = ra.find_br()
             bla = ra.find_bl()
             tra = ra.find_tr()
             tla = ra.find_tl()
+            Crit_pts.append(bra)
+            Crit_pts.append(bla)
+            Crit_pts.append(tra)
+            Crit_pts.append(bla)
+            ## segments
             ta = [tla, tra]
             ba = [bra,bla]
             la = [bla,tla]
             ra = [bra,tra]
             Seg_a = [ta,ba,la,ra]
-            Crit_pts.append(bra)
             ## fill in all the corners 
-            for rb in self.rect_list
+            for rb in self.rectangles:
                 brb = rb.find_br()
                 blb = rb.find_bl()
                 trb = rb.find_tr()
@@ -145,7 +160,8 @@ class RectangleModule:
                         pt = intersect(p[0],p[1],q[0],q[1])
                         if pt != None: 
                             Crit_pts.append(pt)
-        return Crit_ptss 
+        return list(set(Crit_pts)) 
+    
 
     def compute_barcode(self, line): 
         Int, params = self.find_intersection(line)
@@ -157,10 +173,16 @@ class RectangleModule:
                     dgm.append([params[i][0],params[i][1]])
         return dgm 
     
+    def closure_lub(self): 
+        """ Find the closure under least upper boud of the critical points"""
+        """REMARK: finding the closure under least upper bound is very similar to 
+        finding all the intersection points of rectangles in the modules but it finds extra points """ 
+        
+        return None
+    
 ################################
 # Class for lines in the appropriate notation.
 class Line:
-    # Unimplemented
     ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
     def __init__(self,m,b):
         """ Format for 
@@ -220,7 +242,7 @@ class Line:
 
 
 
-###################  Functions   ##################
+################### Extra Functions   ##################
 
 
 def translate_line(line,s):
@@ -270,8 +292,8 @@ def line_through_2points(pt1, pt2):
     
     return line
 
-
 def intersect(p1, p2, p3, p4):
+    '''function finding the intersections of two line segments [p1,p2] and [p3,p4]'''
     x1,y1 = p1
     x2,y2 = p2
     x3,y3 = p3
@@ -289,9 +311,12 @@ def intersect(p1, p2, p3, p4):
     y = y1 + ua * (y2-y1)
     return (x,y)
 
+def intersect_modules(M,N): 
+    """ find intersection points of two rectanlge modules"""
+    
+    return None 
+
 #### plotting function for lines and modules 
-
-
 
 
 
