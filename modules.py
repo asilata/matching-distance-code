@@ -182,6 +182,9 @@ class RectangleModule:
     
 ################################
 # Class for lines in the appropriate notation.
+""" !!!Attention!!! this gives an error when the slope of the line is negative in direction (1,-1)
+      ---> Change the way to normalize the line 
+""" 
 class Line:
     ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
     def __init__(self,m,b):
@@ -202,8 +205,9 @@ class Line:
         #print(m[1])
         if maxm !=1:
             self.m = (m[0]/maxm,m[1]/maxm)
-        if self.m[0] <0 or self.m[1] <0:
+        if self.m[0] <=0 or self.m[1] <=0:
             self.positive = False
+ 
     
     def translate(self,s):
     ## translate a line of direction (m1,m2) in the direction s*(1,-1) 
