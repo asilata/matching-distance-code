@@ -234,7 +234,31 @@ class RectangleModule:
 """ !!!Attention!!! this gives an error when the slope of the line is negative in direction (1,-1)
       ---> Change the way to normalize the line 
 """ 
+
+
 class Line:
+    ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
+    def __init__(self,m,b):
+        """ Format for 
+        m = (m1,m2) direction of the line 
+        b=(b1,b2)
+        We want max(m1,m2) = 1 and positive slope
+        and b1=-b2
+        """
+        self.positive = True
+        self.b = b
+        self.m = m 
+        maxm = max(abs(m[0]),abs(m[1])) 
+        if maxm !=1:
+            self.m = (m[0]/maxm,m[1]/maxm)
+        m = self.m    
+        if b[0]!= -b[1] and m[0]!=-m[1]:
+            self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
+
+        if self.m[0] <=0 or self.m[1] <=0:
+            self.positive = False
+        
+class Line_old:
     ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
     def __init__(self,m,b):
         """ Format for 
@@ -339,11 +363,15 @@ def compute_weighted_bottleneck(M,N,line):
     return w*db
 
 def line_through_2points(pt1, pt2):
-    
-    direction = (pt2[0]-pt1[0], pt2[1]-pt1[1])
-    line = Line(direction,pt1) 
+    if pt1[0]<=pt2[0]:
+        direction = (pt2[0]-pt1[0], pt2[1]-pt1[1])
+        line = Line(direction,pt1) 
+    else: 
+        direction = (pt1[0]-pt2[0], pt1[1]-pt2[1])
+        line = Line(direction,pt2)
     
     return line
+
 
 def intersect(p1, p2, p3, p4):
     '''function finding the intersections of two line segments [p1,p2] and [p3,p4]'''
