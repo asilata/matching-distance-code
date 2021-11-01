@@ -9,7 +9,7 @@ from math import cos, sin, pi
 
 # Class for single rectangles.
 class Rectangle:
-    def __init__(self, bottom_left, top_right, dim ):
+    def __init__(self, bottom_left, top_right, dim = 1):
         """bottom_left and top_right are (x,y) coordinate tuples, 
         dim = a non-negative integer representing the dimension of this rectangle."""
         self.bottom_left = bottom_left
@@ -224,10 +224,21 @@ class RectangleModule:
     
     def closure_lub(self): 
         """ Find the closure under least upper boud of the critical points"""
-        """REMARK: finding the closure under least upper bound is very similar to 
-        finding all the intersection points of rectangles in the modules but it finds extra points """ 
-        
-        return None
+        ## Todo: check that it works properly on an example
+        ## Not the most efficient way to code this function 
+    
+        C_bar = self.find_critical_pts()
+        l = len(C_bar)
+        for i in range(l): 
+            p = C_bar[i]
+            for j in range(i+1, l): 
+                q = C_bar[j]
+                if not are_comparable(p,q):
+                    lub = (max(p[0],q[0]), max(p[1],q[1]))
+                    C_bar.append(lub)
+
+        return list(set(C_bar))
+
     
 ################################
 # Class for lines in the appropriate notation.
@@ -397,7 +408,20 @@ def intersect_modules(M,N):
     
     return None 
 
+
+
+def are_comparable(p,q): 
+    """ function to check whether two points are comparable or not 
+    """
+    comp = False 
+    if p[0] <= q[0] and p[1] <= q[1]: 
+        comp = True 
+    if p[0] >= q[0] and p[1] >= q[1]: 
+        comp = True 
+    return comp
+
 #### plotting function for lines and modules 
+
 
 
 
