@@ -26,8 +26,17 @@ def Find_line_eq_classes(M):
     Function to find all the equivalence classes of lines of a persistence module
     
     """
-    C_bar = M.closure_lub() ## needs to be implemented
+    C_bar = M.closure_lub()
     
+    
+    ## find representative lines through none of the critical points 
+    Eq_classes(C_bar)
+    ## find all positive lines through 1 critical point
+    Eq_classes_through_1pt(C_bar)
+    ## find all positive lines through 2 critical points 
+    ## implement this 
+    
+
     return None 
     
     
