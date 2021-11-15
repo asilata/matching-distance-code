@@ -5,6 +5,7 @@ from math import cos, sin, pi
     - implement algorithm to find all equivalence classes of a given module
     - function to plot easily a module and some lines though the parameter space
     - include "infinite rectangles", ie, open at the top and/or to the right 
+    - check that the functions work also with infinite rectanlges
 """
 
 # Class for single rectangles.
@@ -68,7 +69,6 @@ class Rectangle:
     
     def find_intersection(self, line):
         """Find the intersection of the given line with self, in the appropriate notation."""
-        ## finding intersections of this rectangle and a given line
         b = line.b[0]
         m1 = line.m[0]
         m2 = line.m[1]
@@ -117,8 +117,90 @@ class Rectangle:
       
         return inter, params
     
+    
+###########################################################
+
+class Right_infinite_rectangles():
+    """ Complete this class"""
+   
+    def __init__(self, bottom_left,top_left, dim = 1):
+        """bottom_left and top_left are (x,y) coordinate tuples, 
+        dim = a non-negative integer representing the dimension of this rectangle."""
+        self.bottom_left = bottom_left
+        self.top_left = top_left
+        self.dim = dim
+        
+class Top_infinite_rectangles():
+    """ Complete this class"""
+   
+    def __init__(self, bottom_left,bottom_right, dim = 1):
+        """bottom_left and bottom_right are (x,y) coordinate tuples, 
+        dim = a non-negative integer representing the dimension of this rectangle."""
+        self.bottom_left = bottom_left
+        self.bottom_right = bottom_right
+        self.dim = dim        
+
+
+## Class for rectangles open to the right and the top 
+class Infinite_rectangle:
+    def __init__(self, bottom_left, dim = 1):
+        """bottom_left and top_right are (x,y) coordinate tuples, 
+        dim = a non-negative integer representing the dimension of this rectangle."""
+        self.bottom_left = bottom_left
+        self.dim = dim
+        
+    def __eq__(self, other):
+        """Check equality of rectangles. Overrides the default."""
+        if self.bottom_left != other.find_bl():
+            return False
+        if self.dim != other.find_dim():
+            return False
+        return True
+    
+    def find_dim(self):
+        """Returns the dimension."""
+        return self.dim
+    
+    def find_bl(self):
+        """Returns the bottom left corner."""
+        return self.bottom_left
+
+    def find_intersection(self, line):
+        """Find the intersection of the given line with self, in the appropriate notation."""
+        ## Check that it works properly !!!! 
+        b = line.b[0]
+        m1 = line.m[0]
+        m2 = line.m[1]
+        
+        ## intersection with bottom side: 
+        bl = self.bottom_left[1]
+        t_bs = (bl+b)/m2
+        pt_bs = (m1*t_bs +b, bl)
+       
+        
+        ## intersection with left side:
+        bl = self.bottom_left[0]
+        t_ls = (bl-b)/m1
+        pt_ls = (bl, m2*t_ls-b)
+        
+        inter = []
+        params = []
+        
+        if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
+            inter.append(pt_bs)
+            params.append(t_bs)
+        
+        if self.bottom_left[1] <= pt_ls[1] <= self.find_tl()[1]: 
+            if pt_ls not in inter: 
+                inter.append(pt_ls)
+                params.append(t_ls) 
+       
+        return inter, params 
+    
 #################################################################
 # Class for rectangle modules (i.e. direct sums of rectangles).
+
+#### Change so that it also includes infinite rectangles 
 class RectangleModule:
     def __init__(self, rect_list):
         self.rectangles = rect_list
@@ -246,29 +328,6 @@ class RectangleModule:
       ---> Change the way to normalize the line 
 """ 
 
-
-class Line:
-    ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
-    def __init__(self,m,b):
-        """ Format for 
-        m = (m1,m2) direction of the line 
-        b=(b1,b2)
-        We want max(m1,m2) = 1 and positive slope
-        and b1=-b2
-        """
-        self.positive = True
-        self.b = b
-        self.m = m 
-        maxm = max(abs(m[0]),abs(m[1])) 
-        if maxm !=1:
-            self.m = (m[0]/maxm,m[1]/maxm)
-        m = self.m    
-        if b[0]!= -b[1] and m[0]!=-m[1]:
-            self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
-
-        if self.m[0] <=0 or self.m[1] <=0:
-            self.positive = False
-        
 class Line_old:
     ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
     def __init__(self,m,b):
@@ -291,7 +350,29 @@ class Line_old:
             self.m = (m[0]/maxm,m[1]/maxm)
         if self.m[0] <=0 or self.m[1] <=0:
             self.positive = False
- 
+            
+class Line:
+    ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
+    def __init__(self,m,b):
+        """ Format for 
+        m = (m1,m2) direction of the line 
+        b=(b1,b2)
+        We want max(m1,m2) = 1 and positive slope
+        and b1=-b2
+        """
+        self.positive = True
+        self.b = b
+        self.m = m 
+        maxm = max(abs(m[0]),abs(m[1])) 
+        if maxm !=1:
+            self.m = (m[0]/maxm,m[1]/maxm)
+        m = self.m    
+        if b[0]!= -b[1] and m[0]!=-m[1]:
+            self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
+
+        if self.m[0] <=0 or self.m[1] <=0:
+            self.positive = False
+
     
     def translate(self,s):
     ## translate a line of direction (m1,m2) in the direction s*(1,-1) 
