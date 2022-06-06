@@ -1,5 +1,6 @@
 import gudhi
 from math import cos, sin, pi
+import numpy as np
 
 """TODO: 
     - implement algorithm to find all equivalence classes of a given module
@@ -69,6 +70,10 @@ class Rectangle:
     
     def find_intersection(self, line):
         """Find the intersection of the given line with self, in the appropriate notation."""
+
+        #### what about intersection at a corner...???? 
+
+
         b = line.b[0]
         m1 = line.m[0]
         m2 = line.m[1]
@@ -128,7 +133,91 @@ class Right_infinite_rectangles():
         dim = a non-negative integer representing the dimension of this rectangle."""
         self.bottom_left = bottom_left
         self.top_left = top_left
+        self.top_right = np.inf
+        self.bottom_right = np.inf
         self.dim = dim
+
+    def find_dim(self):
+        """Returns the dimension."""
+        return self.dim
+    
+    def find_bl(self):
+        """Returns the bottom left corner."""
+        return self.bottom_left
+
+    def find_tl(self):
+        """Returns the top left corner."""
+        return self.top_left
+
+    def find_tr(self):
+        """Returns the top right corner."""
+        return self.top_right
+
+    def find_br(self):                
+        """Returns the bottom right corner."""
+        return self.bottom_right
+
+    def find_intersection(self, line):
+        """ Finds the intersection of a line and the rectangle module    """
+        ## include intersection with corner... 
+
+
+        b = line.b[0]
+        m1 = line.m[0]
+        m2 = line.m[1]
+
+        ## intersection with bottom side: 
+        bl = self.bottom_left[1]
+        t_bs = (bl+b)/m2
+        pt_bs = (m1*t_bs +b, bl)
+        
+        ## intersection with top side: 
+        tl = self.find_tl()[1]
+        t_ts = (tl+b)/m2
+        pt_ts = (m1*t_ts +b, tl)
+       
+        ## intersection with right side: 
+        t_rs = np.inf
+        pt_rs = (np.inf,np.inf)
+        ## intersection with left side:
+        bl = self.bottom_left[0]
+        t_ls = (bl-b)/m1
+        pt_ls = (bl, m2*t_ls-b)
+        
+        inter = []
+        params = []
+
+        #### !! check if this could append more than two points if the intersecion is the uppper left corner!!
+
+        ## do we need to check all the following conditioins? 
+        
+        
+        if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
+            inter.append(pt_bs)
+            params.append(t_bs)
+        
+        if self.bottom_left[1] <= pt_ls[1] <= self.find_tl()[1]: 
+            if pt_ls not in inter: 
+                inter.append(pt_ls)
+                params.append(t_ls) 
+            
+        if self.find_tl()[0] <= pt_ts[0] <= self.top_right[0]: 
+                inter.append(pt_ts)
+                params.append(t_ts)
+              
+        
+        #if self.find_br()[1] <= pt_rs[1] <= self.top_right[1]: 
+        #    if pt_rs not in inter:
+         #       inter.append(pt_rs)
+          #      params.append(t_rs)
+      
+        return inter, params
+
+
+
+        return None
+
+
         
 class Top_infinite_rectangles():
     """ Complete this class"""
@@ -138,7 +227,33 @@ class Top_infinite_rectangles():
         dim = a non-negative integer representing the dimension of this rectangle."""
         self.bottom_left = bottom_left
         self.bottom_right = bottom_right
-        self.dim = dim        
+        self.top_left = np.inf 
+        self.top_right = np.inf 
+        self.dim = dim    
+
+     def find_dim(self):
+        """Returns the dimension."""
+        return self.dim
+    
+    def find_bl(self):
+        """Returns the bottom left corner."""
+        return self.bottom_left
+
+    def find_tl(self):
+        """Returns the top left corner."""
+        return self.top_left
+
+    def find_tr(self):
+        """Returns the top right corner."""
+        return self.top_right
+
+    def find_br(self):                
+        """Returns the bottom right corner."""
+        return self.bottom_right  
+
+    def find_intersection(self, line):
+
+        return None      
 
 
 ## Class for rectangles open to the right and the top 
@@ -147,10 +262,14 @@ class Infinite_rectangle:
         """bottom_left and top_right are (x,y) coordinate tuples, 
         dim = a non-negative integer representing the dimension of this rectangle."""
         self.bottom_left = bottom_left
+        self.bottom_right = np.inf
+        self.top_right = np.inf
+        self.top_left = np.inf
         self.dim = dim
         
     def __eq__(self, other):
         """Check equality of rectangles. Overrides the default."""
+        #### what does this do??
         if self.bottom_left != other.find_bl():
             return False
         if self.dim != other.find_dim():
@@ -164,6 +283,19 @@ class Infinite_rectangle:
     def find_bl(self):
         """Returns the bottom left corner."""
         return self.bottom_left
+
+    def find_tl(self):
+        """Returns the top left corner."""
+        return self.top_left
+
+    def find_tr(self):
+        """Returns the top right corner."""
+        return self.top_right
+
+    def find_br(self):                
+        """Returns the bottom right corner."""
+        return self.bottom_right
+
 
     def find_intersection(self, line):
         """Find the intersection of the given line with self, in the appropriate notation."""
