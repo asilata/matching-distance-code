@@ -11,12 +11,13 @@ import numpy as np
 
 # Class for single rectangles.
 class Rectangle:
-    def __init__(self, bottom_left, top_right, dim = 1):
+    def __init__(self, bottom_left, top_right, dim = 1, parent = 1):
         """bottom_left and top_right are (x,y) coordinate tuples, 
         dim = a non-negative integer representing the dimension of this rectangle."""
         self.bottom_left = bottom_left
         self.top_right = top_right
         self.dim = dim
+        self.parent = parent
         #add error message when format is not good
 
     def __eq__(self, other):
@@ -67,6 +68,10 @@ class Rectangle:
     def update_dim(self, d):
         """Sets dimension to d."""
         self.dim = d
+
+    def find_parent(self):
+        # returns parent module
+        return self.parent
     
     def find_intersection(self, line):
         """Find the intersection of the given line with self, in the appropriate notation."""
@@ -119,6 +124,14 @@ class Rectangle:
                 params.append(t_rs)
       
         return inter, params
+
+    def print_info(self):
+        print("bottom left:", self.bottom_left)
+        print("top right:", self.top_right)
+        print("dimension:", self.dim)
+        print("parent mod:", self.parent, "\n")
+        
+
     
     
 ###########################################################
@@ -494,6 +507,20 @@ class RectangleModule:
                     C_bar.append(lub)
 
         return list(set(C_bar))
+
+    def count_rectangles(self):
+        i = 0
+        for x in self.rectangles:
+            i += 1
+        return i
+
+    def print_mod_info(self):
+        print("total rectangles:", self.count_rectangles(), ". \n")
+        for rectangles in self.rectangles:
+            rectangles.print_info()
+
+            
+        
 
     
 ################################
