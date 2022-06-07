@@ -448,54 +448,17 @@ class RectangleModule:
       
         return inter, params
     
+ 
+    
     def find_critical_pts(self):
-        # #method to find intersection points of two rectangles --> gives all the critical poitns of the module
-        # #
-        # coordinates = []
-        # for r in self.rectangles:
-        #     coordinates += r.find_coordinates()
-        # hull = ConvexHull(coordinates)
-        # return hull.vertices
-        """method to find intersection points of two rectangles 
-        --> gives all the critical points of the module
-        """
-        
         Crit_pts = []
         for ra in self.rectangles:
-            ## corners of rectangles, add them to the list of critical points 
-            bra = ra.find_br()
-            bla = ra.find_bl()
-            tra = ra.find_tr()
-            tla = ra.find_tl()
-            Crit_pts.append(bra)
-            Crit_pts.append(bla)
-            Crit_pts.append(tra)
-            Crit_pts.append(bla)
-            ## segments
-            ta = [tla, tra]
-            ba = [bra,bla]
-            la = [bla,tla]
-            ra = [bra,tra]
-            Seg_a = [ta,ba,la,ra]
-            ## fill in all the corners 
-            for rb in self.rectangles:
-                brb = rb.find_br()
-                blb = rb.find_bl()
-                trb = rb.find_tr()
-                tlb = rb.find_tl()
-                tb = [tlb, trb]
-                bb = [brb,blb]
-                lb = [blb,tlb]
-                rb = [brb,trb]
-                Seg_b = [tb,bb,lb,rb]
-                ## find interections of all semgments
-                for p in Seg_a: 
-                    for q in Seg_b: 
-                        pt = intersect(p[0],p[1],q[0],q[1])
-                        if pt != None: 
-                            Crit_pts.append(pt)
-        return list(set(Crit_pts)) 
-    
+            ## check type of rectangle 
+        
+        
+        return list(set(Crit_pts))
+        
+       
     def compute_barcode(self, line): 
         Int, params = self.find_intersection(line)
         dgm = []
@@ -690,12 +653,6 @@ def intersect(p1, p2, p3, p4):
     y = y1 + ua * (y2-y1)
     return (x,y)
 
-def intersect_modules(M,N): 
-    """ find intersection points of two rectanlge modules"""
-    
-    return None 
-
-
 
 def are_comparable(p,q): 
     """ function to check whether two points are comparable or not 
@@ -707,8 +664,65 @@ def are_comparable(p,q):
         comp = True 
     return comp
 
-#### plotting function for lines and modules 
+#### Intersecting modules 
 
+
+def intersect_modules(M,N): 
+    """ find intersection points of two rectanlge modules"""
+    
+    return None 
+
+
+
+def find_critical_pts_old(self):
+        # #method to find intersection points of two rectangles --> gives all the critical poitns of the module
+        # #
+        # coordinates = []
+        # for r in self.rectangles:
+        #     coordinates += r.find_coordinates()
+        # hull = ConvexHull(coordinates)
+        # return hull.vertices
+        """method to find intersection points of two rectangles 
+        --> gives all the critical points of the module
+        """
+        
+        """ This finds intersection of rectangles, not only the critical points... """
+        
+        Crit_pts = []
+        for ra in self.rectangles:
+            ## corners of rectangles, add them to the list of critical points 
+            bra = ra.find_br()
+            bla = ra.find_bl()
+            tra = ra.find_tr()
+            tla = ra.find_tl()
+            Crit_pts.append(bra)
+            Crit_pts.append(bla)
+            Crit_pts.append(tra)
+            Crit_pts.append(bla)
+            ## segments
+            ta = [tla, tra]
+            ba = [bra,bla]
+            la = [bla,tla]
+            ra = [bra,tra]
+            Seg_a = [ta,ba,la,ra]
+            ## fill in all the corners 
+            for rb in self.rectangles:
+                brb = rb.find_br()
+                blb = rb.find_bl()
+                trb = rb.find_tr()
+                tlb = rb.find_tl()
+                tb = [tlb, trb]
+                bb = [brb,blb]
+                lb = [blb,tlb]
+                rb = [brb,trb]
+                Seg_b = [tb,bb,lb,rb]
+                ## find interections of all semgments
+                for p in Seg_a: 
+                    for q in Seg_b: 
+                        pt = intersect(p[0],p[1],q[0],q[1])
+                        if pt != None: 
+                            Crit_pts.append(pt)
+        return list(set(Crit_pts)) 
 
 
 
