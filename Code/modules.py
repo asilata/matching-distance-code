@@ -70,9 +70,7 @@ class Rectangle:
     
     def find_intersection(self, line):
         """Find the intersection of the given line with self, in the appropriate notation."""
-
         #### what about intersection at a corner...???? 
-
 
         b = line.b[0]
         m1 = line.m[0]
@@ -125,7 +123,7 @@ class Rectangle:
     
 ###########################################################
 
-class Right_infinite_rectangles():
+class Right_infinite_rectangle:
     """ Complete this class"""
    
     def __init__(self, bottom_left,top_left, dim = 1):
@@ -156,12 +154,21 @@ class Right_infinite_rectangles():
     def find_br(self):                
         """Returns the bottom right corner."""
         return self.bottom_right
+    
+    def find_coordinates(self):
+        return [self.find_bl(), self.find_tl(), self.find_tr(), self.find_br()]
+
+    def find_dim(self):
+        """Returns the dimension."""
+        return self.dim
+
+    def update_dim(self, d):
+        """Sets dimension to d."""
+        self.dim = d
 
     def find_intersection(self, line):
         """ Finds the intersection of a line and the rectangle module    """
         ## include intersection with corner... 
-
-
         b = line.b[0]
         m1 = line.m[0]
         m2 = line.m[1]
@@ -191,8 +198,8 @@ class Right_infinite_rectangles():
 
         ## do we need to check all the following conditioins? 
         
-        
-        if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
+        #print(pt_bs)
+        if self.bottom_left[0] <= pt_bs[0]: #<= self.find_br()[0]:
             inter.append(pt_bs)
             params.append(t_bs)
         
@@ -201,7 +208,7 @@ class Right_infinite_rectangles():
                 inter.append(pt_ls)
                 params.append(t_ls) 
             
-        if self.find_tl()[0] <= pt_ts[0] <= self.top_right[0]: 
+        if self.find_tl()[0] <= pt_ts[0]: # <= self.top_right[0]: 
                 inter.append(pt_ts)
                 params.append(t_ts)
               
@@ -213,13 +220,8 @@ class Right_infinite_rectangles():
       
         return inter, params
 
-
-
-        return None
-
-
         
-class Top_infinite_rectangles():
+class Top_infinite_rectangle:
     """ Complete this class"""
    
     def __init__(self, bottom_left,bottom_right, dim = 1):
@@ -231,7 +233,7 @@ class Top_infinite_rectangles():
         self.top_right = np.inf 
         self.dim = dim    
 
-     def find_dim(self):
+    def find_dim(self):
         """Returns the dimension."""
         return self.dim
     
@@ -249,13 +251,64 @@ class Top_infinite_rectangles():
 
     def find_br(self):                
         """Returns the bottom right corner."""
-        return self.bottom_right  
+        return self.bottom_right
+    
+    def find_coordinates(self):
+        return [self.find_bl(), self.find_tl(), self.find_tr(), self.find_br()]
+
+    def find_dim(self):
+        """Returns the dimension."""
+        return self.dim
+
+    def update_dim(self, d):
+        """Sets dimension to d."""
+        self.dim = d
 
     def find_intersection(self, line):
+        
+        b = line.b[0]
+        m1 = line.m[0]
+        m2 = line.m[1]
+        
+        ## intersection with bottom side: 
+        bl = self.bottom_left[1]
+        t_bs = (bl+b)/m2
+        pt_bs = (m1*t_bs +b, bl)
+        
+        ## intersection with top side: 
+        t_ts = np.inf
+        pt_ts = (np.inf,np.inf)
+        
+        ## intersection with right side: 
+        br= self.find_br()[0]
+        t_rs = (br-b)/m1
+        pt_rs = (br, m2*t_rs-b)
+        
+        ## intersection with left side:
+        bl = self.bottom_left[0]
+        t_ls = (bl-b)/m1
+        pt_ls = (bl, m2*t_ls-b)
+        
+        inter = []
+        params = []
+        
+        if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
+            inter.append(pt_bs)
+            params.append(t_bs)
+        
+        if self.bottom_left[1] <= pt_ls[1]: 
+            if pt_ls not in inter: 
+                inter.append(pt_ls)
+                params.append(t_ls) 
+        
+        if self.find_br()[1] <= pt_rs[1]:
+            if pt_rs not in inter:
+                inter.append(pt_rs)
+                params.append(t_rs)
+      
+        return inter, params
 
-        return None      
-
-
+    
 ## Class for rectangles open to the right and the top 
 class Infinite_rectangle:
     def __init__(self, bottom_left, dim = 1):
@@ -295,6 +348,17 @@ class Infinite_rectangle:
     def find_br(self):                
         """Returns the bottom right corner."""
         return self.bottom_right
+    
+    def find_coordinates(self):
+        return [self.find_bl(), self.find_tl(), self.find_tr(), self.find_br()]
+
+    def find_dim(self):
+        """Returns the dimension."""
+        return self.dim
+
+    def update_dim(self, d):
+        """Sets dimension to d."""
+        self.dim = d
 
 
     def find_intersection(self, line):
@@ -309,6 +373,12 @@ class Infinite_rectangle:
         t_bs = (bl+b)/m2
         pt_bs = (m1*t_bs +b, bl)
        
+        ## intersection with top 
+        t_ts = np.inf
+        pt_ts = (np.inf,np.inf)
+        ## intersection with right side: 
+        t_rs = np.inf
+        pt_rs = (np.inf,np.inf)
         
         ## intersection with left side:
         bl = self.bottom_left[0]
@@ -318,11 +388,11 @@ class Infinite_rectangle:
         inter = []
         params = []
         
-        if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
+        if self.bottom_left[0] <= pt_bs[0]:
             inter.append(pt_bs)
             params.append(t_bs)
         
-        if self.bottom_left[1] <= pt_ls[1] <= self.find_tl()[1]: 
+        if self.bottom_left[1] <= pt_ls[1]: 
             if pt_ls not in inter: 
                 inter.append(pt_ls)
                 params.append(t_ls) 
@@ -434,6 +504,10 @@ class RectangleModule:
             if len(params[i]) ==2: 
                 for d in range(dim):
                     dgm.append([params[i][0],params[i][1]])
+                     
+            elif len(params[i]) ==1:
+                for d in range(dim):
+                    dgm.append([params[i][0],np.inf])
         return dgm 
     
     def closure_lub(self): 
