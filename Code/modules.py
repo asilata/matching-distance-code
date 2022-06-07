@@ -453,9 +453,14 @@ class RectangleModule:
     def find_critical_pts(self):
         Crit_pts = []
         for ra in self.rectangles:
-            ## check type of rectangle 
-        
-        
+            bra = ra.find_br()
+            bla = ra.find_bl()
+            tra = ra.find_tr()
+            tla = ra.find_tl()
+            Crit_pts.append(bra)
+            Crit_pts.append(bla)
+            Crit_pts.append(tra)
+            Crit_pts.append(bla)
         return list(set(Crit_pts))
         
        
