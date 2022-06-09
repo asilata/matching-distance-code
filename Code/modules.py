@@ -164,12 +164,13 @@ class Rectangle:
                     inter.append(pt_rs)
                     params.append(t_rs)
 
-            if self.type == 'right infinite':
+        if self.type == 'right infinite':
+                ## intersection with bottom side: 
                  ## intersection with bottom side: 
             bl = self.bottom_left[1]
             t_bs = (bl+b)/m2
             pt_bs = (m1*t_bs +b, bl)
-
+        
             ## intersection with top side: 
             tl = self.find_tl()[1]
             t_ts = (tl+b)/m2
@@ -184,7 +185,7 @@ class Rectangle:
             pt_ls = (bl, m2*t_ls-b)
 
             #print(pt_bs)
-            if self.bottom_left[0] <= pt_bs[0]: 
+            if self.bottom_left[0] <= pt_bs[0]: #<= self.find_br()[0]:
                 inter.append(pt_bs)
                 params.append(t_bs)
 
@@ -193,9 +194,10 @@ class Rectangle:
                     inter.append(pt_ls)
                     params.append(t_ls) 
 
-            if self.find_tl()[0] <= pt_ts[0]: 
-                    inter.append(pt_ts)
-                    params.append(t_ts)
+            if self.find_tl()[0] <= pt_ts[0]: # <= self.top_right[0]: 
+                inter.append(pt_ts)
+                params.append(t_ts)
+
       
         if self.type == 'infinite quadrant':
              ## intersection with bottom side: 
@@ -290,16 +292,29 @@ class RectangleModule:
  
     
     def find_critical_pts(self):
+        """Find the critical values of the entire module
+           Only finite values  
+        """
         Crit_pts = []
-        for ra in self.rectangles:
-            bra = ra.find_br()
-            bla = ra.find_bl()
-            tra = ra.find_tr()
-            tla = ra.find_tl()
-            Crit_pts.append(bra)
-            Crit_pts.append(bla)
-            Crit_pts.append(tra)
-            Crit_pts.append(bla)
+        for r in self.rectangles:
+            ## add bottom left (always finite)
+            Crit_pts.append(r.find_bl())
+            
+            ## add top left value if finite
+            tl = r.find_tl()
+            if tl[1] < np.inf:
+                Crit_pts.append(tl)
+            
+            # add top right value if finite      
+            tr = r.find_tr()
+            if tr[0]<np.inf and tr[1]< np.inf:
+                Crit_pts.append(tr)
+                
+            ## add bottom right if finite
+            br = r.find_br()
+            if br[0] < np.inf:
+                Crit_pts.append(br)
+            
         return list(set(Crit_pts))
         
        
@@ -354,29 +369,6 @@ class RectangleModule:
 """ !!!Attention!!! this gives an error when the slope of the line is negative in direction (1,-1)
       ---> Change the way to normalize the line 
 """ 
-
-class Line_old:
-    ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
-    def __init__(self,m,b):
-        """ Format for 
-        m = (m1,m2) direction of the line 
-        b=(b1,b2)
-        We want max(m1,m2) = 1 and positive slope
-        and b1=-b2
-        """
-        self.positive = True
-        self.b = b
-        self.m = m 
-        if b[0]!= -b[1]: 
-            self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
-            
-        maxm = max(abs(m[0]),abs(m[1])) 
-        #print(m[0])
-        #print(m[1])
-        if maxm !=1:
-            self.m = (m[0]/maxm,m[1]/maxm)
-        if self.m[0] <=0 or self.m[1] <=0:
-            self.positive = False
             
 class Line:
     ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
@@ -494,23 +486,27 @@ def line_through_2points(pt1, pt2):
 
 def intersect(p1, p2, p3, p4):
     '''function finding the intersections of two line segments [p1,p2] and [p3,p4]'''
-    x1,y1 = p1
-    x2,y2 = p2
-    x3,y3 = p3
-    x4,y4 = p4
-    denom = (y4-y3)*(x2-x1) - (x4-x3)*(y2-y1)
-    if denom == 0: # parallel
+    if p1 and p2 and p3 and p4 < np.inf:
+        x1,y1 = p1
+        x2,y2 = p2
+        x3,y3 = p3
+        x4,y4 = p4
+        denom = (y4-y3)*(x2-x1) - (x4-x3)*(y2-y1)
+        if denom == 0: # parallel
+            return None
+        ua = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / denom
+        if ua < 0 or ua > 1: # out of range
+            return None
+        ub = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / denom
+        if ub < 0 or ub > 1: # out of range
+            return None
+        x = x1 + ua * (x2-x1)
+        y = y1 + ua * (y2-y1)
+        return (x,y)
+    else: 
+        ## figure out if we need infinite segments 
         return None
-    ua = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / denom
-    if ua < 0 or ua > 1: # out of range
-        return None
-    ub = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / denom
-    if ub < 0 or ub > 1: # out of range
-        return None
-    x = x1 + ua * (x2-x1)
-    y = y1 + ua * (y2-y1)
-    return (x,y)
-
+           
 
 def are_comparable(p,q): 
     """ function to check whether two points are comparable or not 
@@ -529,8 +525,6 @@ def intersect_modules(M,N):
     """ find intersection points of two rectanlge modules"""
     
     return None 
-
-
 
 def find_critical_pts_old(self):
         # #method to find intersection points of two rectangles --> gives all the critical poitns of the module
