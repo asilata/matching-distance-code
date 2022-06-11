@@ -20,6 +20,12 @@ class Rectangle:
         self.parent = parent
         #add error message when format is not good
 
+    def __repr__(self):
+        # IN PROGRESS
+        # f strings are easy way to turn things into strings
+        return f'(dim is {self.find_dim()})'
+        # usage: print(rect), where rect is a Rectangle
+
     def __eq__(self, other):
         """Check equality of rectangles. Overrides the default."""
         if self.bottom_left != other.find_bl():
@@ -475,6 +481,7 @@ class RectangleModule:
             Crit_pts.append(tra)
             Crit_pts.append(bla)
         return list(set(Crit_pts))
+
         
        
     def compute_barcode(self, line): 
