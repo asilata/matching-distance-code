@@ -11,13 +11,24 @@ import numpy as np
 
 # Class for single rectangles.
 class Rectangle:
-    def __init__(self, bottom_left, top_right, dim = 1, parent = 1):
+    def __init__(self, top_left,top_right, bottom_left, bottom_right, dim = 1, parent = 1):
         """bottom_left and top_right are (x,y) coordinate tuples, 
         dim = a non-negative integer representing the dimension of this rectangle."""
         self.bottom_left = bottom_left
         self.top_right = top_right
+        self.top_left = top_left
+        self.bottom_right = bottom_right 
         self.dim = dim
         self.parent = parent
+        if self.top_right[0] < np.inf and self.top_right[1]< np.inf :
+            self.type = 'finite'
+        elif self.top_left[1] == np.inf and self.top_right[0]< np.inf: 
+            self.type = 'top infinite'
+        elif self.top_right[0] == np.inf and self.top_left[1] < np.inf:
+            self.type = 'right infinite'
+        else:
+            self.type = 'infinite quadrant'
+  
         #add error message when format is not good
 
     def __repr__(self):
@@ -50,9 +61,7 @@ class Rectangle:
 
     def find_tl(self):
         """Returns the top left corner."""
-        x = self.bottom_left[0]
-        y = self.top_right[1]
-        return (x,y)
+        return self.top_left
 
     def find_tr(self):
         """Returns the top right corner."""
@@ -60,9 +69,7 @@ class Rectangle:
 
     def find_br(self):                
         """Returns the bottom right corner."""
-        x = self.top_right[0]
-        y = self.bottom_left[1]
-        return (x,y)
+        return self.bottom_right
 
     def find_coordinates(self):
         return [self.find_bl(), self.find_tl(), self.find_tr(), self.find_br()]
@@ -81,343 +88,164 @@ class Rectangle:
     
     def find_intersection(self, line):
         """Find the intersection of the given line with self, in the appropriate notation."""
-        #### what about intersection at a corner...???? 
-
+        #### what about intersection at a corner...????  
         b = line.b[0]
         m1 = line.m[0]
         m2 = line.m[1]
-        
-        ## intersection with bottom side: 
-        bl = self.bottom_left[1]
-        t_bs = (bl+b)/m2
-        pt_bs = (m1*t_bs +b, bl)
-        
-        ## intersection with top side: 
-        tl = self.find_tl()[1]
-        t_ts = (tl+b)/m2
-        pt_ts = (m1*t_ts +b, tl)
-       
-        ## intersection with right side: 
-        br= self.find_br()[0]
-        t_rs = (br-b)/m1
-        pt_rs = (br, m2*t_rs-b)
-        
-        ## intersection with left side:
-        bl = self.bottom_left[0]
-        t_ls = (bl-b)/m1
-        pt_ls = (bl, m2*t_ls-b)
-        
         inter = []
         params = []
         
-        if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
-            inter.append(pt_bs)
-            params.append(t_bs)
+        if self.type == 'finite':
+            ## intersection with bottom side: 
+            bl = self.bottom_left[1]
+            t_bs = (bl+b)/m2
+            pt_bs = (m1*t_bs +b, bl)
+
+            ## intersection with top side: 
+            tl = self.find_tl()[1]
+            t_ts = (tl+b)/m2
+            pt_ts = (m1*t_ts +b, tl)
+
+            ## intersection with right side: 
+            br= self.find_br()[0]
+            t_rs = (br-b)/m1
+            pt_rs = (br, m2*t_rs-b)
+
+            ## intersection with left side:
+            bl = self.bottom_left[0]
+            t_ls = (bl-b)/m1
+            pt_ls = (bl, m2*t_ls-b)
+
+            if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
+                inter.append(pt_bs)
+                params.append(t_bs)
+
+            if self.bottom_left[1] <= pt_ls[1] <= self.find_tl()[1]: 
+                if pt_ls not in inter: 
+                    inter.append(pt_ls)
+                    params.append(t_ls) 
+
+            if self.find_tl()[0] <= pt_ts[0] <= self.top_right[0]: 
+                    inter.append(pt_ts)
+                    params.append(t_ts)
+
+
+            if self.find_br()[1] <= pt_rs[1] <= self.top_right[1]: 
+                if pt_rs not in inter:
+                    inter.append(pt_rs)
+                    params.append(t_rs)
+         
+        if self.type == 'top infinite': 
+
+            ## intersection with bottom side: 
+            bl = self.bottom_left[1]
+            t_bs = (bl+b)/m2
+            pt_bs = (m1*t_bs +b, bl)
+
+            ## intersection with top side: 
+            t_ts = np.inf
+            pt_ts = (np.inf,np.inf)
+
+            ## intersection with right side: 
+            br= self.find_br()[0]
+            t_rs = (br-b)/m1
+            pt_rs = (br, m2*t_rs-b)
+
+            ## intersection with left side:
+            bl = self.bottom_left[0]
+            t_ls = (bl-b)/m1
+            pt_ls = (bl, m2*t_ls-b)
+
+            if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
+                inter.append(pt_bs)
+                params.append(t_bs)
+
+            if self.bottom_left[1] <= pt_ls[1]: 
+                if pt_ls not in inter: 
+                    inter.append(pt_ls)
+                    params.append(t_ls) 
+
+            if self.find_br()[1] <= pt_rs[1]:
+                if pt_rs not in inter:
+                    inter.append(pt_rs)
+                    params.append(t_rs)
+
+        if self.type == 'right infinite':
+                ## intersection with bottom side: 
+                 ## intersection with bottom side: 
+            bl = self.bottom_left[1]
+            t_bs = (bl+b)/m2
+            pt_bs = (m1*t_bs +b, bl)
         
-        if self.bottom_left[1] <= pt_ls[1] <= self.find_tl()[1]: 
-            if pt_ls not in inter: 
-                inter.append(pt_ls)
-                params.append(t_ls) 
-            
-        if self.find_tl()[0] <= pt_ts[0] <= self.top_right[0]: 
+            ## intersection with top side: 
+            tl = self.find_tl()[1]
+            t_ts = (tl+b)/m2
+            pt_ts = (m1*t_ts +b, tl)
+
+            ## intersection with right side: 
+            t_rs = np.inf
+            pt_rs = (np.inf,np.inf)
+            ## intersection with left side:
+            bl = self.bottom_left[0]
+            t_ls = (bl-b)/m1
+            pt_ls = (bl, m2*t_ls-b)
+
+            #print(pt_bs)
+            if self.bottom_left[0] <= pt_bs[0]: #<= self.find_br()[0]:
+                inter.append(pt_bs)
+                params.append(t_bs)
+
+            if self.bottom_left[1] <= pt_ls[1] <= self.find_tl()[1]: 
+                if pt_ls not in inter: 
+                    inter.append(pt_ls)
+                    params.append(t_ls) 
+
+            if self.find_tl()[0] <= pt_ts[0]: # <= self.top_right[0]: 
                 inter.append(pt_ts)
                 params.append(t_ts)
-              
-        
-        if self.find_br()[1] <= pt_rs[1] <= self.top_right[1]: 
-            if pt_rs not in inter:
-                inter.append(pt_rs)
-                params.append(t_rs)
+
       
-        return inter, params
+        if self.type == 'infinite quadrant':
+             ## intersection with bottom side: 
+            bl = self.bottom_left[1]
+            t_bs = (bl+b)/m2
+            pt_bs = (m1*t_bs +b, bl)
+
+            ## intersection with top 
+            t_ts = np.inf
+            pt_ts = (np.inf,np.inf)
+            ## intersection with right side: 
+            t_rs = np.inf
+            pt_rs = (np.inf,np.inf)
+
+            ## intersection with left side:
+            bl = self.bottom_left[0]
+            t_ls = (bl-b)/m1
+            pt_ls = (bl, m2*t_ls-b)
+
+            inter = []
+            params = []
+
+            if self.bottom_left[0] <= pt_bs[0]:
+                inter.append(pt_bs)
+                params.append(t_bs)
+
+            if self.bottom_left[1] <= pt_ls[1]: 
+                if pt_ls not in inter: 
+                    inter.append(pt_ls)
+                    params.append(t_ls) 
+
+        return inter, params 
+     
 
     def print_info(self):
         print("bottom left:", self.bottom_left)
         print("top right:", self.top_right)
+        print("rectanle type:". self.type)
         print("dimension:", self.dim)
         print("parent mod:", self.parent, "\n")
         
-
-    
-    
-###########################################################
-
-class Right_infinite_rectangle:
-    """ Complete this class"""
-   
-    def __init__(self, bottom_left,top_left, dim = 1):
-        """bottom_left and top_left are (x,y) coordinate tuples, 
-        dim = a non-negative integer representing the dimension of this rectangle."""
-        self.bottom_left = bottom_left
-        self.top_left = top_left
-        self.top_right = np.inf
-        self.bottom_right = np.inf
-        self.dim = dim
-
-    def find_dim(self):
-        """Returns the dimension."""
-        return self.dim
-    
-    def find_bl(self):
-        """Returns the bottom left corner."""
-        return self.bottom_left
-
-    def find_tl(self):
-        """Returns the top left corner."""
-        return self.top_left
-
-    def find_tr(self):
-        """Returns the top right corner."""
-        return self.top_right
-
-    def find_br(self):                
-        """Returns the bottom right corner."""
-        return self.bottom_right
-    
-    def find_coordinates(self):
-        return [self.find_bl(), self.find_tl(), self.find_tr(), self.find_br()]
-
-    def find_dim(self):
-        """Returns the dimension."""
-        return self.dim
-
-    def update_dim(self, d):
-        """Sets dimension to d."""
-        self.dim = d
-
-    def find_intersection(self, line):
-        """ Finds the intersection of a line and the rectangle module    """
-        ## include intersection with corner... 
-        b = line.b[0]
-        m1 = line.m[0]
-        m2 = line.m[1]
-
-        ## intersection with bottom side: 
-        bl = self.bottom_left[1]
-        t_bs = (bl+b)/m2
-        pt_bs = (m1*t_bs +b, bl)
-        
-        ## intersection with top side: 
-        tl = self.find_tl()[1]
-        t_ts = (tl+b)/m2
-        pt_ts = (m1*t_ts +b, tl)
-       
-        ## intersection with right side: 
-        t_rs = np.inf
-        pt_rs = (np.inf,np.inf)
-        ## intersection with left side:
-        bl = self.bottom_left[0]
-        t_ls = (bl-b)/m1
-        pt_ls = (bl, m2*t_ls-b)
-        
-        inter = []
-        params = []
-
-        #### !! check if this could append more than two points if the intersecion is the uppper left corner!!
-
-        ## do we need to check all the following conditioins? 
-        
-        #print(pt_bs)
-        if self.bottom_left[0] <= pt_bs[0]: #<= self.find_br()[0]:
-            inter.append(pt_bs)
-            params.append(t_bs)
-        
-        if self.bottom_left[1] <= pt_ls[1] <= self.find_tl()[1]: 
-            if pt_ls not in inter: 
-                inter.append(pt_ls)
-                params.append(t_ls) 
-            
-        if self.find_tl()[0] <= pt_ts[0]: # <= self.top_right[0]: 
-                inter.append(pt_ts)
-                params.append(t_ts)
-              
-        
-        #if self.find_br()[1] <= pt_rs[1] <= self.top_right[1]: 
-        #    if pt_rs not in inter:
-         #       inter.append(pt_rs)
-          #      params.append(t_rs)
-      
-        return inter, params
-
-        
-class Top_infinite_rectangle:
-    """ Complete this class"""
-   
-    def __init__(self, bottom_left,bottom_right, dim = 1):
-        """bottom_left and bottom_right are (x,y) coordinate tuples, 
-        dim = a non-negative integer representing the dimension of this rectangle."""
-        self.bottom_left = bottom_left
-        self.bottom_right = bottom_right
-        self.top_left = np.inf 
-        self.top_right = np.inf 
-        self.dim = dim    
-
-    def find_dim(self):
-        """Returns the dimension."""
-        return self.dim
-    
-    def find_bl(self):
-        """Returns the bottom left corner."""
-        return self.bottom_left
-
-    def find_tl(self):
-        """Returns the top left corner."""
-        return self.top_left
-
-    def find_tr(self):
-        """Returns the top right corner."""
-        return self.top_right
-
-    def find_br(self):                
-        """Returns the bottom right corner."""
-        return self.bottom_right
-    
-    def find_coordinates(self):
-        return [self.find_bl(), self.find_tl(), self.find_tr(), self.find_br()]
-
-    def find_dim(self):
-        """Returns the dimension."""
-        return self.dim
-
-    def update_dim(self, d):
-        """Sets dimension to d."""
-        self.dim = d
-
-    def find_intersection(self, line):
-        
-        b = line.b[0]
-        m1 = line.m[0]
-        m2 = line.m[1]
-        
-        ## intersection with bottom side: 
-        bl = self.bottom_left[1]
-        t_bs = (bl+b)/m2
-        pt_bs = (m1*t_bs +b, bl)
-        
-        ## intersection with top side: 
-        t_ts = np.inf
-        pt_ts = (np.inf,np.inf)
-        
-        ## intersection with right side: 
-        br= self.find_br()[0]
-        t_rs = (br-b)/m1
-        pt_rs = (br, m2*t_rs-b)
-        
-        ## intersection with left side:
-        bl = self.bottom_left[0]
-        t_ls = (bl-b)/m1
-        pt_ls = (bl, m2*t_ls-b)
-        
-        inter = []
-        params = []
-        
-        if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
-            inter.append(pt_bs)
-            params.append(t_bs)
-        
-        if self.bottom_left[1] <= pt_ls[1]: 
-            if pt_ls not in inter: 
-                inter.append(pt_ls)
-                params.append(t_ls) 
-        
-        if self.find_br()[1] <= pt_rs[1]:
-            if pt_rs not in inter:
-                inter.append(pt_rs)
-                params.append(t_rs)
-      
-        return inter, params
-
-    
-## Class for rectangles open to the right and the top 
-class Infinite_rectangle:
-    def __init__(self, bottom_left, dim = 1):
-        """bottom_left and top_right are (x,y) coordinate tuples, 
-        dim = a non-negative integer representing the dimension of this rectangle."""
-        self.bottom_left = bottom_left
-        self.bottom_right = np.inf
-        self.top_right = np.inf
-        self.top_left = np.inf
-        self.dim = dim
-        
-    def __eq__(self, other):
-        """Check equality of rectangles. Overrides the default."""
-        #### what does this do??
-        if self.bottom_left != other.find_bl():
-            return False
-        if self.dim != other.find_dim():
-            return False
-        return True
-    
-    def find_dim(self):
-        """Returns the dimension."""
-        return self.dim
-    
-    def find_bl(self):
-        """Returns the bottom left corner."""
-        return self.bottom_left
-
-    def find_tl(self):
-        """Returns the top left corner."""
-        return self.top_left
-
-    def find_tr(self):
-        """Returns the top right corner."""
-        return self.top_right
-
-    def find_br(self):                
-        """Returns the bottom right corner."""
-        return self.bottom_right
-    
-    def find_coordinates(self):
-        return [self.find_bl(), self.find_tl(), self.find_tr(), self.find_br()]
-
-    def find_dim(self):
-        """Returns the dimension."""
-        return self.dim
-
-    def update_dim(self, d):
-        """Sets dimension to d."""
-        self.dim = d
-
-
-    def find_intersection(self, line):
-        """Find the intersection of the given line with self, in the appropriate notation."""
-        ## Check that it works properly !!!! 
-        b = line.b[0]
-        m1 = line.m[0]
-        m2 = line.m[1]
-        
-        ## intersection with bottom side: 
-        bl = self.bottom_left[1]
-        t_bs = (bl+b)/m2
-        pt_bs = (m1*t_bs +b, bl)
-       
-        ## intersection with top 
-        t_ts = np.inf
-        pt_ts = (np.inf,np.inf)
-        ## intersection with right side: 
-        t_rs = np.inf
-        pt_rs = (np.inf,np.inf)
-        
-        ## intersection with left side:
-        bl = self.bottom_left[0]
-        t_ls = (bl-b)/m1
-        pt_ls = (bl, m2*t_ls-b)
-        
-        inter = []
-        params = []
-        
-        if self.bottom_left[0] <= pt_bs[0]:
-            inter.append(pt_bs)
-            params.append(t_bs)
-        
-        if self.bottom_left[1] <= pt_ls[1]: 
-            if pt_ls not in inter: 
-                inter.append(pt_ls)
-                params.append(t_ls) 
-       
-        return inter, params 
-    
+         
 #################################################################
 # Class for rectangle modules (i.e. direct sums of rectangles).
 
@@ -470,16 +298,29 @@ class RectangleModule:
  
     
     def find_critical_pts(self):
+        """Find the critical values of the entire module
+           Only finite values  
+        """
         Crit_pts = []
-        for ra in self.rectangles:
-            bra = ra.find_br()
-            bla = ra.find_bl()
-            tra = ra.find_tr()
-            tla = ra.find_tl()
-            Crit_pts.append(bra)
-            Crit_pts.append(bla)
-            Crit_pts.append(tra)
-            Crit_pts.append(bla)
+        for r in self.rectangles:
+            ## add bottom left (always finite)
+            Crit_pts.append(r.find_bl())
+            
+            ## add top left value if finite
+            tl = r.find_tl()
+            if tl[1] < np.inf:
+                Crit_pts.append(tl)
+            
+            # add top right value if finite      
+            tr = r.find_tr()
+            if tr[0]<np.inf and tr[1]< np.inf:
+                Crit_pts.append(tr)
+                
+            ## add bottom right if finite
+            br = r.find_br()
+            if br[0] < np.inf:
+                Crit_pts.append(br)
+            
         return list(set(Crit_pts))
 
         
@@ -535,29 +376,6 @@ class RectangleModule:
 """ !!!Attention!!! this gives an error when the slope of the line is negative in direction (1,-1)
       ---> Change the way to normalize the line 
 """ 
-
-class Line_old:
-    ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
-    def __init__(self,m,b):
-        """ Format for 
-        m = (m1,m2) direction of the line 
-        b=(b1,b2)
-        We want max(m1,m2) = 1 and positive slope
-        and b1=-b2
-        """
-        self.positive = True
-        self.b = b
-        self.m = m 
-        if b[0]!= -b[1]: 
-            self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
-            
-        maxm = max(abs(m[0]),abs(m[1])) 
-        #print(m[0])
-        #print(m[1])
-        if maxm !=1:
-            self.m = (m[0]/maxm,m[1]/maxm)
-        if self.m[0] <=0 or self.m[1] <=0:
-            self.positive = False
             
 class Line:
     ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
@@ -675,23 +493,27 @@ def line_through_2points(pt1, pt2):
 
 def intersect(p1, p2, p3, p4):
     '''function finding the intersections of two line segments [p1,p2] and [p3,p4]'''
-    x1,y1 = p1
-    x2,y2 = p2
-    x3,y3 = p3
-    x4,y4 = p4
-    denom = (y4-y3)*(x2-x1) - (x4-x3)*(y2-y1)
-    if denom == 0: # parallel
+    if p1 and p2 and p3 and p4 < np.inf:
+        x1,y1 = p1
+        x2,y2 = p2
+        x3,y3 = p3
+        x4,y4 = p4
+        denom = (y4-y3)*(x2-x1) - (x4-x3)*(y2-y1)
+        if denom == 0: # parallel
+            return None
+        ua = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / denom
+        if ua < 0 or ua > 1: # out of range
+            return None
+        ub = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / denom
+        if ub < 0 or ub > 1: # out of range
+            return None
+        x = x1 + ua * (x2-x1)
+        y = y1 + ua * (y2-y1)
+        return (x,y)
+    else: 
+        ## figure out if we need infinite segments 
         return None
-    ua = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / denom
-    if ua < 0 or ua > 1: # out of range
-        return None
-    ub = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / denom
-    if ub < 0 or ub > 1: # out of range
-        return None
-    x = x1 + ua * (x2-x1)
-    y = y1 + ua * (y2-y1)
-    return (x,y)
-
+           
 
 def are_comparable(p,q): 
     """ function to check whether two points are comparable or not 
@@ -710,8 +532,6 @@ def intersect_modules(M,N):
     """ find intersection points of two rectanlge modules"""
     
     return None 
-
-
 
 def find_critical_pts_old(self):
         # #method to find intersection points of two rectangles --> gives all the critical poitns of the module
