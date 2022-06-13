@@ -34,7 +34,7 @@ class Rectangle:
     def __repr__(self):
         # IN PROGRESS
         # f strings are easy way to turn things into strings
-        return f'(dim is {self.find_dim()})'
+        return f'(dim is {self.find_dim()}. Parent mod is {self.find_parent()}. \n Coords: \n {self.top_left} __________ {self.top_right} \n           |          | \n           |__________| \n {self.bottom_left}            {self.bottom_right} \n )'
         # usage: print(rect), where rect is a Rectangle
 
     def __eq__(self, other):
