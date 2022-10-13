@@ -269,7 +269,7 @@ class RectangleModule:
             for s in myrects:
                 print(s)
                 if r.eq_upto_dim(s):
-                    s.update_dim(s.find_dim() + r.find_dim())
+                    s.update_dim(s.find_dim() + r.find_dim()) ## shouldnt this be r.update_dim(s.find_dim() + r.find_dim())? 
                     break
                 myrects = myrects + [r]
         self.rectangles = myrects
