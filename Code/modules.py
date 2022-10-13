@@ -72,7 +72,8 @@ class Rectangle:
         return self.bottom_right
 
     def find_coordinates(self):
-        return [self.find_bl(), self.find_tl(), self.find_tr(), self.find_br()]
+        """returns the coordinates of the rectangle in the same order that we input them in the rectangle.. """
+        return [self.find_tl(),self.find_tr(), self.find_bl(), self.find_br()]
 
     def find_dim(self):
         """Returns the dimension."""
@@ -433,9 +434,6 @@ class Line:
         return None
 
            
- ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) . 
-
-
 
 ################### Extra Functions   ##################
 
