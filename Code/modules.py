@@ -582,7 +582,7 @@ def find_critical_pts_old(self):
         return list(set(Crit_pts)) 
 
 class critical_val:
-    def __init__(self, coords, parent_module = []):
+    def __init__(self, coords, parent_module = []): ## fix the empty list issue (cf martin) 
         self.parent_module = parent_module
         self.coords = coords      
 
