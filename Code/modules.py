@@ -581,11 +581,13 @@ def find_critical_pts_old(self):
                             Crit_pts.append(pt)
         return list(set(Crit_pts)) 
 
+    
 class critical_val:
-    def __init__(self, coords, parent_module = []): ## fix the empty list issue (cf martin) 
+    # exchange parent mod list [] for single value and just deal with repeated cvs
+    def __init__(self, coords, parent_module):
         self.parent_module = parent_module
-        self.coords = coords      
-
+        self.coords = coords  
+        # parent module is an integer
     def __repr__(self):
         return f'(parent module of {self.find_coords()} is {self.find_parent_mod()})'
         # usage: print(val), where val is a critical val
@@ -597,7 +599,5 @@ class critical_val:
     def find_coords(self):
         return self.coords
 
-    def add_parent(self, new_parent):
-        self.parent_module.append(new_parent)
         return None
 
