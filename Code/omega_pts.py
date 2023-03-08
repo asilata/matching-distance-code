@@ -3,6 +3,173 @@ from math import cos, sin, pi
 import numpy as np
 
 import modules as mod
+import numpy.linalg
+
+## for checking if in convex hull
+import scipy.spatial
+from scipy.optimize import linprog
+
+import modules as mod
+
+
+###### Convex hull functions ####
+
+def in_hull(points, x):
+    ## check if x in convex hull of points 
+    ## points = array of pts in R^2 
+    
+    n_points = len(points)
+    c = np.zeros(n_points)
+    A = np.r_[points.T,np.ones((1,n_points))]
+    b = np.r_[x, np.ones(1)]
+    lp = linprog(c, A_eq=A, b_eq=b, )
+    return lp.success
+
+def sort_bottom_and_right(u,v,w): 
+    """return the rightmost and bottommost points of u,v,w """
+    
+    rm = u
+    if v[0]>rm[0]:
+        rm = v
+    if w[0] > rm[0]:
+        rm = w
+        
+    bm = u
+    if v[1]< bm[1]:
+        bm = v
+    if w[1] < bm[1]:
+        bm = w
+
+    return bm, rm
+
+
+def check_in_quadrant_tl(x, p, q): 
+    """"assume p is the bottomost pt of u,v,w
+        assume q is the rightmost of u,v,w 
+        return True if x is in the top left quadrant 
+    """
+ 
+    if x[0]<= q[0] and x[1]>=p[1]: 
+        return True 
+    else: 
+        return False 
+        
+
+def check_x_push_up(x,u,v,w): ## Check-point-A and Check-point-B like in the overleaf 
+    """Check if the points x,u,v,w are admissible for:
+            - x pushing up
+            - u,v,w pushing right 
+        returns True if they are an admissible quadruple 
+        and False if they are not admissible or would create superfluous omegapoints 
+    """    
+    p,q = sort_bottom_and_right(u,v,w)
+    a = (q[0],p[1])
+    
+    ## First check if x is in the upper left quadrant: 
+    if check_in_quadrant_tl(x,p,q): 
+        ## Check if x is in convex hull
+        if in_hull(np.array([u,v,w]),x):
+            return False
+        
+        elif in_hull(np.array([u,v,w,a]),x ):
+            return True
+        
+        else:
+            return False
+        
+    else: 
+        return True 
+
+    
+def sort_top_and_left(u,v,w): 
+    """return the leftmost and topmost points of u,v,w """
+        
+    lm = u
+    if v[0]<lm[0]:
+        lm = v
+    if w[0] < lm[0]:
+        lm = w
+        
+    tm = u
+    if v[1]> tm[1]:
+        tm = v
+    if w[1] > tm[1]:
+        tm = w
+
+    return tm, lm
+
+
+def check_in_quadrant_br(x, p, q): 
+    """"assume p is the topmost pt of u,v,w
+        assume q is the leftmost of u,v,w 
+        return True if x is in the bottom right quadrant(including the boundary)
+    """
+    
+    if x[0]>= q[0] and x[1]<=p[1]: 
+        return True 
+    else: 
+        return False 
+
+    
+def check_x_push_right(x,u,v,w): 
+    """Check if the points x,u,v,w are admissible for:
+            - x pushing right
+            - u,v,w pushing up 
+        returns True if they are an admissible quadruple 
+        and False if they are not admissible or would create superfluous omegapoints 
+    """    
+    
+    p,q = sort_top_and_left(u,v,w)
+    a = (q[0],p[1])
+    
+    ## First check if x is in the upper left quadrant: 
+    if check_in_quadrant_br(x,p,q): 
+        ## Check if x is in convex hull
+        if in_hull(np.array([u,v,w]),x):
+            return False
+        
+        elif in_hull(np.array([u,v,w,a]),x ):
+            return True  
+        else: 
+            return False 
+    else: 
+        return True 
+        
+
+    
+### éalskdjfséladkjs
+
+
+def check_3distinct(C):
+    # this function checks that 3 out of 4 things in a set are distinct
+    assert len(C) == 4 , "C is not of length 4 "
+    if (len(C) - len(set(C))) > 1: 
+        return False
+    else: 
+        return True 
+    
+def check_c_distinct(c,C):
+    """this function checks that c, assumed to be in C, is not repeated in C"""
+    C_new = C.copy()
+    C_new.remove(c)
+    val = True 
+    for d in C_new: 
+        if c.coords == d.coords: 
+            val = False
+    
+    return val
+
+def check_omega(CritPts,omega): 
+    """ Function to be implemented later to check if the computed omegapoint is valid 
+        for now: returns true all the time
+    """
+    
+    return True
+    
+
+
+
+
 
 ##### helper functions ###
 def distance_line_pt(p1,p2,x):
@@ -35,9 +202,132 @@ def check_omega(list_pt, x,omega):
         return False 
 
     
-###### 3 vs 1 point 
+    
+    
+    
+#####  3 vs 1 new version 
 
-def compute_3vs1(M, N): 
+
+def algo_3vs1(CritPts): 
+
+
+    assert check_3distinct(CritPts), "There is more than one repeated point in the list"
+
+    Omega_pts = []
+
+    for c in CritPts: 
+        # Trying to find x (of the points x,w,u,v in the paper)
+        if check_c_distinct(c, CritPts): 
+            x = c 
+        else: 
+            continue ### Skips the rest of the loop if c appears multiple times in C 
+
+        CritPts_no_x = CritPts.copy()
+        CritPts_no_x.remove(x)
+
+        for d in CritPts_no_x: 
+            w = d
+            CritPts_no_x_no_w  = CritPts_no_x.copy()
+            CritPts_no_x_no_w.remove(w) ## lol (with a french accent), list with two elements only 
+            
+            if CritPts_no_x_no_w[0].coords == CritPts_no_x_no_w[1].coords:
+                
+                continue 
+                
+            u = CritPts_no_x_no_w[0]
+            v = CritPts_no_x_no_w[1]
+
+        ## Assign the value of the denominator eta and delta according to the parent module
+        ## of the pairs (x,w) and (u,v)
+            if x.parent_module == w.parent_module: 
+                eta = 2
+            else: 
+                eta = 1 
+
+            if u.parent_module == v.parent_module: 
+                delta = 2
+            else: 
+                delta = 1 
+
+            ## Is indentation correct? 
+            if check_x_push_up(x.coords,u.coords,v.coords,w.coords):
+
+                if u.coords[1] <= v.coords[1]: ## check if this needs to be <= or < 
+                    temp_u = u
+                    u = v
+                    v = temp_u
+                if w.coords[0] >= x.coords[0] and  w.coords[1] >= x.coords[1] : ## should this be strict inequality? , also check the coordinates 0 and 1 
+
+                    omega = (x.coords[0],(eta/delta)*(v.coords[1]-u.coords[1])+w.coords[1])
+
+                elif w.coords[0] <= x.coords[0] and  w.coords[1] <= x.coords[1] :
+
+                    omega = (x.coords[0],(eta/delta)*(u.coords[1]-v.coords[1])+w.coords[1])
+
+                else :
+                    omega = (x.coords[0],(eta/delta)*(u.coords[1]-v.coords[1])+w.coords[1])
+                    omega1 = (x.coords[0],(eta/delta)*(v.coords[1]-u.coords[1])+w.coords[1])
+
+                    Omega_pts.append(omega1) ## append
+
+
+                Omega_pts.append(omega) ## in any case we append omegaa
+
+                ## print!
+                print('The omega point {} was generated from'.format(omega))
+                print('x = {}'.format(x))
+                print('w = {}'.format(w))
+                print('u = {}'.format(u))
+                print('v = {}'.format(v))
+                print('****************')
+
+
+
+               ### Is indentation correct?  
+            if check_x_push_right(x.coords,u.coords,v.coords,w.coords):
+
+                if u.coords[0]<= v.coords[0]:
+                    temp_u = u
+                    u = v
+                    v = temp_u
+                if w.coords[0] >= x.coords[0] and w.coords[1] >= x.coords[1]: ## check < vs <= and coordinates 0,1
+
+                    omega = ((eta/delta)*(v.coords[0]-u.coords[0])+w.coords[0], x.coords[1])
+
+                elif w.coords[0] <= x.coords[0] and w.coords[1] <= x.coords[1]:
+                    omega = ((eta/delta)*(u.coords[0]-v.coords[0])+w.coords[0], x.coords[1])
+
+                else: 
+                    omega = ((eta/delta)*(v.coords[0]-u.coords[0])+w.coords[0], x.coords[1])
+                    omega1 = ((eta/delta)*(u.coords[0]-v.coords[0])+w.coords[0], x.coords[1])
+                    Omega_pts.append(omega1)
+
+                Omega_pts.append(omega)
+
+                #print('The omega point {} was generated from'.format(omega))
+                #print('x = {}'.format(x))
+                #print('w = {}'.format(w))
+                #print('u = {}'.format(u))
+                #print('v = {}'.format(v))
+                #print('****************')
+
+
+
+
+    print("Computed {} omega points with duplicates".format(len(Omega_pts)))         
+                
+    Omega_pts = list(set(Omega_pts))   
+    print("Without duplicates: {}".format(len(Omega_pts)))
+
+    return Omega_pts
+
+
+
+
+    
+###### 3 vs 1 point old version
+
+def compute_3vs1_old(M, N): 
     """M,N are modules"""
     CM = M.find_critical_pts()
     CN = N.find_critical_pts()
