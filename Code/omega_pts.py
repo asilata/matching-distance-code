@@ -11,6 +11,8 @@ from scipy.optimize import linprog
 
 import modules as mod
 
+import csv
+
 
 ###### Convex hull functions ####
 
@@ -209,15 +211,19 @@ def check_omega(list_pt, x,omega):
 
 
 def algo_3vs1(CritPts): 
+    ## input: 4 critical points from C_M and C_N
 
-
+    ## Check that we have at least three distinct points, otherwise stop
     assert check_3distinct(CritPts), "There is more than one repeated point in the list"
 
     Omega_pts = []
+    #dict_omega_pts = { "omega_pts": [] , "x" : [], "u":[], "v": [], "w": [], "eta" :[], "delta":[] }
+    dict_omega_pts = []
+
 
     for c in CritPts: 
         # Trying to find x (of the points x,w,u,v in the paper)
-        if check_c_distinct(c, CritPts): 
+        if check_c_distinct(c, CritPts): ## want a critical point x that is distinct from u,v,w
             x = c 
         else: 
             continue ### Skips the rest of the loop if c appears multiple times in C 
@@ -249,7 +255,7 @@ def algo_3vs1(CritPts):
             else: 
                 delta = 1 
 
-            ## Is indentation correct? 
+            ## Is indentation correct? yes same as paper
             if check_x_push_up(x.coords,u.coords,v.coords,w.coords):
 
                 if u.coords[1] <= v.coords[1]: ## check if this needs to be <= or < 
@@ -269,9 +275,16 @@ def algo_3vs1(CritPts):
                     omega1 = (x.coords[0],(eta/delta)*(v.coords[1]-u.coords[1])+w.coords[1])
 
                     Omega_pts.append(omega1) ## append
+                    ##  add omega pts to dictionary 
+                    
+                    
+                    dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
 
 
                 Omega_pts.append(omega) ## in any case we append omegaa
+                dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+
+
 
                 ## print!
                 print('The omega point {} was generated from'.format(omega))
@@ -283,10 +296,10 @@ def algo_3vs1(CritPts):
 
 
 
-               ### Is indentation correct?  
+               ### Is indentation correct? yes, same as above 
             if check_x_push_right(x.coords,u.coords,v.coords,w.coords):
 
-                if u.coords[0]<= v.coords[0]:
+                if u.coords[0]<= v.coords[0]: ## why not strict??
                     temp_u = u
                     u = v
                     v = temp_u
@@ -301,14 +314,25 @@ def algo_3vs1(CritPts):
                     omega = ((eta/delta)*(v.coords[0]-u.coords[0])+w.coords[0], x.coords[1])
                     omega1 = ((eta/delta)*(u.coords[0]-v.coords[0])+w.coords[0], x.coords[1])
                     Omega_pts.append(omega1)
+                    ## dict for debuging
+                    dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+
+
 
                 Omega_pts.append(omega)
+                ## dict for debuging
+        
+                dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+
+                #### 
 
                 #print('The omega point {} was generated from'.format(omega))
                 #print('x = {}'.format(x))
                 #print('w = {}'.format(w))
                 #print('u = {}'.format(u))
                 #print('v = {}'.format(v))
+                #print('eta = {}'.format(eta))
+                #print('delta = {}'.format(delta))
                 #print('****************')
 
 
@@ -318,6 +342,14 @@ def algo_3vs1(CritPts):
                 
     Omega_pts = list(set(Omega_pts))   
     print("Without duplicates: {}".format(len(Omega_pts)))
+    
+    fields = ["omega_pts", "x","u","v","w","eta","delta"]
+
+    
+    with open('test.csv', 'a', newline='') as file:  #### find a way to write everything in file
+        writer = csv.DictWriter(file, fieldnames = fields,dialect='excel')
+        writer.writeheader() 
+        writer.writerows(dict_omega_pts)
 
     return Omega_pts
 
