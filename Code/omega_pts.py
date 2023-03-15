@@ -217,7 +217,6 @@ def algo_3vs1(CritPts):
     assert check_3distinct(CritPts), "There is more than one repeated point in the list"
 
     Omega_pts = []
-    #dict_omega_pts = { "omega_pts": [] , "x" : [], "u":[], "v": [], "w": [], "eta" :[], "delta":[] }
     dict_omega_pts = []
 
 
@@ -277,12 +276,16 @@ def algo_3vs1(CritPts):
                     Omega_pts.append(omega1) ## append
                     ##  add omega pts to dictionary 
                     
-                    
-                    dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                    dict_omega_pts.append([omega1,x.coords,u.coords,v.coords,w.coords,eta,delta])
+
+                    #dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
 
 
                 Omega_pts.append(omega) ## in any case we append omegaa
-                dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                #dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                dict_omega_pts.append([omega,x.coords,u.coords,v.coords,w.coords,eta,delta])
+
+
 
 
 
@@ -315,15 +318,20 @@ def algo_3vs1(CritPts):
                     omega1 = ((eta/delta)*(u.coords[0]-v.coords[0])+w.coords[0], x.coords[1])
                     Omega_pts.append(omega1)
                     ## dict for debuging
-                    dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                    #dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                    dict_omega_pts.append([omega1,x.coords,u.coords,v.coords,w.coords,eta,delta])
 
 
 
                 Omega_pts.append(omega)
                 ## dict for debuging
         
-                dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                #dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                dict_omega_pts.append([omega,x.coords,u.coords,v.coords,w.coords,eta,delta])
 
+
+                
+                
                 #### 
 
                 #print('The omega point {} was generated from'.format(omega))
@@ -343,15 +351,16 @@ def algo_3vs1(CritPts):
     Omega_pts = list(set(Omega_pts))   
     print("Without duplicates: {}".format(len(Omega_pts)))
     
-    fields = ["omega_pts", "x","u","v","w","eta","delta"]
+    #fields = ["omega_pts", "x","u","v","w","eta","delta"]
 
     
-    with open('test.csv', 'a', newline='') as file:  #### find a way to write everything in file
+    """with open('test.csv', 'a', newline='') as file:  #### find a way to write everything in file
         writer = csv.DictWriter(file, fieldnames = fields,dialect='excel')
         writer.writeheader() 
-        writer.writerows(dict_omega_pts)
+        writer.writerows(dict_omega_pts)"""
+    #dict_omega_pts = list(set(dict_omega_pts))
 
-    return Omega_pts
+    return Omega_pts, dict_omega_pts
 
 
 
