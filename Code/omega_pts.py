@@ -348,7 +348,7 @@ def algo_3vs1(CritPts):
 
     print("Computed {} omega points with duplicates".format(len(Omega_pts)))         
                 
-    Omega_pts = list(set(Omega_pts))   
+    #Omega_pts = list(set(Omega_pts))   
     print("Without duplicates: {}".format(len(Omega_pts)))
     
     #fields = ["omega_pts", "x","u","v","w","eta","delta"]
