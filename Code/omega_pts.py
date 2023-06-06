@@ -185,7 +185,7 @@ def min_dist(list_pt,x,omega):
     return list_pt[min_idx]
     
     
-def check_omega(list_pt, x,omega):
+def check_omega(list_pt, x,omega): ## obsolete
     if x == omega: 
         return False
     else:
@@ -203,9 +203,26 @@ def check_omega(list_pt, x,omega):
     else: 
         return False 
 
+
+#### 
+def check_omega_x_below(u,v,w, x,omega):
+    """ Function to be implemented later to check if the computed omegapoint is valid"""
+    if omega[0]<= x.coords[1]:
+        return False
+    elif check_x_push_up(u.coords,v.coords, w.coords, omega):
+        return True
+    else:
+        return False 
     
-    
-    
+
+def check_omega_x_above(u,v,w, x,omega):
+    """ Function to be implemented later to check if the computed omegapoint is valid"""
+    if omega[1]<=x.coords[1]:
+        return False
+    elif check_x_push_right(u.coords, v.coords, w.coords,omega):
+        return True
+    else:
+        return False
     
 #####  3 vs 1 new version 
 
@@ -273,20 +290,17 @@ def algo_3vs1(CritPts):
                     omega = (x.coords[0],(eta/delta)*(u.coords[1]-v.coords[1])+w.coords[1])
                     omega1 = (x.coords[0],(eta/delta)*(v.coords[1]-u.coords[1])+w.coords[1])
 
-                    Omega_pts.append(omega1) ## append
+                    if check_omega_x_below(u,v,w,x,omega1):
+                        Omega_pts.append(omega1) ## append
                     ##  add omega pts to dictionary 
-                    
-                    dict_omega_pts.append([omega1,x.coords,u.coords,v.coords,w.coords,eta,delta])
+                        dict_omega_pts.append([omega1,x.coords,u.coords,v.coords,w.coords,eta,delta])
 
                     #dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
 
-
-                Omega_pts.append(omega) ## in any case we append omegaa
-                #dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
-                dict_omega_pts.append([omega,x.coords,u.coords,v.coords,w.coords,eta,delta])
-
-
-
+                if check_omega_x_below(u,v,w,x,omega):
+                    Omega_pts.append(omega) ## in any case we append omegaa
+                    #dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                    dict_omega_pts.append([omega,x.coords,u.coords,v.coords,w.coords,eta,delta])
 
 
                 ## print!
@@ -316,18 +330,20 @@ def algo_3vs1(CritPts):
                 else: 
                     omega = ((eta/delta)*(v.coords[0]-u.coords[0])+w.coords[0], x.coords[1])
                     omega1 = ((eta/delta)*(u.coords[0]-v.coords[0])+w.coords[0], x.coords[1])
-                    Omega_pts.append(omega1)
-                    ## dict for debuging
-                    #dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
-                    dict_omega_pts.append([omega1,x.coords,u.coords,v.coords,w.coords,eta,delta])
+                    
+                    if check_omega_x_above(u,v,w,x,omega1):
+                        Omega_pts.append(omega1)
+                        ## dict for debuging
+                        #dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                        dict_omega_pts.append([omega1,x.coords,u.coords,v.coords,w.coords,eta,delta])
 
 
-
-                Omega_pts.append(omega)
-                ## dict for debuging
+                if check_omega_x_above(u,v,w,x,omega):
+                    Omega_pts.append(omega)
+                     ## dict for debuging
         
-                #dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
-                dict_omega_pts.append([omega,x.coords,u.coords,v.coords,w.coords,eta,delta])
+                    #dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                    dict_omega_pts.append([omega,x.coords,u.coords,v.coords,w.coords,eta,delta])
 
 
                 
