@@ -218,9 +218,10 @@ def check_omega_x_below(u,v,w, x,omega):
     """
     ## check below vs x push up 
     """ Function to be implemented later to check if the computed omegapoint is valid"""
-    if omega[1]<= x.coords[1]: ### We reject omega if it is below x 
+    if omega[1]<= x.coords[1]: ### We reject omega if it is below x , Double check
         return False
-    elif check_x_push_up(u.coords,v.coords, w.coords, omega): ## UUuugh shouldn't this be:  check_x_push_up(omega, u.coords,v.coords, w.coords): ??
+    #elif check_x_push_up(u.coords,v.coords, w.coords, omega): ## UUuugh shouldn't this be:  check_x_push_up(omega, u.coords,v.coords, w.coords): ??
+    elif check_x_push_up(omega, u.coords,v.coords, w.coords):     
         return True
     else:
         return False 
@@ -230,7 +231,8 @@ def check_omega_x_above(u,v,w, x,omega):
     """ Function to be implemented later to check if the computed omegapoint is valid"""
     if omega[0]<=x.coords[0]: ### We reject omega if it is to the left of x, DOUBLE CHECK 
         return False
-    elif check_x_push_right(u.coords, v.coords, w.coords,omega):## UUuugh shouldn't this be:  check_x_push_right(omega, u.coords,v.coords, w.coords): ??
+    #elif check_x_push_right(u.coords, v.coords, w.coords,omega):## UUuugh shouldn't this be:  check_x_push_right(omega, u.coords,v.coords, w.coords): ??
+    elif check_x_push_right(omega, u.coords,v.coords, w.coords):    
         return True
     else:
         return False
