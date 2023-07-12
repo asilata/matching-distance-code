@@ -17,9 +17,13 @@ import csv
 ###### Convex hull functions ####
 
 def in_hull(points, x):
-    ## check if x in convex hull of points 
-    ## points = array of pts in R^2 
-    
+
+    """Checks if x is in the convex hull of points
+        points = array of pts in R^2
+    """
+
+    ## Maybe we need to double check the linearr programing part 
+  
     n_points = len(points)
     c = np.zeros(n_points)
     A = np.r_[points.T,np.ones((1,n_points))]
@@ -29,7 +33,7 @@ def in_hull(points, x):
 
 def sort_bottom_and_right(u,v,w): 
     """return the rightmost and bottommost points of u,v,w """
-    
+    ## C: This seems correct to me 
     rm = u
     if v[0]>rm[0]:
         rm = v
@@ -44,14 +48,32 @@ def sort_bottom_and_right(u,v,w):
 
     return bm, rm
 
+def sort_top_and_left(u,v,w): 
+    """return the leftmost and topmost points of u,v,w """
+    ## C: This seems correct to me   
+    lm = u
+    if v[0]<lm[0]:
+        lm = v
+    if w[0] < lm[0]:
+        lm = w
+        
+    tm = u
+    if v[1]> tm[1]:
+        tm = v
+    if w[1] > tm[1]:
+        tm = w
+
+    return tm, lm
+
+
 
 def check_in_quadrant_tl(x, p, q): 
-    """"assume p is the bottomost pt of u,v,w
+    """"assume p is the bottommost pt of u,v,w
         assume q is the rightmost of u,v,w 
         return True if x is in the top left quadrant 
     """
- 
-    if x[0]<= q[0] and x[1]>=p[1]: 
+    ## C: looks fine to me
+    if x[0]<= q[0] and p[1] <= x[1]: 
         return True 
     else: 
         return False 
@@ -59,12 +81,14 @@ def check_in_quadrant_tl(x, p, q):
 
 def check_x_push_up(x,u,v,w): ## Check-point-A and Check-point-B like in the overleaf 
     """Check if the points x,u,v,w are admissible for:
-            - x pushing up
+            - x pushing up (i.e. x is below the line)
             - u,v,w pushing right 
         returns True if they are an admissible quadruple 
         and False if they are not admissible or would create superfluous omegapoints 
     """    
-    p,q = sort_bottom_and_right(u,v,w)
+    ## C: looks fine to me 
+
+    p,q = sort_bottom_and_right(u,v,w) ## p is the bottommost pt, q is the rightmost pt 
     a = (q[0],p[1])
     
     ## First check if x is in the upper left quadrant: 
@@ -82,32 +106,14 @@ def check_x_push_up(x,u,v,w): ## Check-point-A and Check-point-B like in the ove
     else: 
         return True 
 
-    
-def sort_top_and_left(u,v,w): 
-    """return the leftmost and topmost points of u,v,w """
-        
-    lm = u
-    if v[0]<lm[0]:
-        lm = v
-    if w[0] < lm[0]:
-        lm = w
-        
-    tm = u
-    if v[1]> tm[1]:
-        tm = v
-    if w[1] > tm[1]:
-        tm = w
-
-    return tm, lm
-
 
 def check_in_quadrant_br(x, p, q): 
     """"assume p is the topmost pt of u,v,w
         assume q is the leftmost of u,v,w 
         return True if x is in the bottom right quadrant(including the boundary)
     """
-    
-    if x[0]>= q[0] and x[1]<=p[1]: 
+    ## C: looks fine to me
+    if q[0] <= x[0] and x[1]<=p[1]: 
         return True 
     else: 
         return False 
@@ -120,7 +126,7 @@ def check_x_push_right(x,u,v,w):
         returns True if they are an admissible quadruple 
         and False if they are not admissible or would create superfluous omegapoints 
     """    
-    
+    ## C: looks fine to me
     p,q = sort_top_and_left(u,v,w)
     a = (q[0],p[1])
     
@@ -155,7 +161,7 @@ def check_c_distinct(c,C):
     C_new = C.copy()
     C_new.remove(c)
     val = True 
-    for d in C_new: 
+    for d in C_new: ## can we do without a for loop here? (for further optimization if we ever want to do that )
         if c.coords == d.coords: 
             val = False
     
@@ -206,10 +212,15 @@ def check_omega(list_pt, x,omega): ## obsolete
 
 #### 
 def check_omega_x_below(u,v,w, x,omega):
+
+    """Here we assume we are in the case where x pushes up and u,v,w push right, i.e. x is below a line separating u,v,w from x
+       We check if the omegapoint is valid 
+    """
+    ## check below vs x push up 
     """ Function to be implemented later to check if the computed omegapoint is valid"""
-    if omega[0]<= x.coords[1]:
+    if omega[1]<= x.coords[1]: ### We reject omega if it is below x 
         return False
-    elif check_x_push_up(u.coords,v.coords, w.coords, omega):
+    elif check_x_push_up(u.coords,v.coords, w.coords, omega): ## UUuugh shouldn't this be:  check_x_push_up(omega, u.coords,v.coords, w.coords): ??
         return True
     else:
         return False 
@@ -217,9 +228,9 @@ def check_omega_x_below(u,v,w, x,omega):
 
 def check_omega_x_above(u,v,w, x,omega):
     """ Function to be implemented later to check if the computed omegapoint is valid"""
-    if omega[1]<=x.coords[1]:
+    if omega[0]<=x.coords[0]: ### We reject omega if it is to the left of x, DOUBLE CHECK 
         return False
-    elif check_x_push_right(u.coords, v.coords, w.coords,omega):
+    elif check_x_push_right(u.coords, v.coords, w.coords,omega):## UUuugh shouldn't this be:  check_x_push_right(omega, u.coords,v.coords, w.coords): ??
         return True
     else:
         return False
@@ -228,6 +239,8 @@ def check_omega_x_above(u,v,w, x,omega):
 
 
 def algo_3vs1(CritPts): 
+
+    """discards the omega points that are not valid""" 
     ## input: 4 critical points from C_M and C_N
 
     ## Check that we have at least three distinct points, otherwise stop
@@ -383,6 +396,8 @@ def algo_3vs1(CritPts):
 
 
 def algo_3vs1_keep_omega(CritPts): 
+
+    """Keeps the omega points generated even if they are not valid"""
     ## input: 4 critical points from C_M and C_N
 
     ## Check that we have at least three distinct points, otherwise stop
