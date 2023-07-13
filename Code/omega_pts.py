@@ -238,6 +238,7 @@ def check_omega_x_above(u,v,w, x,omega):
         return False
     
 #####  3 vs 1 new version 
+# corresponds to Algorithm 3 in the paper as of July 13, 2023
 
 
 def algo_3vs1(CritPts): 
@@ -289,7 +290,11 @@ def algo_3vs1(CritPts):
             ## Is indentation correct? yes same as paper
             if check_x_push_up(x.coords,u.coords,v.coords,w.coords):
 
-                if u.coords[1] <= v.coords[1]: ## check if this needs to be <= or < 
+                # adding this to include claudia's comment about matching having null cost
+                if u.coords[1] == v.coords[1]:
+                    continue
+
+                if u.coords[1] < v.coords[1]: ## at some point there was confusion about <= or <; changed to < on 13 july to match current paper. maybe shouldn't have?
                     temp_u = u
                     u = v
                     v = temp_u
@@ -331,7 +336,11 @@ def algo_3vs1(CritPts):
                ### Is indentation correct? yes, same as above 
             if check_x_push_right(x.coords,u.coords,v.coords,w.coords):
 
-                if u.coords[0]<= v.coords[0]: ## why not strict??
+                # adding because of claudia's null cost comment
+                if u.coords[0] == v.coords[0]:
+                    continue
+
+                if u.coords[0] < v.coords[0]: ## confusion about <= or <, but updated 13 july to match paper
                     temp_u = u
                     u = v
                     v = temp_u
