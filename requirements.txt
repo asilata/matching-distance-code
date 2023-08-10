@@ -1,0 +1,5 @@
+gudhi
+matplotlib
+numpy
+scipy
+jupyter
