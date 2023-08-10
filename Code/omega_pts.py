@@ -213,23 +213,23 @@ def min_dist(list_pt, x, omega):
     return list_pt[min_idx]
 
 
-def check_omega(list_pt, x, omega):  ## obsolete
-    if x == omega:
-        return False
-    else:
-        pt = min_dist(list_pt, x, omega)
-        if pt == omega:
-            list_pt.remove(pt)
-            pt = min_dist(list_pt, x, omega)
-            if pt == omega:
-                list_pt.remove(pt)
+# def check_omega(list_pt, x, omega):  ## obsolete
+#     if x == omega:
+#         return False
+#     else:
+#         pt = min_dist(list_pt, x, omega)
+#         if pt == omega:
+#             list_pt.remove(pt)
+#             pt = min_dist(list_pt, x, omega)
+#             if pt == omega:
+#                 list_pt.remove(pt)
 
-        L1 = mod.line_through_2points(min_dist(list_pt, x, omega), omega)
-        L = mod.line_through_2points(x, omega)
-    if L.positive and L1.positive:
-        return True
-    else:
-        return False
+#         L1 = mod.line_through_2points(min_dist(list_pt, x, omega), omega)
+#         L = mod.line_through_2points(x, omega)
+#     if L.positive and L1.positive:
+#         return True
+#     else:
+#         return False
 
 
 ####
@@ -271,12 +271,66 @@ def algo_2v2_paired(CritPts):
     dict_omega_pts = []
 
 
+def output_alg_3_1(CritPts, name):
+    Pts = []
+    Dict_pts = [["omega_pts", "x", "u", "v", "w", "eta", "delta"]]
+    set_of_points = set({})
+    length = len(CritPts)
+
+    for a in range(length):
+        for b in range(a + 1, length):
+            for c in range(b + 1, length):
+                for d in range(c, length):
+                    if check_3distinct(
+                        [
+                            CritPts[a].coords,
+                            CritPts[b].coords,
+                            CritPts[c].coords,
+                            CritPts[d].coords,
+                        ]
+                    ):
+                        pts, dict_pts = algo_3vs1(
+                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]]
+                        )
+                        Pts += pts
+                        # a first attempt to get rid of duplicates
+                        # this should be moved to the omega file
+                        for p in range(len(pts)):
+                            if pts[p] not in set_of_points:
+                                set_of_points.add(pts[p])
+                                Dict_pts += [dict_pts[p]]
+
+    print("**********")
+    print("Computed {} points (with duplicates)".format(len(Pts)))
+
+    # # checking a weird number discrep; uncomment later
+    Pts = list(set(Pts))
+    print("Without duplicates {}".format(len(Pts)))
+
+    # Dict_pts.sort()
+    # new_pts= list(k for k,_ in itertools.groupby(k))
+
+    # w+ option overwrites file each time (good thing)
+    with open("../output/" + name + "_discard_omega.csv", "w+", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerows(Dict_pts)
+
+    return Pts
+
+
 def algo_3vs1(CritPts):
     """discards the omega points that are not valid"""
     ## input: 4 critical points from C_M and C_N
 
+    # don't we already do this in the if statement that contains this function?
     ## Check that we have at least three distinct points, otherwise stop
-    assert check_3distinct(CritPts), "There is more than one repeated point in the list"
+    critptscoords = []
+    for x in CritPts:
+        critptscoords.append(x.coords)
+
+    assert check_3distinct(
+        critptscoords
+    ), "There is more than one repeated point in the list"
 
     Omega_pts = []
     dict_omega_pts = []
@@ -442,10 +496,10 @@ def algo_3vs1(CritPts):
                 # print('delta = {}'.format(delta))
                 # print('****************')
 
-    print("Computed {} omega points with duplicates".format(len(Omega_pts)))
+    # print("Computed {} omega points with duplicates".format(len(Omega_pts)))
 
-    # Omega_pts = list(set(Omega_pts))
-    print("Without duplicates: {}".format(len(Omega_pts)))
+    # # Omega_pts = list(set(Omega_pts))
+    # print("Without duplicates: {}".format(len(Omega_pts)))
 
     # fields = ["omega_pts", "x","u","v","w","eta","delta"]
 
