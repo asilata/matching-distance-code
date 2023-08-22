@@ -7,7 +7,8 @@ import numpy.linalg
 
 ## for checking if in convex hull
 import scipy.spatial
-from scipy.optimize import linprog
+from scipy.optimize import linprog 
+from itertools import combinations
 
 import modules as mod
 
@@ -260,16 +261,73 @@ def check_omega_x_above(u, v, w, x, omega):
     else:
         return False
 
+#### 2 vs 2 paired version  #### 
 
-#####  3 vs 1 new version
-# corresponds to Algorithm 3 in the paper as of July 13, 2023
+def check_pts_2v2_paired(x,w,u,v): 
+    """Implement later"""
 
+    return True
 
 def algo_2v2_paired(CritPts):
     print("hi")
+
+    critptscoords = []
+    for x in CritPts:
+        critptscoords.append(x.coords)
+
+    assert check_4distinct(
+        critptscoords
+    ), "There is more than one repeated point in the list"
+
     Omega_pts = []
     dict_omega_pts = []
+    for (c,d) in itertools.combinations(CritPts,2): 
+        x =c
+        w =d 
+        if w.coords[0] < x.coords[0]:
+            temp_x = x
+            x = w
+            w = temp_x
+        elif w.coords[0] == x.coords[0]:
+            continue
 
+        CritPts_no_x_w = CritPts.copy()
+        CritPts_no_x_w.remove(w).remove(x) ## can we do this in one line? 
+        u = CritPts_no_x_w[0]
+        v = CritPts_no_x_w[1] 
+        if u.coords[1] < v.coords[1]:
+            temp_u = u
+            u = v
+            v = temp_u
+        elif u.coords[1] == v.coords[1]:
+            continue
+        
+
+        if x.parent_module == w.parent_module:
+            eta = 2
+        else:
+            eta = 1
+        if u.parent_module == v.parent_module:
+            delta = 2
+        else:
+            delta = 1
+
+        if check_pts_2v2_paired(x,w,u,v): 
+            omega = (0, delta * (w.coords[0]-x.coords[0]), eta*(u.coords[1]-v.coords[1])) ## How tf are we going to deal with projective coordinates here? 
+            m = delta * (w.coords[0]-x.coords[0])/(eta*(u.coords[1]-v.coords[1]))
+            if max(x.coords[1]-m*x.coords[0], w.coords[1]-m*w.coords[0]) < min(u.coords[1]-m*u.coords[0], v.coords[1]-m*v.coords[0]):
+                Omega_pts.append(omega)
+                dict_omega_pts.append([omega, x.coords, u.coords, v.coords, w.coords, eta, delta])
+
+    return Omega_pts, dict_omega_pts
+
+
+
+
+
+
+#####  3 vs 1 new version
+# corresponds to Algorithm 3 in the paper as of July 13, 2023
 
 def output_alg_3_1(CritPts, name):
     Pts = []
