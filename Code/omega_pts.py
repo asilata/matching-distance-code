@@ -265,6 +265,33 @@ def check_omega_x_above(u, v, w, x, omega):
 
 def check_pts_2v2_paired(x,w,u,v): 
     """Implement later"""
+    m1 = (w.coords[1]-x.coords[1])/(w.coords[0]-x.coords[0])
+    m2 = (u.coords[1]-v.coords[1])/(u.coords[0]-v.coords[0])
+    if m1 >0: #R has a triangle cut out of it
+        print('bla')
+        # check if u or v are in the quandrant containing R 
+        # if yes,check if u or v is in the triangle cut out of R --> return True
+        # if not in the tirangle but in quadrant return False
+        # if not in the quandrant return False 
+
+        # side note: we can check if u or v are in the triangle cut out of R by checking if they are in the convex hull of the other two points and the corner of the quandrant 
+    
+    else: #R is a quandrant 
+        # check if u or v are in the quandrant R
+        # if yes return False 
+        # if no return True 
+    
+    if m2 >0: #Q has a triangle cut out of it
+        print('bla')
+        # check if x or w are in the quandrant containing Q
+        # if yes, check if x or w is in the triangle cut out of Q --> return True
+        # if not in the tirangle but in quadrant return False
+        # if not in the quandrant return False
+
+    else: #Q is a quandrant
+        # check if x or w are in the quandrant Q
+        # if yes return False
+        # if no return True
 
     return True
 
