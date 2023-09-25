@@ -263,12 +263,53 @@ def check_omega_x_above(u, v, w, x, omega):
 
 #### 2 vs 2 paired version  #### 
 
-def check_pts_2v2_paired(x,w,u,v): 
+def check_pts_2v2_paired(x,w,u,v): ## I think this can be made simpler: i think its enough to check if x,w in Q or u,v in R because one implies the other somehow 
     """Implement later"""
-    m1 = (w.coords[1]-x.coords[1])/(w.coords[0]-x.coords[0])
-    m2 = (u.coords[1]-v.coords[1])/(u.coords[0]-v.coords[0])
-    if m1 >0: #R has a triangle cut out of it
-        print('bla')
+    m1 = (w.coords[1]-x.coords[1])/(w.coords[0]-x.coords[0]) ## slope of the line through x and w
+    m2 = (u.coords[1]-v.coords[1])/(u.coords[0]-v.coords[0]) ## slope of the line through u and v
+
+ #R has a triangle cut out of it
+    
+    # sort the topmost of x and w and the leftmost of x and w
+    lm = x.coords ## TODO check if this is correct
+    if w.coords[0] < lm[0]:
+        lm = w.coords
+    tm = x.coords 
+    if w.coords[1] > tm[1]:
+        tm = w.coords
+
+    # sort the bottommost of u and v and the rightmost of u and v
+    rm = u.coords
+    if v.coords[0] > rm[0]: ## TODO check if this is correct
+        rm = v.coords
+    bm = u.coords
+    if v.coords[1] < bm[1]:
+        bm = v.coords
+
+    if check_in_quadrant_br(u.coords, tm, lm) or check_in_quadrant_br(v.coords, tm, lm):
+        if m1 >0:
+            if in_hull(np.array([x.coords, w.coords]), u.coords) or in_hull(np.array([x.coords, w.coords]), v.coords):
+                return True
+            else:
+                return False
+
+        else: #R is a quandrant
+            return False 
+
+    elif check_in_quadrant_tl(x.coords, bm, rm) or check_in_quadrant_tl(w.coords, bm, rm):
+
+        if m2 >0:
+            if in_hull(np.array([u.coords, v.coords]), x.coords) or in_hull(np.array([u.coords, v.coords]), w.coords):
+                return True
+            else:
+                return False
+
+        else:
+            return False
+    else: 
+        return True
+
+
         # check if u or v are in the quandrant containing R 
         # if yes,check if u or v is in the triangle cut out of R --> return True
         # if not in the tirangle but in quadrant return False
@@ -276,24 +317,23 @@ def check_pts_2v2_paired(x,w,u,v):
 
         # side note: we can check if u or v are in the triangle cut out of R by checking if they are in the convex hull of the other two points and the corner of the quandrant 
     
-    else: #R is a quandrant 
+    #else: #R is a quandrant 
         # check if u or v are in the quandrant R
         # if yes return False 
         # if no return True 
     
-    if m2 >0: #Q has a triangle cut out of it
-        print('bla')
+    #if m2 >0: #Q has a triangle cut out of it
         # check if x or w are in the quandrant containing Q
         # if yes, check if x or w is in the triangle cut out of Q --> return True
         # if not in the tirangle but in quadrant return False
         # if not in the quandrant return False
 
-    else: #Q is a quandrant
+    #else: #Q is a quandrant
         # check if x or w are in the quandrant Q
         # if yes return False
         # if no return True
 
-    return True
+
 
 def algo_2v2_paired(CritPts):
     print("hi")
