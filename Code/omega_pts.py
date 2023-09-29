@@ -154,7 +154,7 @@ def check_x_push_right(x, u, v, w):
         return True
 
 
-### éalskdjfséladkjs
+### 
 
 
 def check_3distinct(C):
@@ -261,6 +261,7 @@ def check_omega_x_above(u, v, w, x, omega):
     else:
         return False
 
+
 #### 2 vs 2 paired version  #### 
 
 def check_pts_2v2_paired(x,w,u,v): ## I think this can be made simpler: i think its enough to check if x,w in Q or u,v in R because one implies the other somehow 
@@ -278,6 +279,8 @@ def check_pts_2v2_paired(x,w,u,v): ## I think this can be made simpler: i think 
     if w.coords[1] > tm[1]:
         tm = w.coords
 
+    corner_R = (lm[0], tm[1]) ## corner of the quandrant R
+
     # sort the bottommost of u and v and the rightmost of u and v
     rm = u.coords
     if v.coords[0] > rm[0]: ## TODO check if this is correct
@@ -285,10 +288,13 @@ def check_pts_2v2_paired(x,w,u,v): ## I think this can be made simpler: i think 
     bm = u.coords
     if v.coords[1] < bm[1]:
         bm = v.coords
+    corner_Q = (rm[0], bm[1]) ## corner of the quandrant Q
 
     if check_in_quadrant_br(u.coords, tm, lm) or check_in_quadrant_br(v.coords, tm, lm):
+        # check if u or v are in the quandrant containing R
         if m1 >0:
-            if in_hull(np.array([x.coords, w.coords]), u.coords) or in_hull(np.array([x.coords, w.coords]), v.coords):
+            if in_hull(np.array([x.coords, w.coords, corner_R]), u.coords) or in_hull(np.array([x.coords, w.coords, corner_R]), v.coords):
+                # check if u or v are in the triangle cut out of R
                 return True
             else:
                 return False
@@ -297,9 +303,11 @@ def check_pts_2v2_paired(x,w,u,v): ## I think this can be made simpler: i think 
             return False 
 
     elif check_in_quadrant_tl(x.coords, bm, rm) or check_in_quadrant_tl(w.coords, bm, rm):
+        # check if x or w are in the quandrant containing Q
 
         if m2 >0:
-            if in_hull(np.array([u.coords, v.coords]), x.coords) or in_hull(np.array([u.coords, v.coords]), w.coords):
+            if in_hull(np.array([u.coords, v.coords, corner_Q]), x.coords) or in_hull(np.array([u.coords, v.coords, corner_Q]), w.coords):
+                # check if x or w are in the triangle cut out of Q
                 return True
             else:
                 return False
@@ -348,7 +356,7 @@ def algo_2v2_paired(CritPts):
 
     Omega_pts = []
     dict_omega_pts = []
-    for (c,d) in itertools.combinations(CritPts,2): 
+    for (c,d) in combinations(CritPts,2): 
         x =c
         w =d 
         if w.coords[0] < x.coords[0]:
