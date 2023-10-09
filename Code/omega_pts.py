@@ -266,8 +266,15 @@ def check_omega_x_above(u, v, w, x, omega):
 
 def check_pts_2v2_paired(x,w,u,v): ## I think this can be made simpler: i think its enough to check if x,w in Q or u,v in R because one implies the other somehow 
     """Implement later"""
-    m1 = (w.coords[1]-x.coords[1])/(w.coords[0]-x.coords[0]) ## slope of the line through x and w
-    m2 = (u.coords[1]-v.coords[1])/(u.coords[0]-v.coords[0]) ## slope of the line through u and v
+    if x.coords[0] == w.coords[0]: 
+        m1 = np.inf
+    else: 
+        m1 = (w.coords[1]-x.coords[1])/(w.coords[0]-x.coords[0]) ## slope of the line through x and w
+
+    if u.coords[0] == v.coords[0]:
+        m2 = np.inf
+    else: 
+        m2 = (u.coords[1]-v.coords[1])/(u.coords[0]-v.coords[0]) ## slope of the line through u and v
 
  #R has a triangle cut out of it
     
@@ -344,7 +351,6 @@ def check_pts_2v2_paired(x,w,u,v): ## I think this can be made simpler: i think 
 
 
 def algo_2v2_paired(CritPts):
-    print("hi")
 
     critptscoords = []
     for x in CritPts:
@@ -354,8 +360,8 @@ def algo_2v2_paired(CritPts):
         critptscoords
     ), "There is more than one repeated point in the list"
 
-    Omega_pts = []
-    dict_omega_pts = []
+    Omega_pts = [] ## will contain just the valid omega points that were computed
+    info_list = [] ## contains the omega points and the additional info from which critical pts it came from 
     for (c,d) in combinations(CritPts,2): 
         x =c
         w =d 
@@ -367,7 +373,8 @@ def algo_2v2_paired(CritPts):
             continue
 
         CritPts_no_x_w = CritPts.copy()
-        CritPts_no_x_w.remove(w).remove(x) ## can we do this in one line? 
+        CritPts_no_x_w.remove(w) #.remove(x) ## can we do this in one line? 
+        CritPts_no_x_w.remove(x)
         u = CritPts_no_x_w[0]
         v = CritPts_no_x_w[1] 
         if u.coords[1] < v.coords[1]:
@@ -389,16 +396,63 @@ def algo_2v2_paired(CritPts):
 
         if check_pts_2v2_paired(x,w,u,v): 
             omega = (0, delta * (w.coords[0]-x.coords[0]), eta*(u.coords[1]-v.coords[1])) ## How tf are we going to deal with projective coordinates here? 
-            m = delta * (w.coords[0]-x.coords[0])/(eta*(u.coords[1]-v.coords[1]))
+            if u.coords[1] == v.coords[1]:
+                m = np.inf
+            else:
+                m = delta * (w.coords[0]-x.coords[0])/(eta*(u.coords[1]-v.coords[1]))
             if max(x.coords[1]-m*x.coords[0], w.coords[1]-m*w.coords[0]) < min(u.coords[1]-m*u.coords[0], v.coords[1]-m*v.coords[0]):
                 Omega_pts.append(omega)
-                dict_omega_pts.append([omega, x.coords, u.coords, v.coords, w.coords, eta, delta])
+                info_list.append([omega, x.coords, u.coords, v.coords, w.coords, eta, delta, m])
 
-    return Omega_pts, dict_omega_pts
-
-
+    return Omega_pts, info_list
 
 
+
+def output_alg_2_2_paired(CritPts, name):
+    Pts = []
+    Total_info_list = [["omega_pts", "x", "u", "v", "w", "eta", "delta", "m"]]
+    set_of_points = set({})
+    length = len(CritPts)
+
+    for a in range(length):
+        for b in range(a + 1, length):
+            for c in range(b + 1, length):
+                for d in range(c, length):
+                    if check_4distinct(
+                        [
+                            CritPts[a].coords,
+                            CritPts[b].coords,
+                            CritPts[c].coords,
+                            CritPts[d].coords,
+                        ]
+                    ):
+                        pts, info_list = algo_2v2_paired(
+                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]]
+                        )
+                        Pts += pts
+                        # a first attempt to get rid of duplicates
+                        # this should be moved to the omega file
+                        for p in range(len(pts)):
+                            if pts[p] not in set_of_points:
+                                set_of_points.add(pts[p])
+                                Total_info_list += [info_list[p]]
+
+    print("**********")
+    print("Computed {} points (with duplicates)".format(len(Pts)))
+
+    # # checking a weird number discrep; uncomment later
+    Pts = list(set(Pts))
+    print("Without duplicates {}".format(len(Pts)))
+
+    # Dict_pts.sort()
+    # new_pts= list(k for k,_ in itertools.groupby(k))
+
+    # w+ option overwrites file each time (good thing)
+    with open("../output/" + name + "_2v2_paired.csv", "w+", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerows(Total_info_list)
+
+    return Pts
 
 
 #####  3 vs 1 new version
