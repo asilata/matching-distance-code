@@ -214,25 +214,6 @@ def min_dist(list_pt, x, omega):
     return list_pt[min_idx]
 
 
-# def check_omega(list_pt, x, omega):  ## obsolete
-#     if x == omega:
-#         return False
-#     else:
-#         pt = min_dist(list_pt, x, omega)
-#         if pt == omega:
-#             list_pt.remove(pt)
-#             pt = min_dist(list_pt, x, omega)
-#             if pt == omega:
-#                 list_pt.remove(pt)
-
-#         L1 = mod.line_through_2points(min_dist(list_pt, x, omega), omega)
-#         L = mod.line_through_2points(x, omega)
-#     if L.positive and L1.positive:
-#         return True
-#     else:
-#         return False
-
-
 ####
 def check_omega_x_below(u, v, w, x, omega):
     """Here we assume we are in the case where x pushes up and u,v,w push right, i.e. x is below a line separating u,v,w from x
@@ -505,6 +486,17 @@ def output_alg_3_1(CritPts, name):
     return Pts
 
 
+def almost_equal(x, y, tol=1e-3):
+    return abs(x[0] - y[0]) < tol and abs(x[1] - y[1]) < tol
+
+def check_in_list(x, list_pts):
+    for pt in list_pts:
+        if almost_equal(x, pt):
+            return True
+    else:
+        return False
+
+
 def algo_3vs1(CritPts):
     """discards the omega points that are not valid"""
     ## input: 4 critical points from C_M and C_N
@@ -655,7 +647,7 @@ def algo_3vs1(CritPts):
                         x.coords[1],
                     )
 
-                    if check_omega_x_above(u, v, w, x, omega1):
+                    if check_omega_x_above(u, v, w, x, omega1) and not check_in_list(omega1, critptscoords):
                         Omega_pts.append(omega1)
                         ## dict for debuging
                         # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
@@ -663,7 +655,7 @@ def algo_3vs1(CritPts):
                             [omega1, x.coords, u.coords, v.coords, w.coords, eta, delta]
                         )
 
-                if check_omega_x_above(u, v, w, x, omega):
+                if check_omega_x_above(u, v, w, x, omega) and not check_in_list(omega, critptscoords):
                     Omega_pts.append(omega)
                     ## dict for debuging
 
