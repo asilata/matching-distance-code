@@ -380,7 +380,8 @@ def algo_2v2_paired(CritPts):
             if u.coords[1] == v.coords[1]:
                 m = np.inf
             else:
-                m = delta * (w.coords[0]-x.coords[0])/(eta*(u.coords[1]-v.coords[1]))
+                m = (eta*(u.coords[1]-v.coords[1]))/delta * (w.coords[0]-x.coords[0])
+
             if max(x.coords[1]-m*x.coords[0], w.coords[1]-m*w.coords[0]) < min(u.coords[1]-m*u.coords[0], v.coords[1]-m*v.coords[0]):
                 Omega_pts.append(omega)
                 info_list.append([omega, x.coords, u.coords, v.coords, w.coords, eta, delta, m])
@@ -445,6 +446,11 @@ def output_alg_3_1(CritPts, name):
     set_of_points = set({})
     length = len(CritPts)
 
+    all_critptscoords = []
+    for x in CritPts:
+        all_critptscoords.append(x.coords)
+
+
     for a in range(length):
         for b in range(a + 1, length):
             for c in range(b + 1, length):
@@ -458,7 +464,7 @@ def output_alg_3_1(CritPts, name):
                         ]
                     ):
                         pts, dict_pts = algo_3vs1(
-                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]]
+                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]], all_critptscoords
                         )
                         Pts += pts
                         # a first attempt to get rid of duplicates
@@ -479,7 +485,7 @@ def output_alg_3_1(CritPts, name):
     # new_pts= list(k for k,_ in itertools.groupby(k))
 
     # w+ option overwrites file each time (good thing)
-    with open("../output/" + name + "_discard_omega.csv", "w+", newline="") as file:
+    with open("../output/" + name + "_3v1.csv.csv", "w+", newline="") as file:
         writer = csv.writer(file)
         writer.writerows(Dict_pts)
 
@@ -497,7 +503,7 @@ def check_in_list(x, list_pts):
         return False
 
 
-def algo_3vs1(CritPts):
+def algo_3vs1(CritPts, all_CritPts):
     """discards the omega points that are not valid"""
     ## input: 4 critical points from C_M and C_N
 
@@ -587,7 +593,8 @@ def algo_3vs1(CritPts):
                         (eta / delta) * (v.coords[1] - u.coords[1]) + w.coords[1],
                     )
 
-                    if check_omega_x_below(u, v, w, x, omega1):
+                    if check_omega_x_below(u, v, w, x, omega1)and omega1 not in all_CritPts:
+                       
                         Omega_pts.append(omega1)  ## append
                         ##  add omega pts to dictionary
                         dict_omega_pts.append(
@@ -596,20 +603,13 @@ def algo_3vs1(CritPts):
 
                     # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
 
-                if check_omega_x_below(u, v, w, x, omega):
+                if check_omega_x_below(u, v, w, x, omega) and omega not in all_CritPts:
+                   
                     Omega_pts.append(omega)  ## in any case we append omegaa
                     # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
                     dict_omega_pts.append(
                         [omega, x.coords, u.coords, v.coords, w.coords, eta, delta]
                     )
-
-                ## print!
-                # print("The omega point {} was generated from".format(omega))
-                # print("x = {}".format(x))
-                # print("w = {}".format(w))
-                # print("u = {}".format(u))
-                # print("v = {}".format(v))
-                # print("****************")
 
             ### Is indentation correct? yes, same as above
             if check_x_push_right(x.coords, u.coords, v.coords, w.coords):
@@ -647,7 +647,8 @@ def algo_3vs1(CritPts):
                         x.coords[1],
                     )
 
-                    if check_omega_x_above(u, v, w, x, omega1) and not check_in_list(omega1, critptscoords):
+                    if check_omega_x_above(u, v, w, x, omega1) and omega1 not in all_CritPts: #not check_in_list(omega1, critptscoords):
+    
                         Omega_pts.append(omega1)
                         ## dict for debuging
                         # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
@@ -655,32 +656,14 @@ def algo_3vs1(CritPts):
                             [omega1, x.coords, u.coords, v.coords, w.coords, eta, delta]
                         )
 
-                if check_omega_x_above(u, v, w, x, omega) and not check_in_list(omega, critptscoords):
+                if check_omega_x_above(u, v, w, x, omega)  and omega not in all_CritPts: #and not check_in_list(omega, critptscoords):
+                
                     Omega_pts.append(omega)
-                    ## dict for debuging
-
                     # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
                     dict_omega_pts.append(
                         [omega, x.coords, u.coords, v.coords, w.coords, eta, delta]
                     )
 
-                ####
-
-                # print('The omega point {} was generated from'.format(omega))
-                # print('x = {}'.format(x))
-                # print('w = {}'.format(w))
-                # print('u = {}'.format(u))
-                # print('v = {}'.format(v))
-                # print('eta = {}'.format(eta))
-                # print('delta = {}'.format(delta))
-                # print('****************')
-
-    # print("Computed {} omega points with duplicates".format(len(Omega_pts)))
-
-    # # Omega_pts = list(set(Omega_pts))
-    # print("Without duplicates: {}".format(len(Omega_pts)))
-
-    # fields = ["omega_pts", "x","u","v","w","eta","delta"]
 
     """with open('test.csv', 'a', newline='') as file:  #### find a way to write everything in file
         writer = csv.DictWriter(file, fieldnames = fields,dialect='excel')
@@ -689,318 +672,3 @@ def algo_3vs1(CritPts):
     # dict_omega_pts = list(set(dict_omega_pts))
 
     return Omega_pts, dict_omega_pts
-
-
-def algo_3vs1_keep_omega(CritPts):
-    """Keeps the omega points generated even if they are not valid"""
-    ## input: 4 critical points from C_M and C_N
-
-    ## Check that we have at least three distinct points, otherwise stop
-    assert check_3distinct(CritPts), "There is more than one repeated point in the list"
-
-    Omega_pts = []
-    dict_omega_pts = []
-
-    for c in CritPts:
-        # Trying to find x (of the points x,w,u,v in the paper)
-        if check_c_distinct(
-            c, CritPts
-        ):  ## want a critical point x that is distinct from u,v,w
-            x = c
-        else:
-            continue  ### Skips the rest of the loop if c appears multiple times in C
-
-        CritPts_no_x = CritPts.copy()
-        CritPts_no_x.remove(x)
-
-        for d in CritPts_no_x:
-            w = d
-            CritPts_no_x_no_w = CritPts_no_x.copy()
-            CritPts_no_x_no_w.remove(
-                w
-            )  ## lol (with a french accent), list with two elements only
-
-            if CritPts_no_x_no_w[0].coords == CritPts_no_x_no_w[1].coords:
-                continue
-
-            u = CritPts_no_x_no_w[0]
-            v = CritPts_no_x_no_w[1]
-
-            ## Assign the value of the denominator eta and delta according to the parent module
-            ## of the pairs (x,w) and (u,v)
-            if x.parent_module == w.parent_module:
-                eta = 2
-            else:
-                eta = 1
-
-            if u.parent_module == v.parent_module:
-                delta = 2
-            else:
-                delta = 1
-
-            ## Is indentation correct? yes same as paper
-            if check_x_push_up(x.coords, u.coords, v.coords, w.coords):
-                if u.coords[1] <= v.coords[1]:  ## check if this needs to be <= or <
-                    temp_u = u
-                    u = v
-                    v = temp_u
-                if (
-                    w.coords[0] >= x.coords[0] and w.coords[1] >= x.coords[1]
-                ):  ## should this be strict inequality? , also check the coordinates 0 and 1
-                    omega = (
-                        x.coords[0],
-                        (eta / delta) * (v.coords[1] - u.coords[1]) + w.coords[1],
-                    )
-
-                elif w.coords[0] <= x.coords[0] and w.coords[1] <= x.coords[1]:
-                    omega = (
-                        x.coords[0],
-                        (eta / delta) * (u.coords[1] - v.coords[1]) + w.coords[1],
-                    )
-
-                else:
-                    omega = (
-                        x.coords[0],
-                        (eta / delta) * (u.coords[1] - v.coords[1]) + w.coords[1],
-                    )
-                    omega1 = (
-                        x.coords[0],
-                        (eta / delta) * (v.coords[1] - u.coords[1]) + w.coords[1],
-                    )
-
-                    Omega_pts.append(omega1)  ## append
-                    ##  add omega pts to dictionary
-                    dict_omega_pts.append(
-                        [omega1, x.coords, u.coords, v.coords, w.coords, eta, delta]
-                    )
-
-                    # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
-
-                Omega_pts.append(omega)  ## in any case we append omegaa
-                # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
-                dict_omega_pts.append(
-                    [omega, x.coords, u.coords, v.coords, w.coords, eta, delta]
-                )
-
-                ## print!
-                print("The omega point {} was generated from".format(omega))
-                print("x = {}".format(x))
-                print("w = {}".format(w))
-                print("u = {}".format(u))
-                print("v = {}".format(v))
-                print("****************")
-
-            ### Is indentation correct? yes, same as above
-            if check_x_push_right(x.coords, u.coords, v.coords, w.coords):
-                if u.coords[0] <= v.coords[0]:  ## why not strict??
-                    temp_u = u
-                    u = v
-                    v = temp_u
-                if (
-                    w.coords[0] >= x.coords[0] and w.coords[1] >= x.coords[1]
-                ):  ## check < vs <= and coordinates 0,1
-                    omega = (
-                        (eta / delta) * (v.coords[0] - u.coords[0]) + w.coords[0],
-                        x.coords[1],
-                    )
-
-                elif w.coords[0] <= x.coords[0] and w.coords[1] <= x.coords[1]:
-                    omega = (
-                        (eta / delta) * (u.coords[0] - v.coords[0]) + w.coords[0],
-                        x.coords[1],
-                    )
-
-                else:
-                    omega = (
-                        (eta / delta) * (v.coords[0] - u.coords[0]) + w.coords[0],
-                        x.coords[1],
-                    )
-                    omega1 = (
-                        (eta / delta) * (u.coords[0] - v.coords[0]) + w.coords[0],
-                        x.coords[1],
-                    )
-
-                    Omega_pts.append(omega1)
-                    ## dict for debuging
-                    # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
-                    dict_omega_pts.append(
-                        [omega1, x.coords, u.coords, v.coords, w.coords, eta, delta]
-                    )
-
-                Omega_pts.append(omega)
-                ## dict for debuging
-
-                # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
-                dict_omega_pts.append(
-                    [omega, x.coords, u.coords, v.coords, w.coords, eta, delta]
-                )
-
-                ####
-
-                # print('The omega point {} was generated from'.format(omega))
-                # print('x = {}'.format(x))
-                # print('w = {}'.format(w))
-                # print('u = {}'.format(u))
-                # print('v = {}'.format(v))
-                # print('eta = {}'.format(eta))
-                # print('delta = {}'.format(delta))
-                # print('****************')
-
-    print("Computed {} omega points with duplicates".format(len(Omega_pts)))
-
-    # Omega_pts = list(set(Omega_pts))
-    print("Without duplicates: {}".format(len(Omega_pts)))
-
-    # fields = ["omega_pts", "x","u","v","w","eta","delta"]
-
-    """with open('test.csv', 'a', newline='') as file:  #### find a way to write everything in file
-        writer = csv.DictWriter(file, fieldnames = fields,dialect='excel')
-        writer.writeheader() 
-        writer.writerows(dict_omega_pts)"""
-    # dict_omega_pts = list(set(dict_omega_pts))
-
-    return Omega_pts, dict_omega_pts
-
-
-###### 3 vs 1 point old version
-
-
-# def compute_3vs1_old(M, N):
-#     """M,N are modules"""
-#     CM = M.find_critical_pts()
-#     CN = N.find_critical_pts()
-#     C = list(set(CM + CN))
-#     lenc = len(C)
-#     Omega_pts = []
-#     for i in range(lenc):
-#         for j in range(i + 1, lenc):
-#             for k in range(j + 1, lenc):
-#                 for l in range(k, lenc):
-#                     c1 = C[i]
-#                     c2 = C[j]
-#                     c3 = C[k]
-#                     c4 = C[l]  ## c3 and c4 can be equal
-#                     pts = [c1, c2, c3, c4]
-#                     for x in range(4):
-#                         pts = [c1, c2, c3, c4]
-#                         # print('choosing x')
-#                         for w in range(4):
-#                             pts = [c1, c2, c3, c4]
-#                             # print('choosing w')
-#                             X = pts[x]
-#                             W = pts[w]  ##
-#                             if w != x:
-#                                 pts.remove(W)
-#                                 pts.remove(X)
-#                                 ## choose delta = 1, 2, implement choice later
-#                                 if pts[0] != pts[1]:
-#                                     if pts[0][1] > pts[1][1]:
-#                                         U = pts[0]
-#                                         V = pts[1]
-#                                     else:
-#                                         U = pts[1]
-#                                         V = pts[0]
-#                                     ## all possible choices of delta, eta
-
-#                                     ## pushing up
-#                                     if X in CM and W in CM or X in CN and W in CN:
-#                                         eta = 2
-#                                         if U in CM and V in CM or U in CN and V in CN:
-#                                             delta = 2
-#                                             omega = (
-#                                                 X[0],
-#                                                 (eta / delta) * (V[1] - U[1]) + W[1],
-#                                             )
-#                                             if omega != X:
-#                                                 Omega_pts.append(omega)
-#                                             omega = (
-#                                                 X[0],
-#                                                 (eta / delta) * (U[1] - V[1]) + W[1],
-#                                             )
-#                                             if check_omega([U, V, W], X, omega):
-#                                                 Omega_pts.append(omega)
-#                                         if U in CM and V in CN or U in CN and V in CM:
-#                                             delta = 1
-#                                             omega = (
-#                                                 X[0],
-#                                                 (eta / delta) * (V[1] - U[1]) + W[1],
-#                                             )
-#                                             if check_omega([U, V, W], X, omega):
-#                                                 Omega_pts.append(omega)
-#                                             omega = (
-#                                                 X[0],
-#                                                 (eta / delta) * (U[1] - V[1]) + W[1],
-#                                             )
-#                                             if check_omega([U, V, W], X, omega):
-#                                                 Omega_pts.append(omega)
-
-#                                     if X in CM and W in CN or X in CM and W in CN:
-#                                         eta = 1
-#                                         if U in CM and V in CM or U in CN and V in CN:
-#                                             delta = 2
-#                                             omega = (
-#                                                 X[0],
-#                                                 (eta / delta) * (V[1] - U[1]) + W[1],
-#                                             )
-#                                             if check_omega([U, V, W], X, omega):
-#                                                 Omega_pts.append(omega)
-#                                             omega = (
-#                                                 X[0],
-#                                                 (eta / delta) * (U[1] - V[1]) + W[1],
-#                                             )
-#                                             if check_omega([U, V, W], X, omega):
-#                                                 Omega_pts.append(omega)
-#                                         if U in CM and V in CN or U in CN and V in CM:
-#                                             delta = 1
-#                                             omega = (
-#                                                 X[0],
-#                                                 (eta / delta) * (V[1] - U[1]) + W[1],
-#                                             )
-#                                             if check_omega([U, V, W], X, omega):
-#                                                 Omega_pts.append(omega)
-#                                             omega = (
-#                                                 X[0],
-#                                                 (eta / delta) * (U[1] - V[1]) + W[1],
-#                                             )
-#                                             if check_omega([U, V, W], X, omega):
-#                                                 Omega_pts.append(omega)
-#                                     ## pshing right
-#                                     if pts[0][0] > pts[1][0]:
-#                                         U = pts[0]
-#                                         V = pts[1]
-#                                     else:
-#                                         U = pts[1]
-#                                         V = pts[0]
-#                                     ## all possible choices of delta, eta
-#                                     if X in CM and W in CN or X in CM and W in CN:
-#                                         eta = 1
-#                                         if U in CM and V in CM or U in CN and V in CN:
-#                                             delta = 2
-#                                             omega = (
-#                                                 (eta / delta) * (V[0] - U[0]) + W[0],
-#                                                 X[1],
-#                                             )
-#                                             if check_omega([U, V, W], X, omega):
-#                                                 Omega_pts.append(omega)
-#                                             omega = (
-#                                                 (eta / delta) * (U[0] - V[0]) + W[0],
-#                                                 X[1],
-#                                             )
-#                                             if check_omega([U, V, W], X, omega):
-#                                                 Omega_pts.append(omega)
-#                                         if U in CM and V in CN or U in CN and V in CM:
-#                                             delta = 1
-#                                             omega = (
-#                                                 (eta / delta) * (V[0] - U[0]) + W[0],
-#                                                 X[1],
-#                                             )
-#                                             if check_omega([U, V, W], X, omega):
-#                                                 Omega_pts.append(omega)
-#                                             omega = (
-#                                                 (eta / delta) * (U[0] - V[0]) + W[0],
-#                                                 X[1],
-#                                             )
-#                                             if check_omega([U, V, W], X, omega):
-#                                                 Omega_pts.append(omega)
-
-#     return Omega_pts
