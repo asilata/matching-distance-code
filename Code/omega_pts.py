@@ -470,7 +470,7 @@ def output_alg_3_1(CritPts, name):
                         # a first attempt to get rid of duplicates
                         # this should be moved to the omega file
                         for p in range(len(pts)):
-                            if pts[p] not in set_of_points:
+                            if pts[p] not in set_of_points: 
                                 set_of_points.add(pts[p])
                                 Dict_pts += [dict_pts[p]]
 
@@ -485,22 +485,23 @@ def output_alg_3_1(CritPts, name):
     # new_pts= list(k for k,_ in itertools.groupby(k))
 
     # w+ option overwrites file each time (good thing)
-    with open("../output/" + name + "_3v1.csv.csv", "w+", newline="") as file:
+    with open("../output/" + name + "_3v1.csv", "w+", newline="") as file:
         writer = csv.writer(file)
         writer.writerows(Dict_pts)
 
     return Pts
 
 
-def almost_equal(x, y, tol=1e-3):
-    return abs(x[0] - y[0]) < tol and abs(x[1] - y[1]) < tol
+# def almost_equal(x, y, tol=1e-3):
+#    return abs(x[0] - y[0]) < tol and abs(x[1] - y[1]) < tol
 
-def check_in_list(x, list_pts):
-    for pt in list_pts:
-        if almost_equal(x, pt):
-            return True
-    else:
-        return False
+# def check_in_list(x, list_pts):
+#    for pt in list_pts:
+#        if almost_equal(x, pt):
+#           return True
+#    else:
+#       return False
+
 
 
 def algo_3vs1(CritPts, all_CritPts):
