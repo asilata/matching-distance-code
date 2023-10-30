@@ -380,7 +380,7 @@ def algo_2v2_paired(CritPts):
             if u.coords[1] == v.coords[1]:
                 m = np.inf
             else:
-                m = (eta*(u.coords[1]-v.coords[1]))/delta * (w.coords[0]-x.coords[0])
+                m = (eta*(u.coords[1]-v.coords[1]))/(delta * (w.coords[0]-x.coords[0]))
 
             if max(x.coords[1]-m*x.coords[0], w.coords[1]-m*w.coords[0]) < min(u.coords[1]-m*u.coords[0], v.coords[1]-m*v.coords[0]):
                 Omega_pts.append(omega)
