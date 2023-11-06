@@ -7,7 +7,7 @@ import numpy.linalg
 
 ## for checking if in convex hull
 import scipy.spatial
-from scipy.optimize import linprog 
+from scipy.optimize import linprog
 from itertools import combinations
 
 import modules as mod
@@ -154,7 +154,7 @@ def check_x_push_right(x, u, v, w):
         return True
 
 
-### 
+###
 
 
 def check_3distinct(C):
@@ -243,58 +243,71 @@ def check_omega_x_above(u, v, w, x, omega):
         return False
 
 
-#### 2 vs 2 paired version  #### 
+#### 2 vs 2 paired version  ####
 
-def check_pts_2v2_paired(x,w,u,v): ## I think this can be made simpler: i think its enough to check if x,w in Q or u,v in R because one implies the other somehow 
+
+def check_pts_2v2_paired(
+    x, w, u, v
+):  ## I think this can be made simpler: i think its enough to check if x,w in Q or u,v in R because one implies the other somehow
     """Implement later"""
-    if x.coords[0] == w.coords[0]: 
+    if x.coords[0] == w.coords[0]:
         m1 = np.inf
-    else: 
-        m1 = (w.coords[1]-x.coords[1])/(w.coords[0]-x.coords[0]) ## slope of the line through x and w
+    else:
+        m1 = (w.coords[1] - x.coords[1]) / (
+            w.coords[0] - x.coords[0]
+        )  ## slope of the line through x and w
 
     if u.coords[0] == v.coords[0]:
         m2 = np.inf
-    else: 
-        m2 = (u.coords[1]-v.coords[1])/(u.coords[0]-v.coords[0]) ## slope of the line through u and v
+    else:
+        m2 = (u.coords[1] - v.coords[1]) / (
+            u.coords[0] - v.coords[0]
+        )  ## slope of the line through u and v
 
- #R has a triangle cut out of it
-    
+    # R has a triangle cut out of it
+
     # sort the topmost of x and w and the leftmost of x and w
-    lm = x.coords ## TODO check if this is correct
+    lm = x.coords  ## TODO check if this is correct
     if w.coords[0] < lm[0]:
         lm = w.coords
-    tm = x.coords 
+    tm = x.coords
     if w.coords[1] > tm[1]:
         tm = w.coords
 
-    corner_R = (lm[0], tm[1]) ## corner of the quandrant R
+    corner_R = (lm[0], tm[1])  ## corner of the quandrant R
 
     # sort the bottommost of u and v and the rightmost of u and v
     rm = u.coords
-    if v.coords[0] > rm[0]: ## TODO check if this is correct
+    if v.coords[0] > rm[0]:  ## TODO check if this is correct
         rm = v.coords
     bm = u.coords
     if v.coords[1] < bm[1]:
         bm = v.coords
-    corner_Q = (rm[0], bm[1]) ## corner of the quandrant Q
+    corner_Q = (rm[0], bm[1])  ## corner of the quandrant Q
 
     if check_in_quadrant_br(u.coords, tm, lm) or check_in_quadrant_br(v.coords, tm, lm):
         # check if u or v are in the quandrant containing R
-        if m1 >0:
-            if in_hull(np.array([x.coords, w.coords, corner_R]), u.coords) or in_hull(np.array([x.coords, w.coords, corner_R]), v.coords):
+        if m1 > 0:
+            if in_hull(np.array([x.coords, w.coords, corner_R]), u.coords) or in_hull(
+                np.array([x.coords, w.coords, corner_R]), v.coords
+            ):
                 # check if u or v are in the triangle cut out of R
                 return True
             else:
                 return False
 
-        else: #R is a quandrant
-            return False 
+        else:  # R is a quandrant
+            return False
 
-    elif check_in_quadrant_tl(x.coords, bm, rm) or check_in_quadrant_tl(w.coords, bm, rm):
+    elif check_in_quadrant_tl(x.coords, bm, rm) or check_in_quadrant_tl(
+        w.coords, bm, rm
+    ):
         # check if x or w are in the quandrant containing Q
 
-        if m2 >0:
-            if in_hull(np.array([u.coords, v.coords, corner_Q]), x.coords) or in_hull(np.array([u.coords, v.coords, corner_Q]), w.coords):
+        if m2 > 0:
+            if in_hull(np.array([u.coords, v.coords, corner_Q]), x.coords) or in_hull(
+                np.array([u.coords, v.coords, corner_Q]), w.coords
+            ):
                 # check if x or w are in the triangle cut out of Q
                 return True
             else:
@@ -302,37 +315,34 @@ def check_pts_2v2_paired(x,w,u,v): ## I think this can be made simpler: i think 
 
         else:
             return False
-    else: 
+    else:
         return True
 
-
-        # check if u or v are in the quandrant containing R 
+        # check if u or v are in the quandrant containing R
         # if yes,check if u or v is in the triangle cut out of R --> return True
-        # if not in the tirangle but in quadrant return False
-        # if not in the quandrant return False 
-
-        # side note: we can check if u or v are in the triangle cut out of R by checking if they are in the convex hull of the other two points and the corner of the quandrant 
-    
-    #else: #R is a quandrant 
-        # check if u or v are in the quandrant R
-        # if yes return False 
-        # if no return True 
-    
-    #if m2 >0: #Q has a triangle cut out of it
-        # check if x or w are in the quandrant containing Q
-        # if yes, check if x or w is in the triangle cut out of Q --> return True
         # if not in the tirangle but in quadrant return False
         # if not in the quandrant return False
 
-    #else: #Q is a quandrant
-        # check if x or w are in the quandrant Q
-        # if yes return False
-        # if no return True
+        # side note: we can check if u or v are in the triangle cut out of R by checking if they are in the convex hull of the other two points and the corner of the quandrant
 
+    # else: #R is a quandrant
+    # check if u or v are in the quandrant R
+    # if yes return False
+    # if no return True
+
+    # if m2 >0: #Q has a triangle cut out of it
+    # check if x or w are in the quandrant containing Q
+    # if yes, check if x or w is in the triangle cut out of Q --> return True
+    # if not in the tirangle but in quadrant return False
+    # if not in the quandrant return False
+
+    # else: #Q is a quandrant
+    # check if x or w are in the quandrant Q
+    # if yes return False
+    # if no return True
 
 
 def algo_2v2_paired(CritPts):
-
     critptscoords = []
     for x in CritPts:
         critptscoords.append(x.coords)
@@ -341,11 +351,13 @@ def algo_2v2_paired(CritPts):
         critptscoords
     ), "There is more than one repeated point in the list"
 
-    Omega_pts = [] ## will contain just the valid omega points that were computed
-    info_list = [] ## contains the omega points and the additional info from which critical pts it came from 
-    for (c,d) in combinations(CritPts,2): 
-        x =c
-        w =d 
+    Omega_pts = []  ## will contain just the valid omega points that were computed
+    info_list = (
+        []
+    )  ## contains the omega points and the additional info from which critical pts it came from
+    for c, d in combinations(CritPts, 2):
+        x = c
+        w = d
         if w.coords[0] < x.coords[0]:
             temp_x = x
             x = w
@@ -354,17 +366,16 @@ def algo_2v2_paired(CritPts):
             continue
 
         CritPts_no_x_w = CritPts.copy()
-        CritPts_no_x_w.remove(w) #.remove(x) ## can we do this in one line? 
+        CritPts_no_x_w.remove(w)  # .remove(x) ## can we do this in one line?
         CritPts_no_x_w.remove(x)
         u = CritPts_no_x_w[0]
-        v = CritPts_no_x_w[1] 
+        v = CritPts_no_x_w[1]
         if u.coords[1] < v.coords[1]:
             temp_u = u
             u = v
             v = temp_u
         elif u.coords[1] == v.coords[1]:
             continue
-        
 
         if x.parent_module == w.parent_module:
             eta = 2
@@ -375,19 +386,28 @@ def algo_2v2_paired(CritPts):
         else:
             delta = 1
 
-        if check_pts_2v2_paired(x,w,u,v): 
-            omega = (0, delta * (w.coords[0]-x.coords[0]), eta*(u.coords[1]-v.coords[1])) ## How tf are we going to deal with projective coordinates here? 
+        if check_pts_2v2_paired(x, w, u, v):
+            omega = (
+                0,
+                delta * (w.coords[0] - x.coords[0]),
+                eta * (u.coords[1] - v.coords[1]),
+            )  ## How tf are we going to deal with projective coordinates here?
             if u.coords[1] == v.coords[1]:
                 m = np.inf
             else:
-                m = (eta*(u.coords[1]-v.coords[1]))/(delta * (w.coords[0]-x.coords[0]))
+                m = (eta * (u.coords[1] - v.coords[1])) / (
+                    delta * (w.coords[0] - x.coords[0])
+                )
 
-            if max(x.coords[1]-m*x.coords[0], w.coords[1]-m*w.coords[0]) < min(u.coords[1]-m*u.coords[0], v.coords[1]-m*v.coords[0]):
+            if max(x.coords[1] - m * x.coords[0], w.coords[1] - m * w.coords[0]) < min(
+                u.coords[1] - m * u.coords[0], v.coords[1] - m * v.coords[0]
+            ):
                 Omega_pts.append(omega)
-                info_list.append([omega, x.coords, u.coords, v.coords, w.coords, eta, delta, m])
+                info_list.append(
+                    [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, m]
+                )
 
     return Omega_pts, info_list
-
 
 
 def output_alg_2_2_paired(CritPts, name):
@@ -440,6 +460,7 @@ def output_alg_2_2_paired(CritPts, name):
 #####  3 vs 1 new version
 # corresponds to Algorithm 3 in the paper as of July 13, 2023
 
+
 def output_alg_3_1(CritPts, name):
     Pts = []
     Dict_pts = [["omega_pts", "x", "u", "v", "w", "eta", "delta"]]
@@ -449,7 +470,6 @@ def output_alg_3_1(CritPts, name):
     all_critptscoords = []
     for x in CritPts:
         all_critptscoords.append(x.coords)
-
 
     for a in range(length):
         for b in range(a + 1, length):
@@ -464,13 +484,14 @@ def output_alg_3_1(CritPts, name):
                         ]
                     ):
                         pts, dict_pts = algo_3vs1(
-                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]], all_critptscoords
+                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]],
+                            all_critptscoords,
                         )
                         Pts += pts
                         # a first attempt to get rid of duplicates
                         # this should be moved to the omega file
                         for p in range(len(pts)):
-                            if pts[p] not in set_of_points: 
+                            if pts[p] not in set_of_points:
                                 set_of_points.add(pts[p])
                                 Dict_pts += [dict_pts[p]]
 
@@ -501,7 +522,6 @@ def output_alg_3_1(CritPts, name):
 #           return True
 #    else:
 #       return False
-
 
 
 def algo_3vs1(CritPts, all_CritPts):
@@ -594,8 +614,10 @@ def algo_3vs1(CritPts, all_CritPts):
                         (eta / delta) * (v.coords[1] - u.coords[1]) + w.coords[1],
                     )
 
-                    if check_omega_x_below(u, v, w, x, omega1)and omega1 not in all_CritPts:
-                       
+                    if (
+                        check_omega_x_below(u, v, w, x, omega1)
+                        and omega1 not in all_CritPts
+                    ):
                         Omega_pts.append(omega1)  ## append
                         ##  add omega pts to dictionary
                         dict_omega_pts.append(
@@ -605,7 +627,6 @@ def algo_3vs1(CritPts, all_CritPts):
                     # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
 
                 if check_omega_x_below(u, v, w, x, omega) and omega not in all_CritPts:
-                   
                     Omega_pts.append(omega)  ## in any case we append omegaa
                     # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
                     dict_omega_pts.append(
@@ -648,8 +669,10 @@ def algo_3vs1(CritPts, all_CritPts):
                         x.coords[1],
                     )
 
-                    if check_omega_x_above(u, v, w, x, omega1) and omega1 not in all_CritPts: #not check_in_list(omega1, critptscoords):
-    
+                    if (
+                        check_omega_x_above(u, v, w, x, omega1)
+                        and omega1 not in all_CritPts
+                    ):  # not check_in_list(omega1, critptscoords):
                         Omega_pts.append(omega1)
                         ## dict for debuging
                         # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
@@ -657,14 +680,14 @@ def algo_3vs1(CritPts, all_CritPts):
                             [omega1, x.coords, u.coords, v.coords, w.coords, eta, delta]
                         )
 
-                if check_omega_x_above(u, v, w, x, omega)  and omega not in all_CritPts: #and not check_in_list(omega, critptscoords):
-                
+                if (
+                    check_omega_x_above(u, v, w, x, omega) and omega not in all_CritPts
+                ):  # and not check_in_list(omega, critptscoords):
                     Omega_pts.append(omega)
                     # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
                     dict_omega_pts.append(
                         [omega, x.coords, u.coords, v.coords, w.coords, eta, delta]
                     )
-
 
     """with open('test.csv', 'a', newline='') as file:  #### find a way to write everything in file
         writer = csv.DictWriter(file, fieldnames = fields,dialect='excel')
@@ -673,3 +696,48 @@ def algo_3vs1(CritPts, all_CritPts):
     # dict_omega_pts = list(set(dict_omega_pts))
 
     return Omega_pts, dict_omega_pts
+
+
+# IN PROGRESS
+def algo_2v2_unpaired(CritPts):
+    critptscoords = []
+    for x in CritPts:
+        critptscoords.append(x.coords)
+
+    assert check_3distinct(
+        critptscoords
+    ), "There is more than one repeated point in the list"
+
+    Omega_pts = []  ## will contain just the valid omega points that were computed
+    info_list = (
+        []
+    )  ## contains the omega points and the additional info from which critical pts it came from
+    for c, d in combinations(CritPts, 2):
+        x = c
+        v = d
+        CritPts_no_x_v = CritPts.copy()
+        CritPts_no_x_v.remove(v)
+        CritPts_no_x_v.remove(x)
+        for f in CritPts_no_x_v:
+            if f == x:
+                continue
+            else:
+                w = f
+        CritPtsno_x_v_w = CritPts_no_x_v.copy()
+        CritPtsno_x_v_w.remove(w)
+        for g in CritPtsno_x_v_w:
+            if g == v:
+                continue
+            else:
+                u = g
+            if x.parent_module == w.parent_module:
+                eta = 2
+            else:
+                eta = 1
+            if u.parent_module == v.parent_module:
+                delta = 2
+            else:
+                delta = 1
+            ### CONTINUE FROM HERE
+
+    return Omega_pts, info_list
