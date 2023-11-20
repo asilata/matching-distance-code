@@ -2,6 +2,8 @@ import modules as mod
 from scipy.stats import qmc
 import numpy as np
 import matplotlib.pyplot as plt
+import math
+import random as rnd
 
 
 def example_2_13():
@@ -174,3 +176,43 @@ def make_poisson(
         ax.set_aspect("equal")
         ax.plot(scaledsample[:, 0], scaledsample[:, 1], "o", color="orange")
     return scaledsample
+
+
+def make_rects(poisson_intensity):
+    radius = 1 / (2 * (math.sqrt(poisson_intensity)))
+    poissonpts = make_poisson(
+        inputpts=rectangle_example(),
+        llama=poisson_intensity,
+        radius=radius,
+        seed=0,
+        display=False,
+    )
+    rectangle_lengths = []
+    rectangle_widths = []
+
+    fig, ax = plt.subplots()
+    ax.set_aspect("equal")
+    for x in range(len(poissonpts)):
+        width = float(rnd.randint(1, 5))
+        length = float(rnd.randint(1, 7))
+        rectangle_lengths.append(length)
+        rectangle_widths.append(width)
+        xs = [
+            poissonpts[x][0],
+            poissonpts[x][0],
+            poissonpts[x][0] + width,
+            poissonpts[x][0] + width,
+            poissonpts[x][0],
+        ]
+        ys = [
+            poissonpts[x][1],
+            poissonpts[x][1] + length,
+            poissonpts[x][1] + length,
+            poissonpts[x][1],
+            poissonpts[x][1],
+        ]
+        color = rnd.randint(0, 1)
+        if color == 0:
+            ax.plot(xs, ys, "--", color="red")
+        else:
+            ax.plot(xs, ys, "--", color="blue")
