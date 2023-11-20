@@ -129,59 +129,6 @@ def rectangle_example(numpts=4, display=False):
     return points
 
 
-# def make_poisson(inputpts, llambda, radius, seed=0, display=False):
-#     # inputpts should be column vec of x,y coords in 2D
-#     xMin = np.min(inputpts[:, 0])
-#     xMax = np.max(inputpts[:, 0])
-#     yMin = np.min(inputpts[:, 1])
-#     yMax = np.max(inputpts[:, 1])
-
-#     # rectangle dims
-#     xDelta = xMax - xMin
-#     yDelta = yMax - yMin
-#     areaTotal = xDelta * yDelta
-
-#     # note: llambda is intensity (ie mean density)
-#     # of the Poisson pt process
-
-#     # this fixes a seed for reproducability (so it's not random)
-#     seed = 0
-#     g = np.random.default_rng(seed)
-#     numbPoints = g.poisson(llambda * areaTotal)
-
-#     # Simulate a Poisson point process
-#     xx = xDelta * g.uniform(0, 1, numbPoints) + xMin
-#     yy = yDelta * g.uniform(0, 1, numbPoints) + yMin
-
-#     if display:
-#         fig, ax = plt.subplots()
-#         ax.set_aspect("equal")
-#         ax.plot(inputpts[:, 0], inputpts[:, 1], "-o", color="steelblue")
-#         ax.plot(
-#             [inputpts[-1, 0], inputpts[0, 0]],
-#             [inputpts[-1, 1], inputpts[0, 1]],
-#             "-o",
-#             color="steelblue",
-#         )
-#         ax.plot(xx, yy, "o", color="plum")
-
-#     points = np.column_stack([xx.ravel(), yy.ravel()])
-#     # below is the tricksy blue noise thing
-#     scale = max(xDelta, yDelta)
-#     rng = g
-#     # radius = 1/(2*(math.sqrt(llambda)))
-
-#     engine = qmc.PoissonDisk(d=2, radius=radius, seed=rng)
-#     # these are in [0,1]
-#     sample = engine.random(4 * llambda)
-#     print(radius, llambda, sample.shape)
-#     scaledsample = sample * scale + np.array(
-#         [xMin + xDelta / 2 - scale / 2, yMin + yDelta / 2 - scale / 2]
-#     )
-#     return points
-#     # return scaledsample
-
-
 def make_poisson(
     inputpts=rectangle_example(), llama=30, radius=0.000001, seed=0, display=False
 ):
