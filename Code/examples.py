@@ -193,10 +193,13 @@ def make_rects(poisson_intensity):
     fig, ax = plt.subplots()
     ax.set_aspect("equal")
     for x in range(len(poissonpts)):
-        width = float(rnd.randint(1, 5))
-        length = float(rnd.randint(1, 7))
+        width = float(rnd.randint(2, 10))
+        length = float(rnd.randint(2, 10))
         rectangle_lengths.append(length)
         rectangle_widths.append(width)
+        # we only need the first four points for math,
+        # but we need to repeat the initial point at the
+        # end for plotting
         xs = [
             poissonpts[x][0],
             poissonpts[x][0],
@@ -214,5 +217,11 @@ def make_rects(poisson_intensity):
         color = rnd.randint(0, 1)
         if color == 0:
             ax.plot(xs, ys, "--", color="red")
+            for x in xs:
+                for y in ys:
+                    ax.plot(x, y, "o", color="red", markersize=5)
         else:
             ax.plot(xs, ys, "--", color="blue")
+            for x in xs:
+                for y in ys:
+                    ax.plot(x, y, "o", color="blue", markersize=5)
