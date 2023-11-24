@@ -248,7 +248,7 @@ def check_omega_x_above(u, v, w, x, omega):
 
 def check_pts_2v2_paired(
     x, w, u, v
-):  ### corresponds the the function CheckPts2 in the paper 
+):  ### corresponds the the function CheckPts2 in the paper
     """Implement later"""
     if x.coords[0] == w.coords[0]:
         m1 = np.inf
@@ -700,8 +700,8 @@ def algo_3vs1(CritPts, all_CritPts):
 
 # IN PROGRESS
 def algo_2v2_unpaired(CritPts):
-    # x paired with w 
-    # u paired with v 
+    # x paired with w
+    # u paired with v
     # x,v on one side of line, u,w on the other side
 
     critptscoords = []
@@ -743,21 +743,28 @@ def algo_2v2_unpaired(CritPts):
             else:
                 delta = 1
             ### CONTINUE FROM HERE
-        
-        if check_pts_2v2_paired(x,v,w,u):
-            if delta == eta and v.coords[0]!= x.coords[0] and u.coords[1]!= w.coords[1]:
+
+        if check_pts_2v2_paired(x, v, w, u):
+            if (
+                delta == eta
+                and v.coords[0] != x.coords[0]
+                and u.coords[1] != w.coords[1]
+            ):
                 omega = (
                     0,
                     delta * (v.coords[0] - x.coords[0]),
                     eta * (u.coords[1] - w.coords[1]),
-                                )
-                m = (eta * (u.coords[1] - w.coords[1])) / (delta * (v.coords[0] - x.coords[0]))
-                if max(x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0]) < min(u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0]):
+                )
+                m = (eta * (u.coords[1] - w.coords[1])) / (
+                    delta * (v.coords[0] - x.coords[0])
+                )
+                if max(
+                    x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0]
+                ) < min(u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0]):
                     Omega_pts.append(omega)
-                    info_list.append([omega, x.coords, u.coords, v.coords, w.coords, eta, delta, m])
-                elif ## cotinue coding here once the pseudo code is checked!!!!!!!!!!!!!!
-
-
-                
+                    info_list.append(
+                        [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, m]
+                    )
+                # elif ## cotinue coding here once the pseudo code is checked!!!!!!!!!!!!!!
 
     return Omega_pts, info_list
