@@ -714,8 +714,9 @@ def check_omega_3(omega, u, v, w, x):
             m[p] = (p[1] - omega[1]) / (p[0] - omega[0])
         else:
             Q[p] = 4
-
-    if Q[x] == 2 or Q[v] == 2 or Q[u] == 4 or Q[w] == 4:
+    if omega in [u, v, w, x]:
+        return False
+    elif Q[x] == 2 or Q[v] == 2 or Q[u] == 4 or Q[w] == 4:
         return False
     elif Q[x] == 4 and Q[v] == 4 and Q[u] == 2 and Q[w] == 2:
         return True
@@ -734,7 +735,7 @@ def check_omega_3(omega, u, v, w, x):
                 continue
             else:
                 S.append(p)
-
+      
         for p in P:
             r_p = 1
             for q in [val for val in P if val != p]:
@@ -771,22 +772,22 @@ def check_omega_3(omega, u, v, w, x):
                                 r_p = 0
                 ###### THis is as far as we got checking the pseudo code, continue from here                
 
-                if r_p == 1: 
-                    return True
-
+    if r_p == 1: ## for some p 
+        return True
+    else:
         for s in S:
             r_s = 1
             for t in [val for val in S if val != s]:
                 if Q[s] == 1:
                     if Q[t] == 3:
                         if m[s] <= m[t]:
-                            r_s = 0
+                            r_s = 0 ## check line 94 in pseudo code 
                     elif Q[t] == 1:
                         if m[s] > m[t]:
                             r_s = 0
                 elif Q[s] == 3:
                     if Q[t] == 1:
-                        if m[s] >= m[t]:
+                        if m[s] >= m[t]: ## Check line 103
                             r_s = 0
                     elif Q[t] == 3:
                         if m[s] < m[t]:
@@ -809,8 +810,8 @@ def check_omega_3(omega, u, v, w, x):
                             if m[s] >= m[t]:
                                 r_s = 0
 
-                if r_s == 1:
-                    return True
+        if r_s == 1: ## check indentation  
+            return True
 
         return False
 
@@ -863,25 +864,51 @@ def algo_2v2_unpaired(CritPts):
 
         if check_pts_2v2_paired(x, v, w, u):
             if (
-                delta == eta
-                and v.coords[0] != x.coords[0]
-                and u.coords[1] != w.coords[1]
+                (lub(u, v) == u and lub(x, w) == w)
+                or (lub(u, v) == v and lub(x, w) == x)
+                or lub(u, v) not in [u, v]
+                or lub(x, w) not in [x, w]
             ):
-                omega = (
-                    0,
-                    delta * (v.coords[0] - x.coords[0]),
-                    eta * (u.coords[1] - w.coords[1]),
-                )
-                m = (eta * (u.coords[1] - w.coords[1])) / (
-                    delta * (v.coords[0] - x.coords[0])
-                )
-                if max(
-                    x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0]
-                ) < min(u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0]):
+                omega = (delta(v[0] - x[0]) / eta ,  delta(v[1] - x[1]) / eta ) ## line 29 pseudo code . check this!!!
+                m = (eta * (u[1] - w[1])) / (delta * (v[0] - x[0]))
+                if max(x[1] - m * x[0], v[1] - m * v[0]) < min(u[1] - m * u[0], w[1] - m * w[0]):
                     Omega_pts.append(omega)
-                    info_list.append(
-                        [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, m]
-                    )
-                # elif ## cotinue coding here once the pseudo code is checked!!!!!!!!!!!!!!
+            elif delta != eta:
+                omega = (
+                    (eta * v[0] - delta * x[0]) / (eta - delta),
+                    (eta * u[1] - delta * w[1]) / (eta - delta)
+                )
+                if check_omega_3(omega, u, v, w, x):
+                    Omega_pts.append(omega)
+
+        if (
+            (lub(u, v) == u and lub(x, w) == x)
+            or (lub(u, v) == v and lub(x, w) == w)
+            or lub(u, v) not in [u, v]
+            or lub(x, w) not in [x, w]
+        ):
+            omega = (
+                (eta * v[0] + delta * x[0]) / (eta + delta),
+                (eta * u[1] + delta * w[1]) / (eta + delta)
+            )
+            if delta == eta and v[0] != x[0] and u[1] != w[1]:
+                if check_omega_3(omega, u, v, w, x):
+                    Omega_pts.append(omega)
 
     return Omega_pts, info_list
+
+
+### least upper bound function 
+
+def lub(point1, point2):
+    """
+    Finds the least upper bound of two points.
+
+    Parameters:
+    - point1: Tuple representing the first point.
+    - point2: Tuple representing the second point.
+
+    Returns:
+    Tuple representing the least upper bound of the two points.
+    """
+    return (max(point1[0], point2[0]), max(point1[1], point2[1]))
