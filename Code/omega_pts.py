@@ -697,6 +697,123 @@ def algo_3vs1(CritPts, all_CritPts):
 
     return Omega_pts, dict_omega_pts
 
+#### Check Omega points 2 vs 2 unpaired
+
+def check_omega_3(omega, u, v, w, x):
+    Q = {} ## dictionary of quadrants 
+    m = {} ## dictionary of slopes
+
+    for p in [u, v, w, x]:
+        if p[0] > omega[0] and p[1] > omega[1]:
+            Q[p] = 1
+            m[p] = (p[1] - omega[1]) / (p[0] - omega[0])
+        elif p[0] <= omega[0] and p[1] >= omega[1]:
+            Q[p] = 2
+        elif p[0] < omega[0] and p[1] < omega[1]:
+            Q[p] = 3
+            m[p] = (p[1] - omega[1]) / (p[0] - omega[0])
+        else:
+            Q[p] = 4
+
+    if Q[x] == 2 or Q[v] == 2 or Q[u] == 4 or Q[w] == 4:
+        return False
+    elif Q[x] == 4 and Q[v] == 4 and Q[u] == 2 and Q[w] == 2:
+        return True
+    else:
+        P = []
+        S = []
+
+        for p in [v, x]:
+            if Q[p] == 4: ### THIS is ugly maybe we can do this in a shorter way by checking if Q[p] in [1,3]
+                continue
+            else:
+                P.append(p)
+
+        for p in [u, w]: ## same here 
+            if Q[p] == 2:
+                continue
+            else:
+                S.append(p)
+
+        for p in P:
+            r_p = 1
+            for q in [val for val in P if val != p]:
+                if Q[p] == 1:
+                    if Q[q] == 3: ## can this be on the line above? 
+                        if m[p] >= m[q]:
+                            r_p = 0
+                    elif Q[q] == 1:
+                        if m[p] < m[q]:
+                            r_p = 0
+                elif Q[p] == 3:
+                    if Q[q] == 1:
+                        if m[p] <= m[q]:
+                            r_p = 0
+                    elif Q[q] == 3:
+                        if m[p] > m[q]:
+                            r_p = 0
+
+            if r_p > 0:
+                for q in S:
+                    if Q[p] == 1:
+                        if Q[q] == 3:
+                            if m[p] < m[q]:
+                                r_p = 0
+                        elif Q[q] == 1:
+                            if m[p] >= m[q]:
+                                r_p = 0
+                    elif Q[p] == 3:
+                        if Q[q] == 1:
+                            if m[p] > m[q]:
+                                r_p = 0
+                        elif Q[q] == 3:
+                            if m[p] <= m[q]: 
+                                r_p = 0
+                ###### THis is as far as we got checking the pseudo code, continue from here                
+
+                if r_p == 1: 
+                    return True
+
+        for s in S:
+            r_s = 1
+            for t in [val for val in S if val != s]:
+                if Q[s] == 1:
+                    if Q[t] == 3:
+                        if m[s] <= m[t]:
+                            r_s = 0
+                    elif Q[t] == 1:
+                        if m[s] > m[t]:
+                            r_s = 0
+                elif Q[s] == 3:
+                    if Q[t] == 1:
+                        if m[s] >= m[t]:
+                            r_s = 0
+                    elif Q[t] == 3:
+                        if m[s] < m[t]:
+                            r_s = 0
+
+            if r_s > 0:
+                for t in S:
+                    if Q[s] == 1:
+                        if Q[t] == 3:
+                            if m[s] > m[t]:
+                                r_s = 0
+                        elif Q[t] == 1:
+                            if m[s] <= m[t]:
+                                r_s = 0
+                    elif Q[s] == 3:
+                        if Q[t] == 1:
+                            if m[s] < m[t]:
+                                r_s = 0
+                        elif Q[t] == 3:
+                            if m[s] >= m[t]:
+                                r_s = 0
+
+                if r_s == 1:
+                    return True
+
+        return False
+
 
 # IN PROGRESS
 def algo_2v2_unpaired(CritPts):
