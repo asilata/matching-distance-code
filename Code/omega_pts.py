@@ -869,9 +869,12 @@ def algo_2v2_unpaired(CritPts):
                 or lub(u, v) not in [u, v]
                 or lub(x, w) not in [x, w]
             ):
+                # this is the new thing that robyn just added
+            if (delta == eta) and (v[0] != x[0]) and (u[1] != w[1]):
                 omega = (delta(v[0] - x[0]) / eta ,  delta(v[1] - x[1]) / eta ) ## line 29 pseudo code . check this!!!
                 m = (eta * (u[1] - w[1])) / (delta * (v[0] - x[0]))
-                if max(x[1] - m * x[0], v[1] - m * v[0]) < min(u[1] - m * u[0], w[1] - m * w[0]):
+                # added here (on tuesday) that m > 0
+                if max(x[1] - m * x[0], v[1] - m * v[0]) < min(u[1] - m * u[0], w[1] - m * w[0]) and m > 0:
                     Omega_pts.append(omega)
             elif delta != eta:
                 omega = (
