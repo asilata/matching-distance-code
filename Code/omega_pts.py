@@ -704,6 +704,7 @@ def check_omega_3(omega, u, v, w, x):
     m = {} ## dictionary of slopes
 
     for p in [u, v, w, x]:
+
         if p[0] > omega[0] and p[1] > omega[1]:
             Q[p] = 1
             m[p] = (p[1] - omega[1]) / (p[0] - omega[0])
@@ -772,9 +773,9 @@ def check_omega_3(omega, u, v, w, x):
                                 r_p = 0
                 ###### THis is as far as we got checking the pseudo code, continue from here                
 
-    if r_p == 1: ## for some p 
-        return True
-    else:
+            if r_p == 1: ## for some p 
+                return True
+   
         for s in S:
             r_s = 1
             for t in [val for val in S if val != s]:
@@ -817,7 +818,7 @@ def check_omega_3(omega, u, v, w, x):
 
 
 # IN PROGRESS
-def algo_2v2_unpaired(CritPts):
+def algo_2v2_unpaired(CritPts,all_CritPts):
     # x paired with w
     # u paired with v
     # x,v on one side of line, u,w on the other side
@@ -831,9 +832,7 @@ def algo_2v2_unpaired(CritPts):
     ), "There is more than one repeated point in the list"
 
     Omega_pts = []  ## will contain just the valid omega points that were computed
-    info_list = (
-        []
-    )  ## contains the omega points and the additional info from which critical pts it came from
+    info_list = [] ## contains the omega points and the additional info from which critical pts it came from
     for c, d in combinations(CritPts, 2):
         x = c
         v = d
@@ -860,43 +859,53 @@ def algo_2v2_unpaired(CritPts):
                 delta = 2
             else:
                 delta = 1
-            ### CONTINUE FROM HERE
 
         if check_pts_2v2_paired(x, v, w, u):
             if (
-                (lub(u, v) == u and lub(x, w) == w)
-                or (lub(u, v) == v and lub(x, w) == x)
-                or lub(u, v) not in [u, v]
-                or lub(x, w) not in [x, w]
+                (lub(u, v) == u.coords and lub(x, w) == w.coords)
+                or (lub(u, v) == v.coords and lub(x, w) == x.coords)
+                or lub(u, v) not in [u.coords, v.coords]
+                or lub(x, w) not in [x.coords, w.coords]
             ):
                 # this is the new thing that robyn just added
-            if (delta == eta) and (v[0] != x[0]) and (u[1] != w[1]):
-                omega = (delta(v[0] - x[0]) / eta ,  delta(v[1] - x[1]) / eta ) ## line 29 pseudo code . check this!!!
-                m = (eta * (u[1] - w[1])) / (delta * (v[0] - x[0]))
-                # added here (on tuesday) that m > 0
-                if max(x[1] - m * x[0], v[1] - m * v[0]) < min(u[1] - m * u[0], w[1] - m * w[0]) and m > 0:
-                    Omega_pts.append(omega)
-            elif delta != eta:
-                omega = (
-                    (eta * v[0] - delta * x[0]) / (eta - delta),
-                    (eta * u[1] - delta * w[1]) / (eta - delta)
-                )
-                if check_omega_3(omega, u, v, w, x):
-                    Omega_pts.append(omega)
+                if (delta == eta) and (v.coords[0] != x.coords[0]) and (u.coords[1] != w.coords[1]):
+                    omega = (v.coords[0] - x.coords[0] ,  u.coords[1] - w.coords[1])  ## line 29 pseudo code . check this!!!
+                    m = (u.coords[1] - w.coords[1]) / (v.coords[0] - x.coords[0])
+                    # added here (on tuesday) that m > 0
+                    if max(x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0]) < min(u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0]) and m > 0:
+                        Omega_pts.append(omega)
+                        ## append the slope 
+                        info_list.append(
+                            [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, m]
+                            )
+                        
+                elif delta != eta:
+                    omega = (
+                        (eta * v.coords[0] - delta * x.coords[0]) / (eta - delta),
+                        (eta * u.coords[1] - delta * w.coords[1]) / (eta - delta)
+                    )
+                    if check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) and omega not in all_CritPts:
+                        Omega_pts.append(omega)
+                        info_list.append(
+                            [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None]
+                            )
 
         if (
-            (lub(u, v) == u and lub(x, w) == x)
-            or (lub(u, v) == v and lub(x, w) == w)
-            or lub(u, v) not in [u, v]
-            or lub(x, w) not in [x, w]
+            (lub(u, v) == u.coords and lub(x, w) == x.coords)
+            or (lub(u, v) == v.coords and lub(x, w) == w.coords)
+            or lub(u, v) not in [u.coords, v.coords]
+            or lub(x, w) not in [x.coords, w.coords]
         ):
             omega = (
-                (eta * v[0] + delta * x[0]) / (eta + delta),
-                (eta * u[1] + delta * w[1]) / (eta + delta)
+                (eta * v.coords[0] + delta * x.coords[0]) / (eta + delta),
+                (eta * u.coords[1] + delta * w.coords[1]) / (eta + delta)
             )
-            if delta == eta and v[0] != x[0] and u[1] != w[1]:
-                if check_omega_3(omega, u, v, w, x):
-                    Omega_pts.append(omega)
+
+            if check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) and omega not in all_CritPts: ## corresponds to CheckOmega2 in the pseudo code 
+                Omega_pts.append(omega)
+                info_list.append(
+                            [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None]
+                            )
 
     return Omega_pts, info_list
 
@@ -914,4 +923,56 @@ def lub(point1, point2):
     Returns:
     Tuple representing the least upper bound of the two points.
     """
-    return (max(point1[0], point2[0]), max(point1[1], point2[1]))
+    return (max(point1.coords[0], point2.coords[0]), max(point1.coords[1], point2.coords[1]))
+
+
+def output_alg_2_2_unpaired(CritPts, name):
+    Pts = []
+    Dict_pts = [["omega_pts", "x", "u", "v", "w", "eta", "delta"]]
+    set_of_points = set({})
+    length = len(CritPts)
+
+    all_critptscoords = []
+    for x in CritPts:
+        all_critptscoords.append(x.coords)
+
+    for a in range(length):
+        for b in range(a + 1, length):
+            for c in range(b + 1, length):
+                for d in range(c, length):
+                    if check_3distinct( 
+                        [
+                            CritPts[a].coords,
+                            CritPts[b].coords,
+                            CritPts[c].coords,
+                            CritPts[d].coords,
+                        ]
+                    ):
+                        pts, dict_pts = algo_2v2_unpaired(
+                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]],
+                            all_critptscoords,
+                        )
+                        Pts += pts
+                        # a first attempt to get rid of duplicates
+                        # this should be moved to the omega file
+                        for p in range(len(pts)):
+                            if pts[p] not in set_of_points:
+                                set_of_points.add(pts[p])
+                                Dict_pts += [dict_pts[p]]
+
+    print("**********")
+    print("Computed {} points (with duplicates)".format(len(Pts)))
+
+    # # checking a weird number discrep; uncomment later
+    Pts = list(set(Pts))
+    print("Without duplicates {}".format(len(Pts)))
+
+    # Dict_pts.sort()
+    # new_pts= list(k for k,_ in itertools.groupby(k))
+
+    # w+ option overwrites file each time (good thing)
+    with open("../output/" + name + "_2v2_unpaired.csv", "w+", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerows(Dict_pts)
+
+    return Pts

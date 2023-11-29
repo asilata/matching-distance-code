@@ -225,3 +225,23 @@ def make_rects(poisson_intensity):
             for x in xs:
                 for y in ys:
                     ax.plot(x, y, "o", color="blue", markersize=5)
+
+
+def test_example():
+    """
+    an input crit val c_i needs x,y coords and a parent rectangle module.
+    """
+    c1 = mod.critical_val((0.0, 0.0), 0)
+    c2 = mod.critical_val((7.0, 0.0), 0)
+    c3 = mod.critical_val((0.0, 4.0), 0)
+    
+    
+
+    d1 = mod.critical_val((3.0, 2.0), 1)
+    d2 = mod.critical_val((3.0, 6.0), 1)
+    d3 = mod.critical_val((10.0, 2.0), 1)
+   
+
+    CritPts = [c1, c2, c3, d1, d2, d3]
+
+    return CritPts
