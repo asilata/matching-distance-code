@@ -43,18 +43,24 @@ def plot_both_c_o(critpts, omegapts, title, dpi, alg):
     ax.set_xlim(-5, 35)
     ax.set_ylim(-5, 20)
     for c in critpts:
-        ax.plot(c.coords[0], c.coords[1], "o", color="black", label="black")
+        if c.parent_module == 0:
+            ax.plot(c.coords[0], c.coords[1], "o", color="black", label="black")
+        else:
+            ax.plot(c.coords[0], c.coords[1], "o", color="orange", label="orange")
+
     for o in omegapts:
         # apparently sometimes at the end of omegapts we spit out the number of points too,
         # so it can be an int. We might want to fix.
-        ax.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0)
+        ax.plot(o[0], o[1], "o", color="red", label="red", alpha=0.8)
         # if type(o) is not int:
         #     ax.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0)
     plt.title(alg + " Algorithm for " + title)
 
     red_patch = mpatches.Patch(color="red", label="omega points")
-    black_patch = mpatches.Patch(color="black", label="critical points")
-    plt.legend(handles=[red_patch, black_patch], loc="best")
+    black_patch = mpatches.Patch(color="black", label="critical points from M")
+    orange_patch = mpatches.Patch(color="orange", label="critical points from N")
+
+    plt.legend(handles=[red_patch, black_patch, orange_patch], loc="best")
     plt.show()
 
 
@@ -76,7 +82,10 @@ def plot_c_o_with_inf(critpts, orderedomegas, is_inf, title, dpi, alg):
     ax2.plot(x, y, "--", color="black")
 
     for c in critpts:
-        ax1.plot(c.coords[0], c.coords[1], "o", color="black", label="black")
+        if c.parent_module == 0:
+            ax1.plot(c.coords[0], c.coords[1], "o", color="black", label="black")
+        else:
+            ax1.plot(c.coords[0], c.coords[1], "o", color="orange", label="orange")
     for o in orderedomegas:
         # the first entry is a string
         if orderedomegas.index(o) == 0:
@@ -109,6 +118,9 @@ def plot_c_o_with_inf(critpts, orderedomegas, is_inf, title, dpi, alg):
     fig.suptitle(alg + " Algorithm for " + title)
 
     red_patch = mpatches.Patch(color="red", label="omega points")
-    black_patch = mpatches.Patch(color="black", label="critical points")
-    ax1.legend(handles=[red_patch, black_patch], bbox_to_anchor=(0.8, 1.5))
+    black_patch = mpatches.Patch(color="black", label="critical points from M")
+    orange_patch = mpatches.Patch(color="orange", label="critical points from N")
+    ax1.legend(
+        handles=[red_patch, black_patch, orange_patch], bbox_to_anchor=(0.8, 1.5)
+    )
     plt.show()
