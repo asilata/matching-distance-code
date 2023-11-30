@@ -810,8 +810,8 @@ def check_omega_3(omega, u, v, w, x):
                             if m[s] >= m[t]:
                                 r_s = 0
 
-        if r_s == 1:  ## check indentation
-            return True
+            if r_s == 1:  ## check indentation
+                return True
 
         return False
 
