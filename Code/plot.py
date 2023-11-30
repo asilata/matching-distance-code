@@ -40,7 +40,7 @@ def plot_both_c_o(critpts, omegapts, title, dpi, alg):
     fig.set_dpi(dpi)
     fig.set_size_inches(5, 5)
     ax.set_aspect("equal")
-    ax.set_xlim(-5, 20)
+    ax.set_xlim(-5, 35)
     ax.set_ylim(-5, 20)
     for c in critpts:
         ax.plot(c.coords[0], c.coords[1], "o", color="black", label="black")
@@ -55,4 +55,60 @@ def plot_both_c_o(critpts, omegapts, title, dpi, alg):
     red_patch = mpatches.Patch(color="red", label="omega points")
     black_patch = mpatches.Patch(color="black", label="critical points")
     plt.legend(handles=[red_patch, black_patch], loc="best")
+    plt.show()
+
+
+def plot_c_o_with_inf(critpts, orderedomegas, is_inf, title, dpi, alg):
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
+    fig.set_dpi(dpi)
+    # fig.set_size_inches(5, 5)
+    fig.tight_layout
+    ax1.set_aspect("equal")
+    ax2.set_aspect("equal")
+    # ax1.set_xlim(-5, 20)
+    # ax1.set_ylim(-5, 10)
+
+    ## draw quarter circle
+    theta = np.linspace(0, np.pi / 2, 100)
+    radius = 1
+    x = radius * np.cos(theta)
+    y = radius * np.sin(theta)
+    ax2.plot(x, y, "--", color="black")
+
+    for c in critpts:
+        ax1.plot(c.coords[0], c.coords[1], "o", color="black", label="black")
+    for o in orderedomegas:
+        # the first entry is a string
+        if orderedomegas.index(o) == 0:
+            continue
+        # apparently sometimes at the end of omegapts we spit out the number of points too,
+        # so it can be an int. We might want to fix.
+        if is_inf[orderedomegas.index(o)] == None:
+            ax1.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0)
+        else:
+            print("infty point:", is_inf[orderedomegas.index(o)])
+            # ax2.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0)
+            slope = is_inf[orderedomegas.index(o)]
+            # maybe draw intersection
+            # Calculate the coordinates of the intersection point
+            x_intersection = radius / np.sqrt(1 + slope**2)
+            y_intersection = slope * x_intersection
+
+            # Plot the line through (0,0) with slope m
+            x_line = np.linspace(0, x_intersection, 100)
+            y_line = slope * x_line
+            ax2.plot(x_line, y_line, color="black", label=f"Line with slope {slope}")
+            # Plot the intersection point
+            ax2.scatter(
+                x_intersection,
+                y_intersection,
+                color="black",
+                label="Intersection Point",
+            )
+
+    fig.suptitle(alg + " Algorithm for " + title)
+
+    red_patch = mpatches.Patch(color="red", label="omega points")
+    black_patch = mpatches.Patch(color="black", label="critical points")
+    ax1.legend(handles=[red_patch, black_patch], bbox_to_anchor=(0.8, 1.5))
     plt.show()
