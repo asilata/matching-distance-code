@@ -40,15 +40,16 @@ def plot_both_c_o(critpts, omegapts, title, dpi, alg):
     fig.set_dpi(dpi)
     fig.set_size_inches(5, 5)
     ax.set_aspect("equal")
-    # ax.set_xlim(-5, 20)
-    # ax.set_ylim(-5, 20)
+    ax.set_xlim(-5, 20)
+    ax.set_ylim(-5, 20)
     for c in critpts:
         ax.plot(c.coords[0], c.coords[1], "o", color="black", label="black")
     for o in omegapts:
         # apparently sometimes at the end of omegapts we spit out the number of points too,
         # so it can be an int. We might want to fix.
-        if type(o) is not int:
-            ax.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0)
+        ax.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0)
+        # if type(o) is not int:
+        #     ax.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0)
     plt.title(alg + " Algorithm for " + title)
 
     red_patch = mpatches.Patch(color="red", label="omega points")
