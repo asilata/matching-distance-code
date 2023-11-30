@@ -33,6 +33,23 @@ def example_2_13():
     return CritPts
 
 
+def small_socg_ex():
+    c1 = mod.critical_val((0.0, 0.0), 0)
+    c2 = mod.critical_val((6.0, 0.0), 0)
+    c3 = mod.critical_val((0.0, 6.0), 0)
+
+    d1 = mod.critical_val((4.0, 2.0), 1)
+    d2 = mod.critical_val((4.0, 4.0), 1)
+    d3 = mod.critical_val((8.0, 2.0), 1)
+
+    d4 = mod.critical_val((1.0, 5.0), 1)
+    d5 = mod.critical_val((1.0, 10.0), 1)
+    d6 = mod.critical_val((2.0, 5.0), 1)
+
+    critpts = [c1, c2, c3, d1, d2, d3, d4, d5, d6]
+    return critpts
+
+
 def example_2_11():
     """
     an input crit val c_i needs x,y coords and a parent rectangle module.
@@ -305,7 +322,7 @@ def test_example():
     return CritPts
 
 
-def make_rects_balanced(poisson_intensity, seed=0, exact_num = 2 ):
+def make_rects_balanced(poisson_intensity, seed=0, exact_num=2):
     radius = 1 / (2 * (math.sqrt(poisson_intensity)))
     poissonpts = make_poisson(
         inputpts=rectangle_example(),
@@ -315,29 +332,28 @@ def make_rects_balanced(poisson_intensity, seed=0, exact_num = 2 ):
         display=False,
     )
 
-    while len(poissonpts) < 2*exact_num:
+    while len(poissonpts) < 2 * exact_num:
         print("not enought points try again")
         poisson_intensity = poisson_intensity + 1
         radius = 1 / (2 * (math.sqrt(poisson_intensity)))
         poissonpts = make_poisson(
-        inputpts=rectangle_example(),
-        llama=poisson_intensity,
-        radius=radius,
-        seed=seed,
-        display=False,
-    )
-    
-    if len(poissonpts) > 2*exact_num:
-        poissonpts = poissonpts[:2*exact_num]
-    
+            inputpts=rectangle_example(),
+            llama=poisson_intensity,
+            radius=radius,
+            seed=seed,
+            display=False,
+        )
+
+    if len(poissonpts) > 2 * exact_num:
+        poissonpts = poissonpts[: 2 * exact_num]
 
     rectangle_lengths = []
     rectangle_widths = []
     colors = []
-    for i in range(exact_num): 
+    for i in range(exact_num):
         color = 0
-        colors.append(color)    
-    for i in range(exact_num, exact_num*2): 
+        colors.append(color)
+    for i in range(exact_num, exact_num * 2):
         color = 1
         colors.append(color)
 
@@ -382,7 +398,7 @@ def make_rects_balanced(poisson_intensity, seed=0, exact_num = 2 ):
             poissonpts[x][1],
         ]
         color = colors[x]
-        
+
         if color == 0:
             ax.plot(xs, ys, "--", color="red")
             for x in xs:
