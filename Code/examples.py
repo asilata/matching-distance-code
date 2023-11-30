@@ -196,7 +196,7 @@ def make_poisson(
     return scaledsample
 
 
-def make_rects(poisson_intensity, seed=0):
+def make_rects(poisson_intensity, seed=0, dpi=150):
     radius = 1 / (2 * (math.sqrt(poisson_intensity)))
     poissonpts = make_poisson(
         inputpts=rectangle_example(),
@@ -270,7 +270,7 @@ def make_rects(poisson_intensity, seed=0):
         handles=[black_patch, orange_patch],
         loc="upper right",
     )
-    fig.dpi = 300
+    fig.dpi = dpi
     return critical_pts
 
 
