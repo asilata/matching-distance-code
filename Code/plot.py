@@ -106,12 +106,12 @@ def plot_c_o_with_inf(critpts, orderedomegas, is_inf, title, dpi, alg):
             # Plot the line through (0,0) with slope m
             x_line = np.linspace(0, x_intersection, 100)
             y_line = slope * x_line
-            ax2.plot(x_line, y_line, color="black", label=f"Line with slope {slope}")
+            ax2.plot(x_line, y_line, color="red", label=f"Line with slope {slope}")
             # Plot the intersection point
             ax2.scatter(
                 x_intersection,
                 y_intersection,
-                color="black",
+                color="red",
                 label="Intersection Point",
             )
 
