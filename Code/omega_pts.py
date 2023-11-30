@@ -428,15 +428,21 @@ def output_alg_2_2_paired(CritPts, name):
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
     is_inf = []
+    orderedomegas = []
     for t in range(len(Total_info_list)):
+        # m slopes
         is_inf.append(Total_info_list[t][-1])
+        # omega points in the same order, just to make sure
+        orderedomegas.append(Total_info_list[t][0])
+
     print(is_inf)
+    print(orderedomegas)
     # w+ option overwrites file each time (good thing)
     with open("../output/" + name + "_2v2_paired.csv", "w+", newline="") as file:
         writer = csv.writer(file)
         writer.writerows(Total_info_list)
 
-    return Pts, num_duplicates, len(Pts), is_inf
+    return Pts, num_duplicates, len(Pts), is_inf, orderedomegas
 
 
 #####  3 vs 1 new version
@@ -1017,16 +1023,22 @@ def output_alg_2_2_unpaired(CritPts, name):
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
     is_inf = []
+    orderedomegas = []
     for t in range(len(Dict_pts)):
+        # m slopes
         is_inf.append(Dict_pts[t][-1])
+        # omega points in the same order, just to make sure
+        orderedomegas.append(Dict_pts[t][0])
+
     print(is_inf)
+    print(orderedomegas)
 
     # w+ option overwrites file each time (good thing)
     with open("../output/" + name + "_2v2_unpaired.csv", "w+", newline="") as file:
         writer = csv.writer(file)
         writer.writerows(Dict_pts)
 
-    return Pts, num_duplicates, len(Pts), is_inf
+    return Pts, num_duplicates, len(Pts), is_inf, orderedomegas
 
 
 def closure_lub(CritPts):
