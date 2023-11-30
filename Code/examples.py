@@ -271,6 +271,23 @@ def critvals_poisson(poisson_intensity, seed):
     return critvals
 
 
+def bunny_into_critvals(bunnypoints, seed):
+    rnd.seed(seed)
+    critvals = []
+    for row in bunnypoints:
+        c = mod.critical_val((row[0], row[1]), rnd.randint(0, 1))
+        critvals.append(c)
+
+    fig, ax = plt.subplots()
+    ax.set_aspect("equal")
+    for c in critvals:
+        if c.parent_module == 0:
+            ax.plot(c.coords[0], c.coords[1], "o", color="red")
+        else:
+            ax.plot(c.coords[0], c.coords[1], "o", color="blue")
+    return critvals
+
+
 def test_example():
     """
     an input crit val c_i needs x,y coords and a parent rectangle module.
