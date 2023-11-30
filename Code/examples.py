@@ -248,6 +248,29 @@ def make_rects(poisson_intensity, seed=0):
     return critical_pts
 
 
+def critvals_poisson(poisson_intensity, seed):
+    radius = 1 / (2 * (math.sqrt(poisson_intensity)))
+    poissonpts = make_poisson(
+        llama=poisson_intensity, radius=radius, seed=seed, display=False
+    )
+
+    # turn poiss points into critvals
+    critvals = []
+    for p in poissonpts:
+        c = mod.critical_val((p[0], p[1]), rnd.randint(0, 1))
+        critvals.append(c)
+
+    fig, ax = plt.subplots()
+    ax.set_aspect("equal")
+
+    for c in critvals:
+        if c.parent_module == 0:
+            ax.plot(c.coords[0], c.coords[1], "o", color="red")
+        else:
+            ax.plot(c.coords[0], c.coords[1], "o", color="blue")
+    return critvals
+
+
 def test_example():
     """
     an input crit val c_i needs x,y coords and a parent rectangle module.
