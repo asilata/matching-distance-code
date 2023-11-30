@@ -303,3 +303,98 @@ def test_example():
     CritPts = [c1, c2, c3, d1, d2, d3]
 
     return CritPts
+
+
+def make_rects_balanced(poisson_intensity, seed=0, exact_num = 2 ):
+    radius = 1 / (2 * (math.sqrt(poisson_intensity)))
+    poissonpts = make_poisson(
+        inputpts=rectangle_example(),
+        llama=poisson_intensity,
+        radius=radius,
+        seed=seed,
+        display=False,
+    )
+
+    while len(poissonpts) < 2*exact_num:
+        print("not enought points try again")
+        poisson_intensity = poisson_intensity + 1
+        radius = 1 / (2 * (math.sqrt(poisson_intensity)))
+        poissonpts = make_poisson(
+        inputpts=rectangle_example(),
+        llama=poisson_intensity,
+        radius=radius,
+        seed=seed,
+        display=False,
+    )
+    
+    if len(poissonpts) > 2*exact_num:
+        poissonpts = poissonpts[:2*exact_num]
+    
+
+    rectangle_lengths = []
+    rectangle_widths = []
+    colors = []
+    for i in range(exact_num): 
+        color = 0
+        colors.append(color)    
+    for i in range(exact_num, exact_num*2): 
+        color = 1
+        colors.append(color)
+
+    fig, ax = plt.subplots()
+    ax.set_aspect("equal")
+    # np.random.seed(seed)
+    rnd.seed(seed)
+    critical_pts = []
+    for x in range(len(poissonpts)):
+        width = float(rnd.randint(2, 10))
+        length = float(rnd.randint(2, 10))
+        rectangle_lengths.append(length)
+        rectangle_widths.append(width)
+        # we only need the first four points for math,
+        # but we need to repeat the initial point at the
+        # end for plotting
+        outpt_xs = [
+            poissonpts[x][0],
+            poissonpts[x][0],
+            poissonpts[x][0] + width,
+            poissonpts[x][0] + width,
+        ]
+        outpt_ys = [
+            poissonpts[x][1],
+            poissonpts[x][1] + length,
+            poissonpts[x][1] + length,
+            poissonpts[x][1],
+        ]
+        # added the init pt at the end for plotting
+        xs = [
+            poissonpts[x][0],
+            poissonpts[x][0],
+            poissonpts[x][0] + width,
+            poissonpts[x][0] + width,
+            poissonpts[x][0],
+        ]
+        ys = [
+            poissonpts[x][1],
+            poissonpts[x][1] + length,
+            poissonpts[x][1] + length,
+            poissonpts[x][1],
+            poissonpts[x][1],
+        ]
+        color = colors[x]
+        
+        if color == 0:
+            ax.plot(xs, ys, "--", color="red")
+            for x in xs:
+                for y in ys:
+                    ax.plot(x, y, "o", color="red", markersize=5)
+        else:
+            ax.plot(xs, ys, "--", color="blue")
+            for x in xs:
+                for y in ys:
+                    ax.plot(x, y, "o", color="blue", markersize=5)
+        for i in range(len(outpt_xs)):
+            critpt = mod.critical_val((outpt_xs[i], outpt_ys[i]), color)
+            critical_pts.append(critpt)
+
+    return critical_pts

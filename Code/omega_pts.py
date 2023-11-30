@@ -417,7 +417,8 @@ def output_alg_2_2_paired(CritPts, name):
                                 Total_info_list += [info_list[p]]
 
     print("**********")
-    print("Computed {} points (with duplicates)".format(len(Pts)))
+    num_duplicates = len(Pts)
+    print("Computed {} points (with duplicates)".format(num_duplicates))
 
     # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
@@ -431,7 +432,7 @@ def output_alg_2_2_paired(CritPts, name):
         writer = csv.writer(file)
         writer.writerows(Total_info_list)
 
-    return Pts
+    return Pts, num_duplicates, len(Pts)
 
 
 #####  3 vs 1 new version
@@ -479,7 +480,8 @@ def output_alg_3_1(CritPts, name):
                                 Dict_pts += [dict_pts[p]]
 
     print("**********")
-    print("Computed {} points (with duplicates)".format(len(Pts)))
+    num_duplicates = len(Pts)
+    print("Computed {} points (with duplicates)".format(num_duplicates))
 
     # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
@@ -493,7 +495,7 @@ def output_alg_3_1(CritPts, name):
         writer = csv.writer(file)
         writer.writerows(Dict_pts)
 
-    return Pts
+    return Pts, num_duplicates, len(Pts)
 
 
 # def almost_equal(x, y, tol=1e-3):
@@ -950,7 +952,8 @@ def output_alg_2_2_unpaired(CritPts, name):
                                 Dict_pts += [dict_pts[p]]
 
     print("**********")
-    print("Computed {} points (with duplicates)".format(len(Pts)))
+    num_duplicates = len(Pts)
+    print("Computed {} points (with duplicates)".format(num_duplicates))
 
     # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
@@ -964,7 +967,7 @@ def output_alg_2_2_unpaired(CritPts, name):
         writer = csv.writer(file)
         writer.writerows(Dict_pts)
 
-    return Pts
+    return Pts, num_duplicates, len(Pts)
 
 def closure_lub(CritPts):
     """ 
