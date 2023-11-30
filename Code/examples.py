@@ -178,13 +178,13 @@ def make_poisson(
     return scaledsample
 
 
-def make_rects(poisson_intensity):
+def make_rects(poisson_intensity, seed=0, blueredseed=0):
     radius = 1 / (2 * (math.sqrt(poisson_intensity)))
     poissonpts = make_poisson(
         inputpts=rectangle_example(),
         llama=poisson_intensity,
         radius=radius,
-        seed=0,
+        seed=seed,
         display=False,
     )
     rectangle_lengths = []
@@ -192,6 +192,8 @@ def make_rects(poisson_intensity):
 
     fig, ax = plt.subplots()
     ax.set_aspect("equal")
+    # np.random.seed(seed)
+    rnd.seed(blueredseed)
     for x in range(len(poissonpts)):
         width = float(rnd.randint(2, 10))
         length = float(rnd.randint(2, 10))
@@ -234,13 +236,10 @@ def test_example():
     c1 = mod.critical_val((0.0, 0.0), 0)
     c2 = mod.critical_val((7.0, 0.0), 0)
     c3 = mod.critical_val((0.0, 4.0), 0)
-    
-    
 
     d1 = mod.critical_val((3.0, 2.0), 1)
     d2 = mod.critical_val((3.0, 6.0), 1)
     d3 = mod.critical_val((10.0, 2.0), 1)
-   
 
     CritPts = [c1, c2, c3, d1, d2, d3]
 
