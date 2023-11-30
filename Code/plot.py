@@ -38,22 +38,43 @@ def plotmod(CritPts, Pts):
 def plot_both_c_o(critpts, omegapts, title, dpi, alg):
     fig, ax = plt.subplots()
     fig.set_dpi(dpi)
-    fig.set_size_inches(5, 5)
+    fig.set_size_inches(6, 5)
     ax.set_aspect("equal")
-    ax.set_xlim(-5, 35)
-    ax.set_ylim(-5, 20)
-    for c in critpts:
-        if c.parent_module == 0:
-            ax.plot(c.coords[0], c.coords[1], "o", color="black", label="black")
-        else:
-            ax.plot(c.coords[0], c.coords[1], "o", color="orange", label="orange")
-
+    # ax.set_xlim(-5, 35)
+    # ax.set_ylim(-5, 20)
     for o in omegapts:
         # apparently sometimes at the end of omegapts we spit out the number of points too,
         # so it can be an int. We might want to fix.
-        ax.plot(o[0], o[1], "o", color="red", label="red", alpha=0.8)
-        # if type(o) is not int:
-        #     ax.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0)
+        ax.plot(o[0], o[1], "o", color="red", label="red", alpha=0.8, markersize=4)
+
+    for c in critpts:
+        if c.parent_module == 0:
+            ax.plot(
+                c.coords[0],
+                c.coords[1],
+                "o",
+                color="black",
+                label="black",
+                markersize=4,
+            )
+        else:
+            ax.plot(
+                c.coords[0],
+                c.coords[1],
+                "o",
+                color="black",
+                markersize=4,
+            )
+
+            ax.plot(
+                c.coords[0],
+                c.coords[1],
+                "o",
+                color="orange",
+                label="orange",
+                markersize=3,
+            )
+
     plt.title(alg + " Algorithm for " + title)
 
     red_patch = mpatches.Patch(color="red", label="omega points")
@@ -67,7 +88,7 @@ def plot_both_c_o(critpts, omegapts, title, dpi, alg):
 def plot_c_o_with_inf(critpts, orderedomegas, is_inf, title, dpi, alg):
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
     fig.set_dpi(dpi)
-    # fig.set_size_inches(5, 5)
+    fig.set_size_inches(6, 5)
     fig.tight_layout
     ax1.set_aspect("equal")
     ax2.set_aspect("equal")
@@ -81,11 +102,6 @@ def plot_c_o_with_inf(critpts, orderedomegas, is_inf, title, dpi, alg):
     y = radius * np.sin(theta)
     ax2.plot(x, y, "--", color="black")
 
-    for c in critpts:
-        if c.parent_module == 0:
-            ax1.plot(c.coords[0], c.coords[1], "o", color="black", label="black")
-        else:
-            ax1.plot(c.coords[0], c.coords[1], "o", color="orange", label="orange")
     for o in orderedomegas:
         # the first entry is a string
         if orderedomegas.index(o) == 0:
@@ -93,7 +109,7 @@ def plot_c_o_with_inf(critpts, orderedomegas, is_inf, title, dpi, alg):
         # apparently sometimes at the end of omegapts we spit out the number of points too,
         # so it can be an int. We might want to fix.
         if is_inf[orderedomegas.index(o)] == None:
-            ax1.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0)
+            ax1.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0, markersize=4)
         else:
             print("infty point:", is_inf[orderedomegas.index(o)])
             # ax2.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0)
@@ -114,13 +130,42 @@ def plot_c_o_with_inf(critpts, orderedomegas, is_inf, title, dpi, alg):
                 color="red",
                 label="Intersection Point",
             )
+    for c in critpts:
+        if c.parent_module == 0:
+            ax1.plot(
+                c.coords[0],
+                c.coords[1],
+                "o",
+                color="black",
+                label="black",
+                markersize=4,
+            )
+        else:
+            ax1.plot(
+                c.coords[0],
+                c.coords[1],
+                "o",
+                color="black",
+                markersize=4,
+            )
+
+            ax1.plot(
+                c.coords[0],
+                c.coords[1],
+                "o",
+                color="orange",
+                label="orange",
+                markersize=3,
+            )
 
     fig.suptitle(alg + " Algorithm for " + title)
 
-    red_patch = mpatches.Patch(color="red", label="omega points")
+    red_patch = mpatches.Patch(color="red", label="omega points or slopes")
     black_patch = mpatches.Patch(color="black", label="critical points from M")
     orange_patch = mpatches.Patch(color="orange", label="critical points from N")
     ax1.legend(
-        handles=[red_patch, black_patch, orange_patch], bbox_to_anchor=(0.8, 1.5)
+        handles=[red_patch, black_patch, orange_patch],
+        bbox_to_anchor=(0.64, 1.31),
+        loc="upper left",
     )
     plt.show()

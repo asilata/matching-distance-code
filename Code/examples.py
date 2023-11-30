@@ -2,6 +2,7 @@ import modules as mod
 from scipy.stats import qmc
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import math
 import random as rnd
 
@@ -250,18 +251,26 @@ def make_rects(poisson_intensity, seed=0):
 
         color = rnd.randint(0, 1)
         if color == 0:
-            ax.plot(xs, ys, "--", color="red")
+            ax.plot(xs, ys, "--", color="black")
             for x in xs:
                 for y in ys:
-                    ax.plot(x, y, "o", color="red", markersize=5)
+                    ax.plot(x, y, "o", color="black", markersize=5)
         else:
-            ax.plot(xs, ys, "--", color="blue")
+            ax.plot(xs, ys, "--", color="orange")
             for x in xs:
                 for y in ys:
-                    ax.plot(x, y, "o", color="blue", markersize=5)
+                    ax.plot(x, y, "o", color="orange", markersize=5)
         for i in range(len(outpt_xs)):
             critpt = mod.critical_val((outpt_xs[i], outpt_ys[i]), color)
             critical_pts.append(critpt)
+
+    black_patch = mpatches.Patch(color="black", label="M")
+    orange_patch = mpatches.Patch(color="orange", label="N")
+    ax.legend(
+        handles=[black_patch, orange_patch],
+        loc="upper right",
+    )
+    fig.dpi = 300
     return critical_pts
 
 
