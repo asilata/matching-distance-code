@@ -170,7 +170,7 @@ def check_4distinct(C):
     # this function checks that all things in a set (of 4) are distinct
     assert len(C) == 4, "C is not of length 4 "
     if (len(C) - len(set(C))) > 0:
-        print("beepbeep", C)
+        #print("beepbeep", C)
         return False
     else:
         return True
@@ -190,29 +190,6 @@ def check_c_distinct(c, C):
             val = False
 
     return val
-
-
-def check_omega(CritPts, omega):
-    """Function to be implemented later to check if the computed omegapoint is valid
-    for now: returns true all the time
-    """
-
-    return True
-
-
-##### helper functions ###
-def distance_line_pt(p1, p2, x):
-    d = abs(
-        (p2[0] - p1[0]) * (p1[1] - x[1]) - (p1[0] - x[0]) * (p2[1] - p1[1])
-    ) / np.sqrt(np.square(p2[0] - p1[0]) + np.square(p2[1] - p1[1]))
-    return d
-
-
-def min_dist(list_pt, x, omega):
-    dists = [distance_line_pt(x, omega, pt) for pt in list_pt]
-    min_idx = dists.index(min(dists))
-    return list_pt[min_idx]
-
 
 ####
 def check_omega_x_below(u, v, w, x, omega):
@@ -470,6 +447,12 @@ def output_alg_3_1(CritPts, name):
     all_critptscoords = []
     for x in CritPts:
         all_critptscoords.append(x.coords)
+
+    closure = closure_lub(CritPts)
+    for key in closure.keys():
+        all_critptscoords += closure[key] ## add the closure under lub to the list of all critical points
+    
+    all_critptscoords = list(set(all_critptscoords)) ## remove duplicates
 
     for a in range(length):
         for b in range(a + 1, length):
@@ -928,13 +911,19 @@ def lub(point1, point2):
 
 def output_alg_2_2_unpaired(CritPts, name):
     Pts = []
-    Dict_pts = [["omega_pts", "x", "u", "v", "w", "eta", "delta"]]
+    Dict_pts = [["omega_pts", "x", "u", "v", "w", "eta", "delta", "m"]]
     set_of_points = set({})
     length = len(CritPts)
 
     all_critptscoords = []
     for x in CritPts:
         all_critptscoords.append(x.coords)
+
+    closure = closure_lub(CritPts)
+    for key in closure.keys():
+        all_critptscoords += closure[key] ## add the closure under lub to the list of all critical points
+    
+    all_critptscoords = list(set(all_critptscoords)) ## remove duplicates
 
     for a in range(length):
         for b in range(a + 1, length):
@@ -976,3 +965,25 @@ def output_alg_2_2_unpaired(CritPts, name):
         writer.writerows(Dict_pts)
 
     return Pts
+
+def closure_lub(CritPts):
+    """ 
+    Computes the closure of the least upper bound of a set of points. 
+
+    Parameters:
+    - CritPts: List of critical points.
+
+    Returns:
+    List of critical points.
+    """
+    closure = {}
+    for point1 in CritPts:
+        for point2 in CritPts:
+            if point1 != point2 and point1.parent_module == point2.parent_module:
+                if point1.parent_module not in closure.keys():
+                    closure[point1.parent_module] = [lub(point1, point2)]
+                else:
+                    closure[point1.parent_module].append(lub(point1, point2))
+
+                
+    return closure
