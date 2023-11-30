@@ -170,7 +170,7 @@ def check_4distinct(C):
     # this function checks that all things in a set (of 4) are distinct
     assert len(C) == 4, "C is not of length 4 "
     if (len(C) - len(set(C))) > 0:
-        #print("beepbeep", C)
+        # print("beepbeep", C)
         return False
     else:
         return True
@@ -190,6 +190,7 @@ def check_c_distinct(c, C):
             val = False
 
     return val
+
 
 ####
 def check_omega_x_below(u, v, w, x, omega):
@@ -426,13 +427,16 @@ def output_alg_2_2_paired(CritPts, name):
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
-
+    is_inf = []
+    for t in range(len(Total_info_list)):
+        is_inf.append(Total_info_list[t][-1])
+    print(is_inf)
     # w+ option overwrites file each time (good thing)
     with open("../output/" + name + "_2v2_paired.csv", "w+", newline="") as file:
         writer = csv.writer(file)
         writer.writerows(Total_info_list)
 
-    return Pts, num_duplicates, len(Pts)
+    return Pts, num_duplicates, len(Pts), is_inf
 
 
 #####  3 vs 1 new version
@@ -451,9 +455,11 @@ def output_alg_3_1(CritPts, name):
 
     closure = closure_lub(CritPts)
     for key in closure.keys():
-        all_critptscoords += closure[key] ## add the closure under lub to the list of all critical points
-    
-    all_critptscoords = list(set(all_critptscoords)) ## remove duplicates
+        all_critptscoords += closure[
+            key
+        ]  ## add the closure under lub to the list of all critical points
+
+    all_critptscoords = list(set(all_critptscoords))  ## remove duplicates
 
     for a in range(length):
         for b in range(a + 1, length):
@@ -489,7 +495,6 @@ def output_alg_3_1(CritPts, name):
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
-
     # w+ option overwrites file each time (good thing)
     with open("../output/" + name + "_3v1.csv", "w+", newline="") as file:
         writer = csv.writer(file)
@@ -682,14 +687,15 @@ def algo_3vs1(CritPts, all_CritPts):
 
     return Omega_pts, dict_omega_pts
 
+
 #### Check Omega points 2 vs 2 unpaired
 
+
 def check_omega_3(omega, u, v, w, x):
-    Q = {} ## dictionary of quadrants 
-    m = {} ## dictionary of slopes
+    Q = {}  ## dictionary of quadrants
+    m = {}  ## dictionary of slopes
 
     for p in [u, v, w, x]:
-
         if p[0] > omega[0] and p[1] > omega[1]:
             Q[p] = 1
             m[p] = (p[1] - omega[1]) / (p[0] - omega[0])
@@ -711,22 +717,24 @@ def check_omega_3(omega, u, v, w, x):
         S = []
 
         for p in [v, x]:
-            if Q[p] == 4: ### THIS is ugly maybe we can do this in a shorter way by checking if Q[p] in [1,3]
+            if (
+                Q[p] == 4
+            ):  ### THIS is ugly maybe we can do this in a shorter way by checking if Q[p] in [1,3]
                 continue
             else:
                 P.append(p)
 
-        for p in [u, w]: ## same here 
+        for p in [u, w]:  ## same here
             if Q[p] == 2:
                 continue
             else:
                 S.append(p)
-      
+
         for p in P:
             r_p = 1
             for q in [val for val in P if val != p]:
                 if Q[p] == 1:
-                    if Q[q] == 3: ## can this be on the line above? 
+                    if Q[q] == 3:  ## can this be on the line above?
                         if m[p] >= m[q]:
                             r_p = 0
                     elif Q[q] == 1:
@@ -754,26 +762,26 @@ def check_omega_3(omega, u, v, w, x):
                             if m[p] > m[q]:
                                 r_p = 0
                         elif Q[q] == 3:
-                            if m[p] <= m[q]: 
+                            if m[p] <= m[q]:
                                 r_p = 0
-                ###### THis is as far as we got checking the pseudo code, continue from here                
+                ###### THis is as far as we got checking the pseudo code, continue from here
 
-            if r_p == 1: ## for some p 
+            if r_p == 1:  ## for some p
                 return True
-   
+
         for s in S:
             r_s = 1
             for t in [val for val in S if val != s]:
                 if Q[s] == 1:
                     if Q[t] == 3:
                         if m[s] <= m[t]:
-                            r_s = 0 ## check line 94 in pseudo code 
+                            r_s = 0  ## check line 94 in pseudo code
                     elif Q[t] == 1:
                         if m[s] > m[t]:
                             r_s = 0
                 elif Q[s] == 3:
                     if Q[t] == 1:
-                        if m[s] >= m[t]: ## Check line 103
+                        if m[s] >= m[t]:  ## Check line 103
                             r_s = 0
                     elif Q[t] == 3:
                         if m[s] < m[t]:
@@ -796,14 +804,14 @@ def check_omega_3(omega, u, v, w, x):
                             if m[s] >= m[t]:
                                 r_s = 0
 
-        if r_s == 1: ## check indentation  
+        if r_s == 1:  ## check indentation
             return True
 
         return False
 
 
 # IN PROGRESS
-def algo_2v2_unpaired(CritPts,all_CritPts):
+def algo_2v2_unpaired(CritPts, all_CritPts):
     # x paired with w
     # u paired with v
     # x,v on one side of line, u,w on the other side
@@ -817,7 +825,9 @@ def algo_2v2_unpaired(CritPts,all_CritPts):
     ), "There is more than one repeated point in the list"
 
     Omega_pts = []  ## will contain just the valid omega points that were computed
-    info_list = [] ## contains the omega points and the additional info from which critical pts it came from
+    info_list = (
+        []
+    )  ## contains the omega points and the additional info from which critical pts it came from
     for c, d in combinations(CritPts, 2):
         x = c
         v = d
@@ -853,27 +863,63 @@ def algo_2v2_unpaired(CritPts,all_CritPts):
                 or lub(x, w) not in [x.coords, w.coords]
             ):
                 # this is the new thing that robyn just added
-                if (delta == eta) and (v.coords[0] != x.coords[0]) and (u.coords[1] != w.coords[1]):
-                    omega = (v.coords[0] - x.coords[0] ,  u.coords[1] - w.coords[1])  ## line 29 pseudo code . check this!!!
+                if (
+                    (delta == eta)
+                    and (v.coords[0] != x.coords[0])
+                    and (u.coords[1] != w.coords[1])
+                ):
+                    omega = (
+                        v.coords[0] - x.coords[0],
+                        u.coords[1] - w.coords[1],
+                    )  ## line 29 pseudo code . check this!!!
                     m = (u.coords[1] - w.coords[1]) / (v.coords[0] - x.coords[0])
                     # added here (on tuesday) that m > 0
-                    if max(x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0]) < min(u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0]) and m > 0:
+                    if (
+                        max(
+                            x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0]
+                        )
+                        < min(
+                            u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0]
+                        )
+                        and m > 0
+                    ):
                         Omega_pts.append(omega)
-                        ## append the slope 
+                        ## append the slope
                         info_list.append(
-                            [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, m]
-                            )
-                        
+                            [
+                                omega,
+                                x.coords,
+                                u.coords,
+                                v.coords,
+                                w.coords,
+                                eta,
+                                delta,
+                                m,
+                            ]
+                        )
+
                 elif delta != eta:
                     omega = (
                         (eta * v.coords[0] - delta * x.coords[0]) / (eta - delta),
-                        (eta * u.coords[1] - delta * w.coords[1]) / (eta - delta)
+                        (eta * u.coords[1] - delta * w.coords[1]) / (eta - delta),
                     )
-                    if check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) and omega not in all_CritPts:
+                    if (
+                        check_omega_3(omega, u.coords, v.coords, w.coords, x.coords)
+                        and omega not in all_CritPts
+                    ):
                         Omega_pts.append(omega)
                         info_list.append(
-                            [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None]
-                            )
+                            [
+                                omega,
+                                x.coords,
+                                u.coords,
+                                v.coords,
+                                w.coords,
+                                eta,
+                                delta,
+                                None,
+                            ]
+                        )
 
         if (
             (lub(u, v) == u.coords and lub(x, w) == x.coords)
@@ -883,19 +929,23 @@ def algo_2v2_unpaired(CritPts,all_CritPts):
         ):
             omega = (
                 (eta * v.coords[0] + delta * x.coords[0]) / (eta + delta),
-                (eta * u.coords[1] + delta * w.coords[1]) / (eta + delta)
+                (eta * u.coords[1] + delta * w.coords[1]) / (eta + delta),
             )
 
-            if check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) and omega not in all_CritPts: ## corresponds to CheckOmega2 in the pseudo code 
+            if (
+                check_omega_3(omega, u.coords, v.coords, w.coords, x.coords)
+                and omega not in all_CritPts
+            ):  ## corresponds to CheckOmega2 in the pseudo code
                 Omega_pts.append(omega)
                 info_list.append(
-                            [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None]
-                            )
+                    [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None]
+                )
 
     return Omega_pts, info_list
 
 
-### least upper bound function 
+### least upper bound function
+
 
 def lub(point1, point2):
     """
@@ -908,7 +958,10 @@ def lub(point1, point2):
     Returns:
     Tuple representing the least upper bound of the two points.
     """
-    return (max(point1.coords[0], point2.coords[0]), max(point1.coords[1], point2.coords[1]))
+    return (
+        max(point1.coords[0], point2.coords[0]),
+        max(point1.coords[1], point2.coords[1]),
+    )
 
 
 def output_alg_2_2_unpaired(CritPts, name):
@@ -923,15 +976,17 @@ def output_alg_2_2_unpaired(CritPts, name):
 
     closure = closure_lub(CritPts)
     for key in closure.keys():
-        all_critptscoords += closure[key] ## add the closure under lub to the list of all critical points
-    
-    all_critptscoords = list(set(all_critptscoords)) ## remove duplicates
+        all_critptscoords += closure[
+            key
+        ]  ## add the closure under lub to the list of all critical points
+
+    all_critptscoords = list(set(all_critptscoords))  ## remove duplicates
 
     for a in range(length):
         for b in range(a + 1, length):
             for c in range(b + 1, length):
                 for d in range(c, length):
-                    if check_3distinct( 
+                    if check_3distinct(
                         [
                             CritPts[a].coords,
                             CritPts[b].coords,
@@ -961,17 +1016,22 @@ def output_alg_2_2_unpaired(CritPts, name):
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
+    is_inf = []
+    for t in range(len(Dict_pts)):
+        is_inf.append(Dict_pts[t][-1])
+    print(is_inf)
 
     # w+ option overwrites file each time (good thing)
     with open("../output/" + name + "_2v2_unpaired.csv", "w+", newline="") as file:
         writer = csv.writer(file)
         writer.writerows(Dict_pts)
 
-    return Pts, num_duplicates, len(Pts)
+    return Pts, num_duplicates, len(Pts), is_inf
+
 
 def closure_lub(CritPts):
-    """ 
-    Computes the closure of the least upper bound of a set of points. 
+    """
+    Computes the closure of the least upper bound of a set of points.
 
     Parameters:
     - CritPts: List of critical points.
@@ -988,5 +1048,4 @@ def closure_lub(CritPts):
                 else:
                     closure[point1.parent_module].append(lub(point1, point2))
 
-                
     return closure
