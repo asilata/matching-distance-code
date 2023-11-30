@@ -178,7 +178,7 @@ def make_poisson(
     return scaledsample
 
 
-def make_rects(poisson_intensity, seed=0, blueredseed=0):
+def make_rects(poisson_intensity, seed=0):
     radius = 1 / (2 * (math.sqrt(poisson_intensity)))
     poissonpts = make_poisson(
         inputpts=rectangle_example(),
@@ -193,7 +193,8 @@ def make_rects(poisson_intensity, seed=0, blueredseed=0):
     fig, ax = plt.subplots()
     ax.set_aspect("equal")
     # np.random.seed(seed)
-    rnd.seed(blueredseed)
+    rnd.seed(seed)
+    critical_pts = []
     for x in range(len(poissonpts)):
         width = float(rnd.randint(2, 10))
         length = float(rnd.randint(2, 10))
@@ -202,6 +203,19 @@ def make_rects(poisson_intensity, seed=0, blueredseed=0):
         # we only need the first four points for math,
         # but we need to repeat the initial point at the
         # end for plotting
+        outpt_xs = [
+            poissonpts[x][0],
+            poissonpts[x][0],
+            poissonpts[x][0] + width,
+            poissonpts[x][0] + width,
+        ]
+        outpt_ys = [
+            poissonpts[x][1],
+            poissonpts[x][1] + length,
+            poissonpts[x][1] + length,
+            poissonpts[x][1],
+        ]
+        # added the init pt at the end for plotting
         xs = [
             poissonpts[x][0],
             poissonpts[x][0],
@@ -216,6 +230,7 @@ def make_rects(poisson_intensity, seed=0, blueredseed=0):
             poissonpts[x][1],
             poissonpts[x][1],
         ]
+
         color = rnd.randint(0, 1)
         if color == 0:
             ax.plot(xs, ys, "--", color="red")
@@ -227,6 +242,33 @@ def make_rects(poisson_intensity, seed=0, blueredseed=0):
             for x in xs:
                 for y in ys:
                     ax.plot(x, y, "o", color="blue", markersize=5)
+        for i in range(len(outpt_xs)):
+            critpt = mod.critical_val((outpt_xs[i], outpt_ys[i]), color)
+            critical_pts.append(critpt)
+    return critical_pts
+
+
+def critvals_poisson(poisson_intensity, seed):
+    radius = 1 / (2 * (math.sqrt(poisson_intensity)))
+    poissonpts = make_poisson(
+        llama=poisson_intensity, radius=radius, seed=seed, display=False
+    )
+
+    # turn poiss points into critvals
+    critvals = []
+    for p in poissonpts:
+        c = mod.critical_val((p[0], p[1]), rnd.randint(0, 1))
+        critvals.append(c)
+
+    fig, ax = plt.subplots()
+    ax.set_aspect("equal")
+
+    for c in critvals:
+        if c.parent_module == 0:
+            ax.plot(c.coords[0], c.coords[1], "o", color="red")
+        else:
+            ax.plot(c.coords[0], c.coords[1], "o", color="blue")
+    return critvals
 
 
 def test_example():
