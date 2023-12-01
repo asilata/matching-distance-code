@@ -35,6 +35,18 @@ def example_2_13():
 
 
 def small_socg_ex():
+    a1 = ((0.0, 0.0), 0)
+    a2 = ((6.0, 0.0), 0)
+    a3 = ((0.0, 6.0), 0)
+
+    b1 = ((4.0, 2.0), 1)
+    b2 = ((4.0, 4.0), 1)
+    b3 = ((8.0, 2.0), 1)
+
+    b4 = ((1.0, 5.0), 1)
+    b5 = ((1.0, 10.0), 1)
+    b6 = ((2.0, 5.0), 1)
+    ############## make them into crit vals
     c1 = mod.critical_val((0.0, 0.0), 0)
     c2 = mod.critical_val((6.0, 0.0), 0)
     c3 = mod.critical_val((0.0, 6.0), 0)
@@ -46,9 +58,9 @@ def small_socg_ex():
     d4 = mod.critical_val((1.0, 5.0), 1)
     d5 = mod.critical_val((1.0, 10.0), 1)
     d6 = mod.critical_val((2.0, 5.0), 1)
-
+    crits_no_lub = [a1, a2, a3, b1, b2, b3, b4, b5, b6]
     critpts = [c1, c2, c3, d1, d2, d3, d4, d5, d6]
-    return critpts
+    return critpts, crits_no_lub
 
 
 def example_2_11():
@@ -213,6 +225,7 @@ def make_rects(poisson_intensity, seed=0, dpi=150):
     # np.random.seed(seed)
     rnd.seed(seed)
     critical_pts = []
+    crits_no_lub = []
     for x in range(len(poissonpts)):
         width = float(rnd.randint(2, 10))
         length = float(rnd.randint(2, 10))
@@ -263,6 +276,8 @@ def make_rects(poisson_intensity, seed=0, dpi=150):
         for i in range(len(outpt_xs)):
             critpt = mod.critical_val((outpt_xs[i], outpt_ys[i]), color)
             critical_pts.append(critpt)
+            c_no_lub = ((outpt_xs[i], outpt_ys[i]), color)
+            crits_no_lub.append(c_no_lub)
 
     black_patch = mpatches.Patch(color="black", label="M")
     orange_patch = mpatches.Patch(color="orange", label="N")
@@ -271,7 +286,7 @@ def make_rects(poisson_intensity, seed=0, dpi=150):
         loc="upper right",
     )
     fig.dpi = dpi
-    return critical_pts
+    return critical_pts, crits_no_lub
 
 
 def critvals_poisson(poisson_intensity, seed):

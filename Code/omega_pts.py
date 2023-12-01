@@ -435,8 +435,8 @@ def output_alg_2_2_paired(CritPts, name):
         # omega points in the same order, just to make sure
         orderedomegas.append(Total_info_list[t][0])
 
-    print(is_inf)
-    print(orderedomegas)
+    # print(is_inf)
+    # print(orderedomegas)
     # w+ option overwrites file each time (good thing)
     with open("../output/" + name + "_2v2_paired.csv", "w+", newline="") as file:
         writer = csv.writer(file)
@@ -1030,8 +1030,8 @@ def output_alg_2_2_unpaired(CritPts, name):
         # omega points in the same order, just to make sure
         orderedomegas.append(Dict_pts[t][0])
 
-    print(is_inf)
-    print(orderedomegas)
+    # print(is_inf)
+    # print(orderedomegas)
 
     # w+ option overwrites file each time (good thing)
     with open("../output/" + name + "_2v2_unpaired.csv", "w+", newline="") as file:
