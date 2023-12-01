@@ -398,11 +398,9 @@ def make_rects_balanced(poisson_intensity, seed=0, exact_num=2):
             poissonpts[x][0],
             poissonpts[x][0],
             poissonpts[x][0] + width,
-            poissonpts[x][0] + width,
         ]
         outpt_ys = [
             poissonpts[x][1],
-            poissonpts[x][1] + length,
             poissonpts[x][1] + length,
             poissonpts[x][1],
         ]
