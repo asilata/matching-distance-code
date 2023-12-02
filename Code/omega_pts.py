@@ -417,13 +417,13 @@ def output_alg_2_2_paired(CritPts, name):
                                 set_of_points.add(pts[p])
                                 Total_info_list += [info_list[p]]
 
-    # print("**********")
+    print("**********")
     num_duplicates = len(Pts)
-    # print("Computed {} points (with duplicates)".format(num_duplicates))
+    print("Computed {} points (with duplicates)".format(num_duplicates))
 
     # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
-    # print("Without duplicates {}".format(len(Pts)))
+    print("Without duplicates {}".format(len(Pts)))
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
@@ -491,13 +491,13 @@ def output_alg_3_1(CritPts, name):
                                 set_of_points.add(pts[p])
                                 Dict_pts += [dict_pts[p]]
 
-    # print("**********")
+    print("**********")
     num_duplicates = len(Pts)
-    # print("Computed {} points (with duplicates)".format(num_duplicates))
+    print("Computed {} points (with duplicates)".format(num_duplicates))
 
     # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
-    # print("Without duplicates {}".format(len(Pts)))
+    print("Without duplicates {}".format(len(Pts)))
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
@@ -1012,13 +1012,13 @@ def output_alg_2_2_unpaired(CritPts, name):
                                 set_of_points.add(pts[p])
                                 Dict_pts += [dict_pts[p]]
 
-    # print("**********")
+    print("**********")
     num_duplicates = len(Pts)
-    # print("Computed {} points (with duplicates)".format(num_duplicates))
+    print("Computed {} points (with duplicates)".format(num_duplicates))
 
     # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
-    # print("Without duplicates {}".format(len(Pts)))
+    print("Without duplicates {}".format(len(Pts)))
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
@@ -1030,8 +1030,8 @@ def output_alg_2_2_unpaired(CritPts, name):
         # omega points in the same order, just to make sure
         orderedomegas.append(Dict_pts[t][0])
 
-    #print(is_inf)
-    #print(orderedomegas)
+    # print(is_inf)
+    # print(orderedomegas)
 
     # w+ option overwrites file each time (good thing)
     with open("../output/" + name + "_2v2_unpaired.csv", "w+", newline="") as file:

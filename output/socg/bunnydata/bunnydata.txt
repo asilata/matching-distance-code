@@ -1,0 +1,66 @@
+bunny data
+
+#################################################################
+bunny 002 = bunny_smaller.bunnysmaller() (34 verts)
+
+********** 3v1
+Computed 400607 points (with duplicates)
+Without duplicates 321203
+********** 2v2p
+Computed 64300 points (with duplicates)
+Without duplicates 64300
+********** 2v2unp
+Computed 62835 points (with duplicates)
+Without duplicates 62835
+
+#################################################################
+bunny 003 (24 verts)
+
+********** 3v1
+Computed 93494 points (with duplicates)
+Without duplicates 75390
+********** 2v2p
+Computed 15160 points (with duplicates)
+Without duplicates 15160
+********** 2v2unp
+Computed 14322 points (with duplicates)
+Without duplicates 14322
+
+#################################################################
+bunny 004 (16 verts)
+
+********** 3v1
+Computed 17157 points (with duplicates)
+Without duplicates 13722
+********** 2v2p
+Computed 2617 points (with duplicates)
+Without duplicates 2617
+********** 2v2unp
+Computed 2462 points (with duplicates)
+Without duplicates 2462
+
+#################################################################
+bunny 005 (9 verts)
+
+********** 3v1
+Computed 1354 points (with duplicates)
+Without duplicates 1015
+********** 2v2p
+Computed 183 points (with duplicates)
+Without duplicates 183
+********** 2v2unp
+Computed 183 points (with duplicates)
+Without duplicates 183
+
+#################################################################
+ bunny 006 (4 verts) (TET)
+
+********** 3v1
+Computed 26 points (with duplicates)
+Without duplicates 13
+********** 2v2p
+Computed 2 points (with duplicates)
+Without duplicates 2
+********** 2v2unp
+Computed 2 points (with duplicates)
+Without duplicates 2
