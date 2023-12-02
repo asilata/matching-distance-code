@@ -297,8 +297,11 @@ def critvals_poisson(poisson_intensity, seed):
 
     # turn poiss points into critvals
     critvals = []
+    no_lub = []
     for p in poissonpts:
-        c = mod.critical_val((p[0], p[1]), rnd.randint(0, 1))
+        r = rnd.randint(0, 1)
+        c = mod.critical_val((p[0], p[1]), r)
+        no_lub.append(((p[0], p[1]), r))
         critvals.append(c)
 
     fig, ax = plt.subplots()
@@ -309,7 +312,7 @@ def critvals_poisson(poisson_intensity, seed):
             ax.plot(c.coords[0], c.coords[1], "o", color="red")
         else:
             ax.plot(c.coords[0], c.coords[1], "o", color="blue")
-    return critvals
+    return critvals, no_lub
 
 
 def bunny_into_critvals(bunnypoints, seed):
