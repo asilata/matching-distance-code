@@ -3,7 +3,7 @@ from math import cos, sin, pi
 import numpy as np
 
 """TODO: 
-    - implement algorithm to find all equivalence classes of a given module
+    - implement algorithm to find all equivalence classes of a given module --> not curently possible :( 
     - function to plot easily a module and some lines though the parameter space
     - include "infinite rectangles", ie, open at the top and/or to the right 
     - check that the functions work also with infinite rectanlges
