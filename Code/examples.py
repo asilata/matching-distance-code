@@ -7,6 +7,20 @@ import math
 import random as rnd
 
 
+def example_2_12():
+    #module M
+    c1 = mod.critical_val((2.0,2.0),0)
+    c2 = mod.critical_val((2.0,7.0),0)
+
+    #module N
+    d1 = mod.critical_val((2.0,2.0),1)
+    d2 = mod.critical_val((2.0,10.0),1)
+    CritPts = [c1, c2, d1, d2]
+    
+    return CritPts
+
+
+
 def example_2_13():
     """
     Corresponds to figure 3 in the paper.

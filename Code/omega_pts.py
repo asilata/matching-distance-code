@@ -459,7 +459,7 @@ def output_alg_3_1(CritPts, name):
     for x in CritPts:
         all_critptscoords.append(x.coords)
 
-    closure = closure_lub(CritPts)
+    closure = closure_lub(CritPts) ## WHy do we  only compute the closure in 3v1 and not in 2v2??? 
     for key in closure.keys():
         all_critptscoords += closure[
             key
@@ -506,7 +506,7 @@ def output_alg_3_1(CritPts, name):
         writer = csv.writer(file)
         writer.writerows(Dict_pts)
 
-    return Pts, num_duplicates, len(Pts)
+    return Pts, num_duplicates, len(Pts) 
 
 
 # def almost_equal(x, y, tol=1e-3):
@@ -1060,4 +1060,4 @@ def closure_lub(CritPts):
                 else:
                     closure[point1.parent_module].append(lub(point1, point2))
 
-    return closure
+    return closure 

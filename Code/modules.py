@@ -299,7 +299,8 @@ class RectangleModule:
  
     
     def find_critical_pts(self):
-        """Find the critical values of the entire module
+
+        """Find the critical values of the entire module given all of its rectangles
            Only finite values  
         """
         Crit_pts = []
