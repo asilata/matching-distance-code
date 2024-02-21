@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import math
 import random as rnd
+import modules as mod
 
 
 def example_2_12():
@@ -102,8 +103,18 @@ def small_socg_ex_M_N():
     d6 = mod.critical_val((2.0, 5.0), 1)
     crits_no_lub = [a1, a2, a3, b1, b2, b3, b4, b5, b6]
     critpts = [c1, c2, c3, d1, d2, d3, d4, d5, d6]
-    M = [a1, a2, a3, c1, c2, c3]
-    N = [b1, b2, b3, b4, b5, b6, d1, d2, d3, d4, d5, d6]
+
+
+   #(self, top_left,top_right, bottom_left, bottom_right, dim = 1, parent = 1):
+
+    m1 = mod.Rectangle(a3[0], (6.0, 6.0), a1[0], a2[0], 1, 0)
+    n1 = mod.Rectangle(b2[0], (8.0, 4.0), b1[0], b3[0], 1, 1)   
+    n2 = mod.Rectangle(b5[0], (2.0, 10.0), b4[0], b6[0], 1, 1)
+
+    M = mod.RectangleModule([m1])
+    N = mod.RectangleModule([n1, n2])
+
+
     return critpts, crits_no_lub, M, N
 
 
