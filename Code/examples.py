@@ -76,6 +76,36 @@ def small_socg_ex():
     critpts = [c1, c2, c3, d1, d2, d3, d4, d5, d6]
     return critpts, crits_no_lub
 
+def small_socg_ex_M_N():
+    a1 = ((0.0, 0.0), 0)
+    a2 = ((6.0, 0.0), 0)
+    a3 = ((0.0, 6.0), 0)
+
+    b1 = ((4.0, 2.0), 1)
+    b2 = ((4.0, 4.0), 1)
+    b3 = ((8.0, 2.0), 1)
+
+    b4 = ((1.0, 5.0), 1)
+    b5 = ((1.0, 10.0), 1)
+    b6 = ((2.0, 5.0), 1)
+    ############## make them into crit vals
+    c1 = mod.critical_val((0.0, 0.0), 0)
+    c2 = mod.critical_val((6.0, 0.0), 0)
+    c3 = mod.critical_val((0.0, 6.0), 0)
+
+    d1 = mod.critical_val((4.0, 2.0), 1)
+    d2 = mod.critical_val((4.0, 4.0), 1)
+    d3 = mod.critical_val((8.0, 2.0), 1)
+
+    d4 = mod.critical_val((1.0, 5.0), 1)
+    d5 = mod.critical_val((1.0, 10.0), 1)
+    d6 = mod.critical_val((2.0, 5.0), 1)
+    crits_no_lub = [a1, a2, a3, b1, b2, b3, b4, b5, b6]
+    critpts = [c1, c2, c3, d1, d2, d3, d4, d5, d6]
+    M = [a1, a2, a3, c1, c2, c3]
+    N = [b1, b2, b3, b4, b5, b6, d1, d2, d3, d4, d5, d6]
+    return critpts, crits_no_lub, M, N
+
 
 def example_2_11():
     """
