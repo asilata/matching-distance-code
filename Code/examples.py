@@ -88,7 +88,7 @@ def small_socg_ex_M_N():
     b4 = ((1.0, 5.0), 1)
     b5 = ((1.0, 10.0), 1)
     b6 = ((2.0, 5.0), 1)
-    ############## make them into crit vals
+    ############## make them into crit vals flskdjflsdkfjdslkfjks
     c1 = mod.critical_val((0.0, 0.0), 0)
     c2 = mod.critical_val((6.0, 0.0), 0)
     c3 = mod.critical_val((0.0, 6.0), 0)
