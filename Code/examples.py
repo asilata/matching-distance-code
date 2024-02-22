@@ -112,7 +112,7 @@ def small_socg_ex_M_N():
     n2 = mod.Rectangle(b5[0], (2.0, 10.0), b4[0], b6[0], 1, 1)
 
     M = mod.RectangleModule([m1])
-    N = mod.RectangleModule([n1, n2])
+    N = mod.RectangleModule([n2])
 
 
     return critpts, crits_no_lub, M, N
@@ -160,7 +160,16 @@ def example_1():
     d4 = mod.critical_val((8.0, 9.0), 1)
 
     CritPts = [c1, c2, c3, d1, d2, d3]
-    return CritPts
+
+    #(self, top_left,top_right, bottom_left, bottom_right, dim = 1, parent = 1):
+    m1= mod.Rectangle(c3.coords, c4.coords, c1.coords, c2.coords, 1, 0)
+
+    n1 = mod.Rectangle(d3.coords, d4.coords, d1.coords, d2.coords, 1, 1)
+
+    M = mod.RectangleModule([m1])
+    N = mod.RectangleModule([n1])
+
+    return CritPts, M, N
 
 
 def example_2():

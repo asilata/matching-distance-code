@@ -9,7 +9,7 @@ import numpy as np
     - check that the functions work also with infinite rectanlges
 """
 
-# Class for single rectangles.
+# Class for single rectangles.  
 class Rectangle:
     def __init__(self, top_left,top_right, bottom_left, bottom_right, dim = 1, parent = 1):
         """bottom_left and top_right are (x,y) coordinate tuples, 
