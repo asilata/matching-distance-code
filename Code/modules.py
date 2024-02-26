@@ -135,6 +135,12 @@ class Rectangle:
                 if pt_rs not in inter:
                     inter.append(pt_rs)
                     params.append(t_rs)
+            
+            if len(params) == 1:
+                pt = inter[0]
+                t = params[0]
+                inter.append(pt)
+                params.append(t)
          
         if self.type == 'top infinite': 
 
@@ -325,7 +331,6 @@ class RectangleModule:
             
         return list(set(Crit_pts))
 
-        
        
     def compute_barcode(self, line): 
         Int, params = self.find_intersection(line)
