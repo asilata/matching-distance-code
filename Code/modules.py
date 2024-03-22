@@ -397,7 +397,10 @@ class Line:
         self.b = b
         self.m = m 
         maxm = max(abs(m[0]),abs(m[1])) 
-        if maxm !=1:
+        if maxm == 0:
+            self.positive = False
+    
+        elif maxm !=1:
             self.m = (m[0]/maxm,m[1]/maxm)
         m = self.m    
         if b[0]!= -b[1] and m[0]!=-m[1]:
