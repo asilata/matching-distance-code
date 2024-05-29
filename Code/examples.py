@@ -118,6 +118,49 @@ def small_socg_ex_M_N():
     return critpts, crits_no_lub, M, N
 
 
+def small_rectangle_example():
+    a1 = ((0.0, 0.0), 0)
+    a2 = ((6.0, 0.0), 0)
+    a3 = ((0.0, 6.0), 0)
+
+    b1 = ((4.0, 2.0), 1)
+    b2 = ((4.0, 4.0), 1)
+    b3 = ((8.0, 2.0), 1)
+
+    
+    ############## make them into crit vals flskdjflsdkfjdslkfjks
+    c1 = mod.critical_val((0.0, 0.0), 0)
+    c2 = mod.critical_val((6.0, 0.0), 0)
+    c3 = mod.critical_val((0.0, 6.0), 0)
+
+    d1 = mod.critical_val((4.0, 2.0), 1)
+    d2 = mod.critical_val((4.0, 4.0), 1)
+    d3 = mod.critical_val((8.0, 2.0), 1)
+
+    crits_no_lub = [a1, a2, a3, b1, b2, b3]
+    critpts = [c1, c2, c3, d1, d2, d3]
+
+
+   #(self, top_left,top_right, bottom_left, bottom_right, dim = 1, parent = 1):
+
+    m1 = mod.Rectangle(a3[0], (6.0, 6.0), a1[0], a2[0], 1, 0)
+    n1 = mod.Rectangle(b2[0], (8.0, 4.0), b1[0], b3[0], 1, 1)   
+
+
+    M = mod.RectangleModule([m1])
+    N = mod.RectangleModule([n1])
+
+
+    return critpts, crits_no_lub, M, N
+
+
+
+
+
+
+
+
+
 def example_2_11():
     """
     an input crit val c_i needs x,y coords and a parent rectangle module.
