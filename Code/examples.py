@@ -12,8 +12,12 @@ import modules as mod
 #################### EXAMPLES CURRENTLY WORKING
 
 def small_socg_ex_M_N():
+    # these are the points we'll graph
+    # bottom left
     a1 = ((0.0, 0.0), 0)
+    # bottom right
     a2 = ((6.0, 0.0), 0)
+    # top left
     a3 = ((0.0, 6.0), 0)
 
     b1 = ((4.0, 2.0), 1)
@@ -46,7 +50,7 @@ def small_socg_ex_M_N():
     n2 = mod.Rectangle(b5[0], (2.0, 10.0), b4[0], b6[0], 1, 1)
 
     M = mod.RectangleModule([m1])
-    N = mod.RectangleModule([n2])
+    N = mod.RectangleModule([n2,n1])
 
 
     return critpts, crits_no_lub, M, N

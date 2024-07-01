@@ -13,7 +13,12 @@ import bunny_smaller
 import omega_pts as omega
 from numpy import linalg as LA
 
-def make_1dim_MN_example(tl_m, tr_m, bl_m, br_m, tl_n, tr_n, bl_n, br_n):
+def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
+    # calculate other coords from tr and bl
+    tl_m = np.array([bl_m[0],tr_m[1]])
+    br_m = np.array([tr_m[0],bl_m[1]])
+    tl_n = np.array([bl_n[0],tr_n[1]])
+    br_n = np.array([tr_n[0],bl_n[1]])
 
     #######################
     a1 = ((bl_m[0], bl_m[1]), 0)
@@ -256,13 +261,18 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n):
     return
 
 def do_all_the_things(onedim_mods, graph, example, MN):
-    tl_m, tr_m, bl_m, br_m, tl_n, tr_n, bl_n, br_n = MN[0], MN[1], MN[2], MN[3], MN[4], MN[5], MN[6], MN[7]
+    tr_m, bl_m, tr_n, bl_n = MN[0], MN[1], MN[2], MN[3]
+    # tl_m = np.array([bl_m[0],tr_m[1]])
+    # br_m = np.array([tr_m[0],bl_m[1]])
+    # tl_n = np.array([bl_n[0],tr_n[1]])
+    # br_n = np.array([tr_n[0],bl_n[1]])
+
     if onedim_mods and graph:
         print("Warning: Currently cannot print graphs from one-dim mod option. Continuing without graphs.\n")
         graph = False
 
     if onedim_mods:
-        critical_vals, nolub, M, N, critval_coords = make_1dim_MN_example(tl_m, tr_m, bl_m, br_m, tl_n, tr_n, bl_n, br_n)
+        critical_vals, nolub, M, N, critval_coords = make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n)
 
     if not onedim_mods:
         critical_vals, nolub, M, N = example[0], example[1], example[2], example[3]
