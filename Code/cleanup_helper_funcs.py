@@ -228,7 +228,7 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
     idx = Wb.index(matching_dist)
 
     print('The matching distance is {}'.format(matching_dist))
-    print('Matching disstance is attained at the line with slope {} and intercept {}'.format(Lines[idx].m, Lines[idx].b))
+    print('Matching distance is attained at the line with slope {} and intercept {}'.format(Lines[idx].m, Lines[idx].b))
 
     return 
 
@@ -253,4 +253,39 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n):
 
     min_all = min(max_abcd, max_infs)
     print("matching distance (from equation) is", min_all)
+    return
+
+def do_all_the_things(onedim_mods, graph, example, MN):
+    tl_m, tr_m, bl_m, br_m, tl_n, tr_n, bl_n, br_n = MN[0], MN[1], MN[2], MN[3], MN[4], MN[5], MN[6], MN[7]
+    if onedim_mods and graph:
+        print("Warning: Currently cannot print graphs from one-dim mod option. Continuing without graphs.\n")
+        graph = False
+
+    if onedim_mods:
+        critical_vals, nolub, M, N, critval_coords = make_1dim_MN_example(tl_m, tr_m, bl_m, br_m, tl_n, tr_n, bl_n, br_n)
+
+    if not onedim_mods:
+        critical_vals, nolub, M, N = example[0], example[1], example[2], example[3]
+        critval_coords = []
+        ## forgets the parent modules 
+        for i in range(len(critical_vals)):
+            critval_coords.append(critical_vals[i].coords)
+        
+        
+
+    ## computes the least upper bound CM and CN separately 
+    # using the parent module information 
+    lub = omega.closure_lub(critical_vals) 
+
+    ### run all three allgoriths 3v1, 2v2 paired , 2v2 unpaired
+    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, makegraphyesno = graph, title = " ")
+    # combine the outputs together and deal with slopes vs points
+    omega_points_collection, omega_slopes_collection = combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp)
+
+    print("\n")
+    compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N)
+
+    print("\n")
+    if onedim_mods:
+        check_onedim_mods(bl_m, tr_m, bl_n, tr_n)
     return
