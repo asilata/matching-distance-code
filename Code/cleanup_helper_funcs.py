@@ -119,13 +119,19 @@ def compute_switch_points(critpts, crits_no_lub, makegraphyesno = False, title =
     ############# do computations
     # algo 3v1 = Algorithm 3 in SoCG overleaf
     # never has points at infinity, so we can plot all points
-    print("3v1")
+    print("______________________________________")
+    print("Running the three algorithms.")
+    print("-------------")
+
+
+    print("3v1:")
     omegapts_3v1, _, _ = omega.output_alg_3_1(critpts, "socg/" + title)
     if makegraphyesno:
         ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1")
-
+    
+    print("-------------")
     # algo 2v2 paired = Algorithm 5 in SoCG overleaf
-    print("2v2paired")
+    print("2v2paired:")
     omegapts_2v2_p, _, _, is_inf_2v2p, orderedomegas2v2p = omega.output_alg_2_2_paired(
         critpts, "socg/" + title
     )
@@ -134,10 +140,14 @@ def compute_switch_points(critpts, crits_no_lub, makegraphyesno = False, title =
         ourplot.plot_c_o_with_inf(crits_no_lub, orderedomegas2v2p, is_inf_2v2p, title, dpi, "2v2 Paired")
 
     # algo 2v2 unpaired = Algorithm 7 in SoCG overleaf
-    print("2v2unp")
+    print("-------------")
+
+    print("2v2unpaired:")
     omegapts_2v2_unp, _, _, is_inf_2v2unp_orig , orderedomegas_2v2unp = omega.output_alg_2_2_unpaired(
         critpts, "socg/" + title
     )
+    print("______________________________________")
+
     if makegraphyesno:
         ourplot.plot_c_o_with_inf(
             crits_no_lub, orderedomegas_2v2unp, is_inf_2v2unp_orig, title, dpi, "2v2 Unpaired"
@@ -232,8 +242,8 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
     matching_dist = max(Wb)
     idx = Wb.index(matching_dist)
 
-    print('The matching distance is {}'.format(matching_dist))
-    print('Matching distance is attained at the line with slope {} and intercept {}'.format(Lines[idx].m, Lines[idx].b))
+    print('Matching distance is {},'.format(matching_dist))
+    print('and is attained at the line with slope {} \nand intercept {}.'.format(Lines[idx].m, Lines[idx].b))
 
     return 
 
@@ -257,7 +267,7 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n):
     max_infs = max(infnorm_ca, infnorm_db)
 
     min_all = min(max_abcd, max_infs)
-    print("matching distance (from equation) is", min_all)
+    print("Matching distance (from equation) is {}.".format(min_all))
     return
 
 def do_all_the_things(onedim_mods, graph, example, MN):
@@ -268,7 +278,7 @@ def do_all_the_things(onedim_mods, graph, example, MN):
     # br_n = np.array([tr_n[0],bl_n[1]])
 
     if onedim_mods and graph:
-        print("Warning: Currently cannot print graphs from one-dim mod option. Continuing without graphs.\n")
+        print("⚠️ Warning: Currently cannot print graphs from one-dim mod option.\nContinuing without graphs.\n")
         graph = False
 
     if onedim_mods:

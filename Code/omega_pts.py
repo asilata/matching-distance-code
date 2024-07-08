@@ -417,7 +417,7 @@ def output_alg_2_2_paired(CritPts, name):
                                 set_of_points.add(pts[p])
                                 Total_info_list += [info_list[p]]
 
-    print("**********")
+    # print("**********")
     num_duplicates = len(Pts)
     print("Computed {} points (with duplicates)".format(num_duplicates))
 
@@ -491,7 +491,7 @@ def output_alg_3_1(CritPts, name):
                                 set_of_points.add(pts[p])
                                 Dict_pts += [dict_pts[p]]
 
-    print("**********")
+    # print("**********")
     num_duplicates = len(Pts)
     print("Computed {} points (with duplicates)".format(num_duplicates))
 
@@ -1012,7 +1012,7 @@ def output_alg_2_2_unpaired(CritPts, name):
                                 set_of_points.add(pts[p])
                                 Dict_pts += [dict_pts[p]]
 
-    print("**********")
+    # print("**********")
     num_duplicates = len(Pts)
     print("Computed {} points (with duplicates)".format(num_duplicates))
 
