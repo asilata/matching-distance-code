@@ -9,7 +9,7 @@ from matplotlib import rc
 import math
 from math import cos, sin, pi, atan     
 import itertools
-from scipy.stats import qmc
+# from scipy.stats import qmc
 import scipy.spatial
 from scipy.optimize import linprog
 import random as rnd

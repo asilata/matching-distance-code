@@ -1,5 +1,5 @@
 import modules as mod
-from scipy.stats import qmc
+# from scipy.stats import qmc
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -309,3 +309,72 @@ def do_all_the_things(onedim_mods, graph, example, MN):
     if onedim_mods:
         check_onedim_mods(bl_m, tr_m, bl_n, tr_n)
     return
+
+def make_example(M,N):
+    # this is for two modules M and N 
+
+    # input example (this is small_socg_ex_M_N): 
+    # tr, bl 
+    # M = [[(6.0, 6.0),(0.0, 0.0)]]
+    # N = [[(8.0, 4.0),(4.0, 2.0)],
+    #     [(2.0, 10.0),(1.0, 5.0)]]
+
+
+    # M gets parent index 0
+    # N gets parent index 1
+    crits_no_lub = []
+    critpts = []
+    #(self, top_left,top_right, bottom_left, bottom_right, 
+            # dim (num of rectangles), parent (M is 0, N is 1)):
+
+    m_rects = []
+    n_rects = []
+
+    for i in range(len(M)):
+        # iterate over the rectangles
+        tr = M[i][0]
+        bl = M[i][1]
+        tl = (bl[0], tr[1])
+        br = (tr[0], bl[1])
+        # print("tr, bl, tl, br:\n", tr, bl, tl, br)
+        # tl, tr, bl, br, dim, parent
+        # print("⚠️chf.make_example: remember to check if dim always 1 here")
+        m_i = mod.Rectangle(tl, tr, bl, br, 1, 0)
+        m_rects.append(m_i)
+
+        #bl, br, tl, NO tr
+        crits_no_lub.append((bl,0))
+        crits_no_lub.append((br,0))
+        crits_no_lub.append((tl,0))
+        # crits_no_lub.append((tr,0))
+        #bl, br, tl, NO tr
+        critpts.append(mod.critical_val(bl,0))
+        critpts.append(mod.critical_val(br,0))
+        critpts.append(mod.critical_val(tl,0))
+        # critpts.append(mod.critical_val(tr,0))
+
+    for i in range(len(N)):
+        tr = N[i][0]
+        bl = N[i][1]
+        tl = (bl[0], tr[1])
+        br = (tr[0], bl[1])
+        # print("tr, bl, tl, br:\n", tr, bl, tl, br)
+        # tl, tr, bl, br, dim, parent
+        n_i = mod.Rectangle(tl, tr, bl, br, 1, 1)
+        n_rects.append(n_i)
+
+        #bl, br, tl, NO tr
+        crits_no_lub.append((bl,1))
+        crits_no_lub.append((br,1))
+        crits_no_lub.append((tl,1))
+        # crits_no_lub.append((tr,1))
+        #bl, br, tl, NO tr
+        critpts.append(mod.critical_val(bl,1))
+        critpts.append(mod.critical_val(br,1))
+        critpts.append(mod.critical_val(tl,1))
+        # critpts.append(mod.critical_val(tr,1))
+
+    retM = mod.RectangleModule(m_rects)
+    retN = mod.RectangleModule(n_rects)
+        
+    return critpts, crits_no_lub, retM, retN

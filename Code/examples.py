@@ -1,5 +1,5 @@
 import modules as mod
-from scipy.stats import qmc
+# from scipy.stats import qmc
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -12,6 +12,9 @@ import modules as mod
 #################### EXAMPLES CURRENTLY WORKING
 
 def small_socg_ex_M_N():
+    # usage as of 26 July 2024:
+    # example = ex.small_socg_ex_M_N()
+    
     # these are the points we'll graph
     # bottom left
     a1 = ((0.0, 0.0), 0)
@@ -39,6 +42,7 @@ def small_socg_ex_M_N():
     d4 = mod.critical_val(b4[0], 1)
     d5 = mod.critical_val(b5[0], 1)
     d6 = mod.critical_val(b6[0], 1)
+    #bl, br, tl, tr
     crits_no_lub = [a1, a2, a3, b1, b2, b3, b4, b5, b6]
     critpts = [c1, c2, c3, d1, d2, d3, d4, d5, d6]
 
