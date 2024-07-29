@@ -3,3 +3,4 @@ matplotlib
 numpy
 scipy ~= 1.11.1
 jupyter
+latex
