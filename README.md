@@ -2,7 +2,7 @@
 
 This repository contains code to compute matching distances between multidimensional persistence modules.
 You need ```python 3.9.6```.
-We recommend using ```pip```, but you can use ```conda``` if you prefer.
+We recommend using ```pip```, but you can use ```conda``` if you prefer. We also recommend using a virtual environment like ```virtualenv```. 
 
 Navigate to the ```matching-distance-code``` directory and run the following in the terminal.
 ```
