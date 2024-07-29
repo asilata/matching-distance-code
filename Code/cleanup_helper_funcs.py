@@ -12,6 +12,7 @@ import csv
 import bunny_smaller
 import omega_pts as omega
 from numpy import linalg as LA
+from math import cos, sin, pi, atan
 
 def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
     # calculate other coords from tr and bl
@@ -378,3 +379,187 @@ def make_example(M,N):
     retN = mod.RectangleModule(n_rects)
         
     return critpts, crits_no_lub, retM, retN
+
+
+
+
+### Approximation functions 
+
+def closure_lub(Points): 
+        """ Find the closure under least upper boud of the critical points
+            Input: list of points
+        """
+         
+        l = len(Points)
+        for i in range(l): 
+            p = Points[i]
+            for j in range(i+1, l): 
+                q = Points[j]
+                if not mod.are_comparable(p,q):
+                    lub = (max(p[0],q[0]), max(p[1],q[1]))
+                    Points.append(lub)
+
+        return list(set(Points))
+    
+def plot_weighted_bottleneck(M,N, filename = 'weightedBottlneckDistance'):
+
+    """Takes M and N as RectangleModules 
+        example: 
+        rect_m1 = mod.Rectangle((0,0),(7,7),1)
+        rect_m2 = mod.Rectangle((0,4),(7,11),1)
+        M = mod.RectangleModule([rect_m1,rect_m2])
+        rect_n1 = mod.Rectangle((0,0),(7,11),1)
+        rect_n2 = mod.Rectangle((0,4),(7,7),1)
+        N= mod.RectangleModule([rect_n1,rect_n2])
+    """
+    
+    Crit_M = M.closure_lub() 
+    Crit_N = N.closure_lub() 
+    C = list(set(Crit_M+Crit_N))
+    Crit_MN = closure_lub(C)
+    #print(len(Crit_MN))
+    #Crit_MN=list(set(Crit_M+Crit_N))
+    Lines = []
+    DD = []
+    k = 0
+    Crit = []
+    for i in range(len(Crit_MN)-1):
+        p = Crit_MN[i]
+        for j in range(i+1,len(Crit_MN)):
+            q = Crit_MN[j] 
+            line = mod.line_through_2points(Crit_MN[i], Crit_MN[j])
+            if line.positive: 
+                d = mod.compute_weighted_bottleneck(M,N,line)
+                Lines.append(line)
+                Crit.append([Crit_MN[i], Crit_MN[j]])
+                DD.append(d)
+    print('There are {} lines through critical points'.format(len(Lines)))
+    #print('Bottleneck distance for lines through critical points: ')
+    #print(D)
+    print('Maximum distance for lines:')
+    print(max(DD))
+    
+    ## computing bottlneck for "every" line
+    
+    Theta = np.linspace(0,pi/2,100)[1:-1]
+    B = np.linspace(-5,5,100)
+    D= np.zeros((len(Theta), len(B)))
+    T = []
+    BB= []
+    Dist = []
+    for t in range(len(Theta)): 
+        for n in range(len(B)): 
+            s = sin(Theta[t])
+            c = cos(Theta[t])
+            maxm = max(s,c)
+            line = mod.Line((c/maxm, s/maxm), (B[n],-B[n]))
+            d = mod.compute_weighted_bottleneck(M,N,line)
+            D[t,n] = d
+            T.append(Theta[t])
+            BB.append(B[n])
+            Dist.append(d)
+    val = max(Dist)
+    idx = Dist.index(val)
+    print('Maximum distance computed:')
+    print(max(Dist))     
+    plt.figure(figsize=(8,8))
+    plt.scatter(T, BB, c= Dist,s = 10, cmap = "summer")
+    plt.scatter(T[idx], BB[idx], marker = 'x', color = 'red')
+    print(T[idx])
+    print(BB[idx])
+    
+    ## plot markers for the lines through critical points
+    b_crit = []
+    theta_crit = []
+    for j in range(len(Lines)):
+        Line = Lines[j]
+        b= Line.b[0]
+        theta = atan(Line.m[1]/Line.m[0])
+        b_crit.append(b)
+        theta_crit.append(theta)
+    
+    for j in range(len(Lines)): 
+        plt.scatter(theta_crit[j], b_crit[j], marker = 'x', color = 'grey')
+        #plt.text(theta_crit[j], b_crit[j], str(Crit[j]))
+    val = max(DD)
+    idx=DD.index(val)
+    plt.scatter(theta_crit[idx], b_crit[idx], marker = 'x', color = 'black')
+    ## plot titles
+    plt.xlabel('theta')
+    plt.ylabel('b')
+    plt.title("Weighted bottleneck distance as a function of theta and b")
+    plt.colorbar(label="Weighted distance", orientation="horizontal")
+    plt.clim(0,max(Dist))
+    plt.savefig(filename)
+    plt.show()
+    
+def compute_weighted_bottleneck_distances(M,N): 
+    """Takes M and N as RectangleModules 
+        example: 
+        rect_m1 = mod.Rectangle((0,0),(7,7),1)
+        rect_m2 = mod.Rectangle((0,4),(7,11),1)
+        M = mod.RectangleModule([rect_m1,rect_m2])
+        rect_n1 = mod.Rectangle((0,0),(7,11),1)
+        rect_n2 = mod.Rectangle((0,4),(7,7),1)
+        N= mod.RectangleModule([rect_n1,rect_n2])
+    """
+    
+    Crit_M = M.closure_lub() 
+    Crit_N = N.closure_lub() 
+    C = list(set(Crit_M+Crit_N))
+    Crit_MN = closure_lub(C)
+    #print(len(Crit_MN))
+    #Crit_MN=list(set(Crit_M+Crit_N))
+    Lines = []
+    DD = []
+    k = 0
+    Crit = []
+    for i in range(len(Crit_MN)-1):
+        p = Crit_MN[i]
+        for j in range(i+1,len(Crit_MN)):
+            q = Crit_MN[j] 
+            line = mod.line_through_2points(Crit_MN[i], Crit_MN[j])
+            if line.positive: 
+                d = mod.compute_weighted_bottleneck(M,N,line)
+                Lines.append(line)
+                Crit.append([Crit_MN[i], Crit_MN[j]])
+                DD.append(d)
+    print('There are {} lines through critical points'.format(len(Lines)))
+    #print('Bottleneck distance for lines through critical points: ')
+    #print(D)
+    print('Maximum distance for lines:')
+    print(max(DD))
+    
+    ## computing bottlneck for "every" line
+    
+    Theta = np.linspace(0,pi/2,100)[1:-1]
+    B = np.linspace(-5,5,100)
+    D= np.zeros((len(Theta), len(B)))
+    T = []
+    BB= []
+    Dist = []
+    for t in range(len(Theta)): 
+        for n in range(len(B)): 
+            s = sin(Theta[t])
+            c = cos(Theta[t])
+            maxm = max(s,c)
+            line = mod.Line((c/maxm, s/maxm), (B[n],-B[n]))
+            d = mod.compute_weighted_bottleneck(M,N,line)
+            D[t,n] = d
+            T.append(Theta[t])
+            BB.append(B[n])
+            Dist.append(d)
+    val = max(Dist)
+    idx = Dist.index(val)
+    print('Maximum distance computed:')
+    print(max(Dist))     
+    print(T[idx])
+    print(BB[idx])
+    
+    s = sin(T[idx])
+    c = cos(T[idx])
+    maxm = max(s,c)
+    L_max = mod.Line((c/maxm, s/maxm), (BB[idx],-BB[idx]))
+    return T,BB, idx, L_max
+
+
