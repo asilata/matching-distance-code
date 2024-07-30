@@ -1,6 +1,7 @@
 import modules as mod
 # from scipy.stats import qmc
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import math
@@ -249,7 +250,7 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
 
     return 
 
-def check_onedim_mods(bl_m, tr_m, bl_n, tr_n):
+def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
     # # figuring stuff out: 
     # bl tr YES
     ai = bl_m
@@ -270,6 +271,52 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n):
 
     min_all = min(max_abcd, max_infs)
     print("Matching distance (from equation) is {}.".format(min_all))
+
+    ##########
+    if graph:
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        plt.grid(visible = True )
+        ## rectangles 
+        # a1 = rect_m1.bottom_left 
+        a1 = bl_m
+        # h1= rect_m1.top_right[0]- a1[0]
+        h1 = tr_m[0] - a1[0]
+        # v1= rect_m1.top_right[1]- a1[1]
+        v1 = tr_m[1] - a1[1]
+        # a2 = rect_m2.bottom_left 
+        a2 = bl_n
+        # h2= rect_m2.top_right[0]- a2[0]
+        h2 = tr_n[0] - a2[0]
+        # v2= rect_m2.top_right[1]- a2[1]
+        v2 = tr_n[1] - a2[1]
+        from matplotlib import patches
+        # m
+        rect1 = patches.Rectangle(a1,h1,v1,color ='blue', alpha = 0.2)
+        # n
+        rect2 = patches.Rectangle(a2,h2,v2, color ='green',alpha = 0.2)
+
+        # ## lines
+        # x = np.linspace(-2, 10, 1000)
+
+        # b1 = L_max.b[0]
+        # b2 = L_max.b[1]
+        # m1 = L_max.m[0]
+        # m2 = L_max.m[1]
+        # plt.plot(x, m2*(x-b1)/m1 +b2, linestyle='solid') ##L _
+        # plt.plot(x,x,linestyle='dashed')
+
+        ax.add_patch(rect1)
+        ax.add_patch(rect2)
+        ax.legend(["N", "M"])
+        ax.set_aspect("equal")
+        plt.ylim([min(bl_m[1], bl_n[1]) - 1, max(tr_m[1], tr_n[1]) + 1])
+        plt.xlim([min(bl_m[0], bl_n[0]) - 1, max(tr_m[0], tr_n[0]) + 1])
+
+        plt.title('Modules')  
+        #plt.savefig('moduleM')
+        plt.show()
+    #########
     return
 
 def do_all_the_things(onedim_mods, graph, example, MN):
@@ -279,10 +326,11 @@ def do_all_the_things(onedim_mods, graph, example, MN):
     # br_m = np.array([tr_m[0],bl_m[1]])
     # tl_n = np.array([bl_n[0],tr_n[1]])
     # br_n = np.array([tr_n[0],bl_n[1]])
-
+    graphh = False
     if onedim_mods and graph:
         print("⚠️ Warning: Currently cannot print graphs from one-dim mod option.\nContinuing without graphs.\n")
         graph = False
+        graphh = True
 
     if onedim_mods:
         critical_vals, nolub, M, N, critval_coords = make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n)
@@ -310,7 +358,7 @@ def do_all_the_things(onedim_mods, graph, example, MN):
 
     print("\n")
     if onedim_mods:
-        check_onedim_mods(bl_m, tr_m, bl_n, tr_n)
+        check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graphh)
     end_time = time.time()
     tot_time = end_time - start_time
     print("Time elapsed:", "{:.2f}".format(tot_time),"sec")
@@ -406,7 +454,7 @@ def closure_lub(Points):
 
         return list(set(Points))
     
-def plot_weighted_bottleneck(M,N, filename = 'weightedBottlneckDistance'):
+def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance'):
     start_time = time.time()
     """Takes M and N as RectangleModules 
         example: 
@@ -466,40 +514,44 @@ def plot_weighted_bottleneck(M,N, filename = 'weightedBottlneckDistance'):
     val = max(Dist)
     idx = Dist.index(val)
     print('Maximum distance computed:')
-    print(max(Dist))     
-    plt.figure(figsize=(8,8))
-    plt.scatter(T, BB, c= Dist,s = 10, cmap = "summer")
-    plt.scatter(T[idx], BB[idx], marker = 'x', color = 'red')
-    print(T[idx])
-    print(BB[idx])
-    
-    ## plot markers for the lines through critical points
-    b_crit = []
-    theta_crit = []
-    for j in range(len(Lines)):
-        Line = Lines[j]
-        b= Line.b[0]
-        theta = atan(Line.m[1]/Line.m[0])
-        b_crit.append(b)
-        theta_crit.append(theta)
-    
-    for j in range(len(Lines)): 
-        plt.scatter(theta_crit[j], b_crit[j], marker = 'x', color = 'grey')
-        #plt.text(theta_crit[j], b_crit[j], str(Crit[j]))
-    val = max(DD)
-    idx=DD.index(val)
-    plt.scatter(theta_crit[idx], b_crit[idx], marker = 'x', color = 'black')
-    ## plot titles
-    plt.xlabel('theta')
-    plt.ylabel('b')
-    plt.title("Weighted bottleneck distance as a function of theta and b")
-    plt.colorbar(label="Weighted distance", orientation="horizontal")
-    plt.clim(0,max(Dist))
-    plt.savefig(filename)
+    print(max(Dist))
+
+    if graph:     
+        plt.figure(figsize=(8,8))
+        plt.scatter(T, BB, c= Dist,s = 10, cmap = "summer")
+        plt.scatter(T[idx], BB[idx], marker = 'x', color = 'red')
+        # print(T[idx])
+        # print(BB[idx])
+        
+        ## plot markers for the lines through critical points
+        b_crit = []
+        theta_crit = []
+        for j in range(len(Lines)):
+            Line = Lines[j]
+            b= Line.b[0]
+            theta = atan(Line.m[1]/Line.m[0])
+            b_crit.append(b)
+            theta_crit.append(theta)
+        
+        for j in range(len(Lines)): 
+            plt.scatter(theta_crit[j], b_crit[j], marker = 'x', color = 'grey')
+            #plt.text(theta_crit[j], b_crit[j], str(Crit[j]))
+        val = max(DD)
+        idx=DD.index(val)
+        plt.scatter(theta_crit[idx], b_crit[idx], marker = 'x', color = 'black')
+        ## plot titles
+        plt.xlabel('theta')
+        plt.ylabel('b')
+        plt.title("Weighted bottleneck distance as a function of theta and b")
+        plt.colorbar(label="Weighted distance", orientation="horizontal")
+        plt.clim(0,max(Dist))
+        # plt.savefig(filename)
+
     end_time = time.time()
     tot_time = end_time - start_time
     print("Time elapsed:", "{:.2f}".format(tot_time),"sec")
-    plt.show()
+    if graph:
+        plt.show()
     return
     
 def compute_weighted_bottleneck_distances(M,N): 
