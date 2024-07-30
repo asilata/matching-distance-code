@@ -13,6 +13,7 @@ import bunny_smaller
 import omega_pts as omega
 from numpy import linalg as LA
 from math import cos, sin, pi, atan
+import time
 
 def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
     # calculate other coords from tr and bl
@@ -272,6 +273,7 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n):
     return
 
 def do_all_the_things(onedim_mods, graph, example, MN):
+    start_time = time.time()
     tr_m, bl_m, tr_n, bl_n = MN[0], MN[1], MN[2], MN[3]
     # tl_m = np.array([bl_m[0],tr_m[1]])
     # br_m = np.array([tr_m[0],bl_m[1]])
@@ -309,6 +311,9 @@ def do_all_the_things(onedim_mods, graph, example, MN):
     print("\n")
     if onedim_mods:
         check_onedim_mods(bl_m, tr_m, bl_n, tr_n)
+    end_time = time.time()
+    tot_time = end_time - start_time
+    print("Time elapsed:", "{:.2f}".format(tot_time),"sec")
     return
 
 def make_example(M,N):
@@ -402,7 +407,7 @@ def closure_lub(Points):
         return list(set(Points))
     
 def plot_weighted_bottleneck(M,N, filename = 'weightedBottlneckDistance'):
-
+    start_time = time.time()
     """Takes M and N as RectangleModules 
         example: 
         rect_m1 = mod.Rectangle((0,0),(7,7),1)
@@ -491,7 +496,11 @@ def plot_weighted_bottleneck(M,N, filename = 'weightedBottlneckDistance'):
     plt.colorbar(label="Weighted distance", orientation="horizontal")
     plt.clim(0,max(Dist))
     plt.savefig(filename)
+    end_time = time.time()
+    tot_time = end_time - start_time
+    print("Time elapsed:", "{:.2f}".format(tot_time),"sec")
     plt.show()
+    return
     
 def compute_weighted_bottleneck_distances(M,N): 
     """Takes M and N as RectangleModules 
