@@ -7,6 +7,29 @@ import math
 import random as rnd
 import modules as mod
 
+#################### NEW TYPES OF EXAMPLES
+def test_ex_one_rect():
+    # tr and bl stand for top right and bottom left coordinate.
+    # NOTE: these need to be finite values for now. that's on the TODO list. 
+
+    tr_m = np.array([6.0, 6.0])
+    bl_m = np.array([0.0, 0.0])
+
+    tr_n = np.array([8.0, 4.0])
+    bl_n = np.array([4.0, 2.0])
+
+    return tr_m, bl_m, tr_n, bl_n
+
+def test_ex_more_rects():
+    # NOTE: these need to be finite values for now. that's on the TODO list. 
+    # tr, bl 
+    # Example where M has two rectangles:
+    # M = [[(tr),(bl)],
+    #      [(tr),(bl)]]
+    M = [[(6.0, 6.0),(0.0, 0.0)]]
+    N = [[(8.0, 4.0),(4.0, 2.0)],
+        [(2.0, 10.0),(1.0, 5.0)]]
+    return M, N
 
 
 #################### EXAMPLES CURRENTLY WORKING
