@@ -489,7 +489,7 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
     print('There are {} lines through critical points'.format(len(Lines)))
     #print('Bottleneck distance for lines through critical points: ')
     #print(D)
-    print('Maximum distance for lines:')
+    print('Maximum distance for lines through critical points:')
     print(max(DD))
     
     ## computing bottlneck for "every" line
@@ -513,7 +513,7 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
             Dist.append(d)
     val = max(Dist)
     idx = Dist.index(val)
-    print('Maximum distance computed:')
+    print('Maximum distance computed for grid of lines:')
     print(max(Dist))
 
     if graph:     
@@ -588,7 +588,7 @@ def compute_weighted_bottleneck_distances(M,N):
     print('There are {} lines through critical points'.format(len(Lines)))
     #print('Bottleneck distance for lines through critical points: ')
     #print(D)
-    print('Maximum distance for lines:')
+    print('Maximum distance for lines through critical points:')
     print(max(DD))
     
     ## computing bottlneck for "every" line
@@ -612,7 +612,7 @@ def compute_weighted_bottleneck_distances(M,N):
             Dist.append(d)
     val = max(Dist)
     idx = Dist.index(val)
-    print('Maximum distance computed:')
+    print('Maximum distance computed from grid of lines:')
     print(max(Dist))     
     print(T[idx])
     print(BB[idx])
