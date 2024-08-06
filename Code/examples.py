@@ -1,5 +1,6 @@
 import modules as mod
 # from scipy.stats import qmc
+# need this for randomness 
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -376,7 +377,7 @@ def make_poisson(
     scale = max(xDelta, yDelta)
     rng = g
     # radius = 1/(2*(math.sqrt(llama)))
-
+    from scipy.stats import qmc
     engine = qmc.PoissonDisk(d=2, radius=radius, seed=rng)
     # these are in [0,1]
     sample = engine.random(4 * llama)

@@ -10,7 +10,7 @@ import modules as mod
 import examples as ex
 import plot as ourplot
 import csv
-import bunny_smaller
+# import bunny_smaller
 import omega_pts as omega
 from numpy import linalg as LA
 from math import cos, sin, pi, atan
