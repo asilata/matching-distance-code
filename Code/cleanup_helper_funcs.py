@@ -60,7 +60,7 @@ def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
 
     return critpts, crits_no_lub, M, N, critval_coords
 
-def compute_switch_points(critpts, crits_no_lub, makegraphyesno = False, title = 'title'):
+def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, title = 'title'):
 
     ############################
     ### originally from socg_examples.ipynb
@@ -128,7 +128,7 @@ def compute_switch_points(critpts, crits_no_lub, makegraphyesno = False, title =
 
 
     print("3v1:")
-    omegapts_3v1, _, _ = omega.output_alg_3_1(critpts, "socg/" + title)
+    omegapts_3v1, _, _ = omega.output_alg_3_1(critpts, "socg/" + title, prune)
     if makegraphyesno:
         ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1")
     
@@ -136,7 +136,7 @@ def compute_switch_points(critpts, crits_no_lub, makegraphyesno = False, title =
     # algo 2v2 paired = Algorithm 5 in SoCG overleaf
     print("2v2paired:")
     omegapts_2v2_p, _, _, is_inf_2v2p, orderedomegas2v2p = omega.output_alg_2_2_paired(
-        critpts, "socg/" + title
+        critpts, "socg/" + title, prune
     )
 
     if makegraphyesno:
@@ -147,7 +147,7 @@ def compute_switch_points(critpts, crits_no_lub, makegraphyesno = False, title =
 
     print("2v2unpaired:")
     omegapts_2v2_unp, _, _, is_inf_2v2unp_orig , orderedomegas_2v2unp = omega.output_alg_2_2_unpaired(
-        critpts, "socg/" + title
+        critpts, "socg/" + title, prune
     )
     print("______________________________________")
 
@@ -319,7 +319,7 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
     #########
     return
 
-def do_all_the_things(onedim_mods, graph, example, MN):
+def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     start_time = time.time()
     tr_m, bl_m, tr_n, bl_n = MN[0], MN[1], MN[2], MN[3]
     # tl_m = np.array([bl_m[0],tr_m[1]])
@@ -349,7 +349,7 @@ def do_all_the_things(onedim_mods, graph, example, MN):
     lub = omega.closure_lub(critical_vals) 
 
     ### run all three allgoriths 3v1, 2v2 paired , 2v2 unpaired
-    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, makegraphyesno = graph, title = " ")
+    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, makegraphyesno = graph, title = " ")
     # combine the outputs together and deal with slopes vs points
     omega_points_collection, omega_slopes_collection = combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp)
 
@@ -435,7 +435,7 @@ def make_example(M,N):
 
 
 
-
+###########################
 ### Approximation functions 
 
 def closure_lub(Points): 

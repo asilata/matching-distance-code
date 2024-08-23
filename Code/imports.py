@@ -20,8 +20,8 @@ if sys.version_info[0:3] != (3, 9, 6):
 import modules as mod
 import examples as ex
 import plot as ourplot
-import csv
-import bunny_smaller
+# import csv
+# import bunny_smaller
 import omega_pts as omega
 import cleanup_helper_funcs as chf
 import time

@@ -17,7 +17,6 @@ import csv
 
 ###### Convex hull functions ####
 
-
 def in_hull(points, x):
     """Checks if x is in the convex hull of points
     points = array of pts in R^2
@@ -220,9 +219,8 @@ def check_omega_x_above(u, v, w, x, omega):
     else:
         return False
 
-
-#### 2 vs 2 paired version  ####
-
+###############################
+#### 2 vs 2 PAIRED  ####
 
 def check_pts_2v2_paired(
     x, w, u, v
@@ -320,7 +318,7 @@ def check_pts_2v2_paired(
     # if no return True
 
 
-def algo_2v2_paired(CritPts):
+def algo_2v2_paired(CritPts, prune):
     critptscoords = []
     for x in CritPts:
         critptscoords.append(x.coords)
@@ -363,8 +361,11 @@ def algo_2v2_paired(CritPts):
             delta = 2
         else:
             delta = 1
-
-        if check_pts_2v2_paired(x, w, u, v):
+        # prune is true by default, which would make the if check
+        # always true. But by "prune true," we actually mean 
+        # "let through fewer things."
+        # so here we check not prune instead.
+        if check_pts_2v2_paired(x, w, u, v) or not prune:
             omega = (
                 0,
                 delta * (w.coords[0] - x.coords[0]),
@@ -379,7 +380,7 @@ def algo_2v2_paired(CritPts):
 
             if max(x.coords[1] - m * x.coords[0], w.coords[1] - m * w.coords[0]) < min(
                 u.coords[1] - m * u.coords[0], v.coords[1] - m * v.coords[0]
-            ):
+            ) or not prune:
                 Omega_pts.append(omega)
                 info_list.append(
                     [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, m]
@@ -388,7 +389,7 @@ def algo_2v2_paired(CritPts):
     return Omega_pts, info_list
 
 
-def output_alg_2_2_paired(CritPts, name):
+def output_alg_2_2_paired(CritPts, name, prune):
     Pts = []
     Total_info_list = [["omega_pts", "x", "u", "v", "w", "eta", "delta", "m"]]
     set_of_points = set({})
@@ -407,7 +408,7 @@ def output_alg_2_2_paired(CritPts, name):
                         ]
                     ):
                         pts, info_list = algo_2v2_paired(
-                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]]
+                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]], prune
                         )
                         Pts += pts
                         # a first attempt to get rid of duplicates
@@ -444,12 +445,11 @@ def output_alg_2_2_paired(CritPts, name):
 
     return Pts, num_duplicates, len(Pts), is_inf, orderedomegas
 
-
-#####  3 vs 1 new version
+###############################
+#####  3 vs 1 
 # corresponds to Algorithm 3 in the paper as of July 13, 2023
 
-
-def output_alg_3_1(CritPts, name):
+def output_alg_3_1(CritPts, name, prune):
     Pts = []
     Dict_pts = [["omega_pts", "x", "u", "v", "w", "eta", "delta"]]
     set_of_points = set({})
@@ -481,7 +481,7 @@ def output_alg_3_1(CritPts, name):
                     ):
                         pts, dict_pts = algo_3vs1(
                             [CritPts[a], CritPts[b], CritPts[c], CritPts[d]],
-                            all_critptscoords,
+                            all_critptscoords, prune
                         )
                         Pts += pts
                         # a first attempt to get rid of duplicates
@@ -509,18 +509,7 @@ def output_alg_3_1(CritPts, name):
     return Pts, num_duplicates, len(Pts) 
 
 
-# def almost_equal(x, y, tol=1e-3):
-#    return abs(x[0] - y[0]) < tol and abs(x[1] - y[1]) < tol
-
-# def check_in_list(x, list_pts):
-#    for pt in list_pts:
-#        if almost_equal(x, pt):
-#           return True
-#    else:
-#       return False
-
-
-def algo_3vs1(CritPts, all_CritPts):
+def algo_3vs1(CritPts, all_CritPts, prune):
     """discards the omega points that are not valid"""
     ## input: 4 critical points from C_M and C_N
 
@@ -613,7 +602,7 @@ def algo_3vs1(CritPts, all_CritPts):
                     if (
                         check_omega_x_below(u, v, w, x, omega1)
                         and omega1 not in all_CritPts
-                    ):
+                    ) or (not prune):
                         Omega_pts.append(omega1)  ## append
                         ##  add omega pts to dictionary
                         dict_omega_pts.append(
@@ -622,7 +611,7 @@ def algo_3vs1(CritPts, all_CritPts):
 
                     # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
 
-                if check_omega_x_below(u, v, w, x, omega) and omega not in all_CritPts:
+                if (check_omega_x_below(u, v, w, x, omega) and omega not in all_CritPts) or (not prune):
                     Omega_pts.append(omega)  ## in any case we append omegaa
                     # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
                     dict_omega_pts.append(
@@ -630,7 +619,7 @@ def algo_3vs1(CritPts, all_CritPts):
                     )
 
             ### Is indentation correct? yes, same as above
-            if check_x_push_right(x.coords, u.coords, v.coords, w.coords):
+            if check_x_push_right(x.coords, u.coords, v.coords, w.coords) or not prune:
                 # adding because of claudia's null cost comment
                 if u.coords[0] == v.coords[0]:
                     continue
@@ -668,7 +657,7 @@ def algo_3vs1(CritPts, all_CritPts):
                     if (
                         check_omega_x_above(u, v, w, x, omega1)
                         and omega1 not in all_CritPts
-                    ):  # not check_in_list(omega1, critptscoords):
+                    ) or not prune:  # not check_in_list(omega1, critptscoords):
                         Omega_pts.append(omega1)
                         ## dict for debuging
                         # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
@@ -678,7 +667,7 @@ def algo_3vs1(CritPts, all_CritPts):
 
                 if (
                     check_omega_x_above(u, v, w, x, omega) and omega not in all_CritPts
-                ):  # and not check_in_list(omega, critptscoords):
+                ) or not prune:  # and not check_in_list(omega, critptscoords):
                     Omega_pts.append(omega)
                     # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
                     dict_omega_pts.append(
@@ -693,9 +682,8 @@ def algo_3vs1(CritPts, all_CritPts):
 
     return Omega_pts, dict_omega_pts
 
-
-#### Check Omega points 2 vs 2 unpaired
-
+###############################
+####  2 vs 2 UNpaired
 
 def check_omega_3(omega, u, v, w, x):
     Q = {}  ## dictionary of quadrants
@@ -815,9 +803,7 @@ def check_omega_3(omega, u, v, w, x):
 
         return False
 
-
-# IN PROGRESS
-def algo_2v2_unpaired(CritPts, all_CritPts):
+def algo_2v2_unpaired(CritPts, all_CritPts, prune):
     # x paired with w
     # u paired with v
     # x,v on one side of line, u,w on the other side
@@ -847,6 +833,10 @@ def algo_2v2_unpaired(CritPts, all_CritPts):
                 w = f
         CritPtsno_x_v_w = CritPts_no_x_v.copy()
         CritPtsno_x_v_w.remove(w)
+        # setting eta and delta to any value to get rid of type errors 
+        # when checking inequality/equality (literal vs unbounded if unset)
+        eta = 1
+        delta = 1
         for g in CritPtsno_x_v_w:
             if g == v:
                 continue
@@ -861,7 +851,7 @@ def algo_2v2_unpaired(CritPts, all_CritPts):
             else:
                 delta = 1
 
-        if check_pts_2v2_paired(x, v, w, u):
+        if check_pts_2v2_paired(x, v, w, u) or not prune:
             if (
                 (lub(u, v) == u.coords and lub(x, w) == w.coords)
                 or (lub(u, v) == v.coords and lub(x, w) == x.coords)
@@ -941,7 +931,7 @@ def algo_2v2_unpaired(CritPts, all_CritPts):
             if (
                 check_omega_3(omega, u.coords, v.coords, w.coords, x.coords)
                 and omega not in all_CritPts
-            ):  ## corresponds to CheckOmega2 in the pseudo code
+            ) or not prune:  ## corresponds to CheckOmega2 in the pseudo code
                 Omega_pts.append(omega)
                 info_list.append(
                     [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None]
@@ -949,28 +939,7 @@ def algo_2v2_unpaired(CritPts, all_CritPts):
 
     return Omega_pts, info_list
 
-
-### least upper bound function
-
-
-def lub(point1, point2):
-    """
-    Finds the least upper bound of two points.
-
-    Parameters:
-    - point1: Tuple representing the first point.
-    - point2: Tuple representing the second point.
-
-    Returns:
-    Tuple representing the least upper bound of the two points.
-    """
-    return (
-        max(point1.coords[0], point2.coords[0]),
-        max(point1.coords[1], point2.coords[1]),
-    )
-
-
-def output_alg_2_2_unpaired(CritPts, name):
+def output_alg_2_2_unpaired(CritPts, name, prune):
     Pts = []
     Dict_pts = [["omega_pts", "x", "u", "v", "w", "eta", "delta", "m"]]
     set_of_points = set({})
@@ -1002,7 +971,7 @@ def output_alg_2_2_unpaired(CritPts, name):
                     ):
                         pts, dict_pts = algo_2v2_unpaired(
                             [CritPts[a], CritPts[b], CritPts[c], CritPts[d]],
-                            all_critptscoords,
+                            all_critptscoords, prune
                         )
                         Pts += pts
                         # a first attempt to get rid of duplicates
@@ -1040,6 +1009,25 @@ def output_alg_2_2_unpaired(CritPts, name):
 
     return Pts, num_duplicates, len(Pts), is_inf, orderedomegas
 
+######################################
+
+### least upper bound function
+
+def lub(point1, point2):
+    """
+    Finds the least upper bound of two points.
+
+    Parameters:
+    - point1: Tuple representing the first point.
+    - point2: Tuple representing the second point.
+
+    Returns:
+    Tuple representing the least upper bound of the two points.
+    """
+    return (
+        max(point1.coords[0], point2.coords[0]),
+        max(point1.coords[1], point2.coords[1]),
+    )
 
 def closure_lub(CritPts):
     """
