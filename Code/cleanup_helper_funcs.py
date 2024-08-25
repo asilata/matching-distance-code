@@ -123,18 +123,18 @@ def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, 
     # algo 3v1 = Algorithm 3 in SoCG overleaf
     # never has points at infinity, so we can plot all points
     print("______________________________________")
-    print("Running the three algorithms.")
-    print("-------------")
+    # print("Running the three algorithms.")
+    # print("-------------")
 
 
-    print("3v1:")
+    # print("3v1:")
     omegapts_3v1, _, _ = omega.output_alg_3_1(critpts, "socg/" + title, prune)
     if makegraphyesno:
         ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1")
     
     print("-------------")
     # algo 2v2 paired = Algorithm 5 in SoCG overleaf
-    print("2v2paired:")
+    # print("2v2paired:")
     omegapts_2v2_p, _, _, is_inf_2v2p, orderedomegas2v2p = omega.output_alg_2_2_paired(
         critpts, "socg/" + title, prune
     )
@@ -145,7 +145,7 @@ def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, 
     # algo 2v2 unpaired = Algorithm 7 in SoCG overleaf
     print("-------------")
 
-    print("2v2unpaired:")
+    # print("2v2unpaired:")
     omegapts_2v2_unp, _, _, is_inf_2v2unp_orig , orderedomegas_2v2unp = omega.output_alg_2_2_unpaired(
         critpts, "socg/" + title, prune
     )
@@ -245,9 +245,10 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
     matching_dist = max(Wb)
     idx = Wb.index(matching_dist)
 
-    print('Matching distance is {},'.format(matching_dist))
-    print('and is attained at the line with slope {} \nand intercept {}.'.format(Lines[idx].m, Lines[idx].b))
+    # print('Matching distance is {},'.format(matching_dist))
+    # print('and is attained at the line with slope {} \nand intercept {}.'.format(Lines[idx].m, Lines[idx].b))
 
+    print('Matching dist: {} with slope {} and intercept {}.'.format(matching_dist,Lines[idx].m, Lines[idx].b))
     return 
 
 def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
@@ -353,10 +354,10 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     # combine the outputs together and deal with slopes vs points
     omega_points_collection, omega_slopes_collection = combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp)
 
-    print("\n")
+    # print("\n")
     compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N)
 
-    print("\n")
+    # print("\n")
     if onedim_mods:
         check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graphh)
     end_time = time.time()
@@ -486,11 +487,11 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
                 Lines.append(line)
                 Crit.append([Crit_MN[i], Crit_MN[j]])
                 DD.append(d)
-    print('There are {} lines through critical points'.format(len(Lines)))
+    # print('There are {} lines through critical points'.format(len(Lines)))
     #print('Bottleneck distance for lines through critical points: ')
     #print(D)
-    print('Maximum distance for lines through critical points:')
-    print(max(DD))
+    print('Maximum distance for lines through critical points: {:.2f}'.format(max(DD)))
+    # print(max(DD))
     
     ## computing bottlneck for "every" line
     
@@ -513,8 +514,8 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
             Dist.append(d)
     val = max(Dist)
     idx = Dist.index(val)
-    print('Maximum distance computed for grid of lines:')
-    print(max(Dist))
+    print('Maximum distance computed for grid of lines: {:.2f}'.format(max(Dist)))
+    # print(max(Dist))
 
     if graph:     
         plt.figure(figsize=(8,8))
@@ -623,4 +624,38 @@ def compute_weighted_bottleneck_distances(M,N):
     L_max = mod.Line((c/maxm, s/maxm), (BB[idx],-BB[idx]))
     return T,BB, idx, L_max
 
+######################
+# EXPERIMENTS
 
+def to_prune_or_not_to_prune(M,N):
+    # prune by default true
+    # what we want: 
+    # prune TRUE means let algo decide if take the thing
+    # prune FALSE means always return all the things
+    ###################
+    print("Rectangles in M: {} and N: {}. Total: {}.".format(len(M), len(N), len(M) + len(N)))
+    print("PRUNE POINTS")
+    prune = True
+
+    ######### M AND N can have MORE THAN ONE RECTANGLE
+    # set one_rect_mods -> FALSE
+    # M,N = ex.test_ex_more_rects()
+
+    graph = False
+    one_rect_mods = False
+
+    ##################
+    tr_m, bl_m, tr_n, bl_n = ex.test_ex_one_rect()
+    example = make_example(M,N)
+    MN = [tr_m, bl_m, tr_n, bl_n]
+    do_all_the_things(one_rect_mods, graph, example, MN, prune)
+    print("\n")
+    print("DON'T PRUNE POINTS")
+    prune = False
+    do_all_the_things(one_rect_mods, graph, example, MN, prune)
+
+    # also do the approx matching dist
+    print("\nApproximate Matching Distance:")
+    Mmod = example[2]
+    Nmod = example[3]
+    plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')

@@ -420,11 +420,13 @@ def output_alg_2_2_paired(CritPts, name, prune):
 
     # print("**********")
     num_duplicates = len(Pts)
-    print("Computed {} points (with duplicates)".format(num_duplicates))
+    # print("Computed {} points (with duplicates)".format(num_duplicates))
 
     # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
-    print("Without duplicates {}".format(len(Pts)))
+    # print("Without duplicates {}".format(len(Pts)))
+
+    print("2v2paired: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
@@ -493,11 +495,13 @@ def output_alg_3_1(CritPts, name, prune):
 
     # print("**********")
     num_duplicates = len(Pts)
-    print("Computed {} points (with duplicates)".format(num_duplicates))
+    # print("Computed {} points (with duplicates)".format(num_duplicates))
 
     # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
-    print("Without duplicates {}".format(len(Pts)))
+    # print("Without duplicates {}".format(len(Pts)))
+
+    print("3v1: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
@@ -983,11 +987,13 @@ def output_alg_2_2_unpaired(CritPts, name, prune):
 
     # print("**********")
     num_duplicates = len(Pts)
-    print("Computed {} points (with duplicates)".format(num_duplicates))
+    # print("Computed {} points (with duplicates)".format(num_duplicates))
 
     # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
-    print("Without duplicates {}".format(len(Pts)))
+    # print("Without duplicates {}".format(len(Pts)))
+
+    print("2v2unpaired: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
