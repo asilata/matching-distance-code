@@ -380,7 +380,7 @@ def algo_2v2_paired(CritPts, prune):
 
             if max(x.coords[1] - m * x.coords[0], w.coords[1] - m * w.coords[0]) < min(
                 u.coords[1] - m * u.coords[0], v.coords[1] - m * v.coords[0]
-            ) or not prune:
+            ):
                 Omega_pts.append(omega)
                 info_list.append(
                     [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, m]
@@ -564,7 +564,7 @@ def algo_3vs1(CritPts, all_CritPts, prune):
                 delta = 1
 
             ## Is indentation correct? yes same as paper
-            if check_x_push_up(x.coords, u.coords, v.coords, w.coords):
+            if check_x_push_up(x.coords, u.coords, v.coords, w.coords) or not prune:
                 # adding this to include claudia's comment about matching having null cost
                 if u.coords[1] == v.coords[1]:
                     continue
@@ -902,7 +902,7 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                     if (
                         check_omega_3(omega, u.coords, v.coords, w.coords, x.coords)
                         and omega not in all_CritPts
-                    ):
+                    ) or not prune:
                         Omega_pts.append(omega)
                         info_list.append(
                             [
