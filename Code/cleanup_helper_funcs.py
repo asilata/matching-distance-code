@@ -659,3 +659,76 @@ def to_prune_or_not_to_prune(M,N):
     Mmod = example[2]
     Nmod = example[3]
     plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
+
+# Random rectangles
+def plot_rectangles(M,N):
+    from matplotlib import patches
+    # Get rectangles from the example function
+    # M, N = ex.test_ex_more_rects()
+
+    # Create a new figure and axis
+    fig, ax = plt.subplots()
+
+    # Plot rectangles in M (colored red)
+    for rect in M:
+        tr, bl = rect
+        width = tr[0] - bl[0]
+        height = tr[1] - bl[1]
+        ax.add_patch(patches.Rectangle(bl, width, height, linewidth=1, edgecolor='r', facecolor='red', alpha=0.5))
+
+    # Plot rectangles in N (colored blue)
+    for rect in N:
+        tr, bl = rect
+        width = tr[0] - bl[0]
+        height = tr[1] - bl[1]
+        ax.add_patch(patches.Rectangle(bl, width, height, linewidth=1, edgecolor='b', facecolor='blue', alpha=0.5))
+
+    # Set the limits of the plot
+    ax.set_xlim(-1, 10)
+    ax.set_ylim(-1, 12)
+
+    # Set the aspect of the plot to be equal
+    ax.set_aspect('equal')
+
+    # Show the plot
+    plt.show()
+
+
+def generate_random_rectangles(num_M, num_N, seed = None):
+    # Set the random seed if provided
+    if seed is not None:
+        rnd.seed(seed)
+
+        def create_random_rectangle():
+            while True:
+                # Generate bottom-left corner (bl)
+                bl_x = rnd.uniform(0, 15)
+                bl_y = rnd.uniform(0, 15)
+                # Generate top-right corner (tr)
+                tr_x = rnd.uniform(0, 15)
+                tr_y = rnd.uniform(0, 15)
+                # Ensure width and height are at least 1
+                width = tr_x - bl_x
+                height = tr_y - bl_y
+                if width >= 1 and height >= 1:
+                    return [(tr_x, tr_y), (bl_x, bl_y)]
+                else:
+                    while width < 1 or height < 1:
+                        # Generate bottom-left corner (bl)
+                        bl_x = rnd.uniform(0, 15)
+                        bl_y = rnd.uniform(0, 15)
+                        # Generate top-right corner (tr)
+                        tr_x = rnd.uniform(0, 15)
+                        tr_y = rnd.uniform(0, 15)
+                        width = tr_x - bl_x
+                        height = tr_y - bl_y
+                    return [(tr_x, tr_y), (bl_x, bl_y)]
+
+
+    # Generate M with num_M rectangles
+    M = [create_random_rectangle() for _ in range(num_M)]
+
+    # Generate N with num_N rectangles
+    N = [create_random_rectangle() for _ in range(num_N)]
+
+    return M, N
