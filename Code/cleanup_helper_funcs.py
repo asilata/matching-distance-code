@@ -780,3 +780,26 @@ def generate_random_rectangles(num_M, num_N, seed = None):
     N = [create_random_rectangle() for _ in range(num_N)]
 
     return M, N
+
+def append_to_csv(file_path, new_data):
+    column_name = new_data['Label']
+    # Read the existing CSV into a list of dictionaries
+    with open(file_path, 'r') as csv_file:
+        reader = csv.DictReader(csv_file)
+        rows = list(reader)
+        
+    print(rows[:2])
+    
+    # Add the new data to each row based on the 'Label' column
+    for row in rows:
+        key = row['Label']  # Now we explicitly look for the 'Label' column
+        if key in new_data:
+            row[column_name] = new_data[key]
+    print(rows[:2])
+    
+    # Write the updated rows back to the CSV
+    with open(file_path, 'w', newline='') as csv_file:
+        fieldnames = reader.fieldnames + [column_name]
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
