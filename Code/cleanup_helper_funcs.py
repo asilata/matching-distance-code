@@ -249,7 +249,7 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
     # print('and is attained at the line with slope {} \nand intercept {}.'.format(Lines[idx].m, Lines[idx].b))
 
     print('Matching dist: {} with slope {} and intercept {}.'.format(matching_dist,Lines[idx].m, Lines[idx].b))
-    return 
+    return matching_dist
 
 def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
     # # figuring stuff out: 
@@ -355,7 +355,7 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     omega_points_collection, omega_slopes_collection = combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp)
 
     # print("\n")
-    compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N)
+    matching_dist = compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N)
 
     # print("\n")
     if onedim_mods:
@@ -363,7 +363,7 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     end_time = time.time()
     tot_time = end_time - start_time
     print("Time elapsed:", "{:.2f}".format(tot_time),"sec")
-    return
+    return matching_dist
 
 def make_example(M,N):
     # this is for two modules M and N 
@@ -491,6 +491,7 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
     #print('Bottleneck distance for lines through critical points: ')
     #print(D)
     print('Maximum distance for lines through critical points: {:.2f}'.format(max(DD)))
+    max_dist_critpts = max(DD)
     # print(max(DD))
     
     ## computing bottlneck for "every" line
@@ -515,6 +516,7 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
     val = max(Dist)
     idx = Dist.index(val)
     print('Maximum distance computed for grid of lines: {:.2f}'.format(max(Dist)))
+    max_grids_lines = max(Dist)
     # print(max(Dist))
 
     if graph:     
@@ -553,7 +555,7 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
     print("Time elapsed:", "{:.2f}".format(tot_time),"sec")
     if graph:
         plt.show()
-    return
+    return max_dist_critpts, max_grids_lines
     
 def compute_weighted_bottleneck_distances(M,N): 
     """Takes M and N as RectangleModules 
@@ -659,6 +661,52 @@ def to_prune_or_not_to_prune(M,N):
     Mmod = example[2]
     Nmod = example[3]
     plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
+
+def to_prune_or_not_to_prune_csv(M,N):
+    # prune by default true
+    # what we want: 
+    # prune TRUE means let algo decide if take the thing
+    # prune FALSE means always return all the things
+    ###################
+    print("Rectangles in M: {} and N: {}. Total: {}.".format(len(M), len(N), len(M) + len(N)))
+    print("PRUNE POINTS")
+    prune = True
+
+    ######### M AND N can have MORE THAN ONE RECTANGLE
+    # set one_rect_mods -> FALSE
+    # M,N = ex.test_ex_more_rects()
+
+    graph = False
+    one_rect_mods = False
+
+    ################## PRUNE
+    tr_m, bl_m, tr_n, bl_n = ex.test_ex_one_rect()
+    example = make_example(M,N)
+    MN = [tr_m, bl_m, tr_n, bl_n]
+    prune_start_time = time.time()
+    prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
+    print("\n")
+    prune_end_time = time.time()
+    prune_time = prune_end_time - prune_start_time
+
+    ################# NO PRUNE
+    print("DON'T PRUNE POINTS")
+    prune = False
+    no_prune_start_time = time.time()
+    no_prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
+    no_prune_end_time = time.time()
+    no_prune_time = no_prune_end_time - no_prune_start_time
+    
+    #################### APPROX
+    # also do the approx matching dist
+    print("\nApproximate Matching Distance:")
+    Mmod = example[2]
+    Nmod = example[3]
+    approx_start_time = time.time()
+    max_dist_critpts, max_grids_lines = plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
+    approx_end_time = time.time()
+    approx_time = approx_end_time - approx_start_time
+    return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
 
 # Random rectangles
 def plot_rectangles(M,N):

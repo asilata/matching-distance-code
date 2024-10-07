@@ -1,0 +1,11 @@
+Label,Run
+rects in M,1
+rects in N,2
+seed,10
+Prune Matching dist,1.2990969986369292
+No Prune Matching dist,1.2990969986369292
+Approx Matching dist through cps,1.2666602623495389
+Approx Matching dist grid,1.2990969986369287
+Time Prune,16.190306186676025
+Time No Prune,76.20312213897705
+Time Approx,0.20015907287597656
