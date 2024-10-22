@@ -709,7 +709,7 @@ def to_prune_or_not_to_prune_csv(M,N):
     return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
 
 # Random rectangles
-def plot_rectangles(M,N):
+def plot_rectangles(M,N,img_path):
     from matplotlib import patches
     # Get rectangles from the example function
     # M, N = ex.test_ex_more_rects()
@@ -738,8 +738,17 @@ def plot_rectangles(M,N):
     # Set the aspect of the plot to be equal
     ax.set_aspect('equal')
 
+    import matplotlib.lines as mlines
+
+    eight = mlines.Line2D([], [], color='red', marker='D', ls='', label='M')
+    nine = mlines.Line2D([], [], color='blue', marker='D', ls='', label='N')
+    # etc etc
+    ax.legend(handles=[eight, nine])
+
+    fig.savefig(img_path, format='png', dpi=250)
+
     # Show the plot
-    plt.show()
+    # plt.show()
 
 
 def generate_random_rectangles(num_M, num_N, seed = None):
