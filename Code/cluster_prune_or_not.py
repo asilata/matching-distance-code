@@ -3,6 +3,7 @@ import sys
 from imports import *
 import csv
 import random
+import settings
 
 
 def make_csv():
@@ -50,10 +51,11 @@ if __name__ == '__main__':
             file_path = '../output/cluster/output.csv'
             img_path = '../output/cluster/img' + str(i) +'.png'
 
-
             M, N = chf.generate_random_rectangles(rects_in_M,rects_in_N, seed=seed)
 
-            chf.plot_rectangles(M,N, img_path)
+            if settings.save_figure:
+                chf.plot_rectangles(M,N, img_path)
+
             prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines = chf.to_prune_or_not_to_prune_csv(M,N)
 
             data = {

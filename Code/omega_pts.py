@@ -11,6 +11,7 @@ from scipy.optimize import linprog
 from itertools import combinations
 
 import modules as mod
+import settings
 
 import csv
 
@@ -426,7 +427,8 @@ def output_alg_2_2_paired(CritPts, name, prune):
     Pts = list(set(Pts))
     # print("Without duplicates {}".format(len(Pts)))
 
-    print("2v2paired: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
+    if settings.print_output:
+        print("2v2paired: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
@@ -500,8 +502,8 @@ def output_alg_3_1(CritPts, name, prune):
     # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
     # print("Without duplicates {}".format(len(Pts)))
-
-    print("3v1: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
+    if settings.print_output:
+        print("3v1: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
@@ -992,8 +994,8 @@ def output_alg_2_2_unpaired(CritPts, name, prune):
     # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
     # print("Without duplicates {}".format(len(Pts)))
-
-    print("2v2unpaired: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
+    if settings.print_output:
+        print("2v2unpaired: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
