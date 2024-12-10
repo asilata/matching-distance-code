@@ -682,9 +682,8 @@ def to_prune_or_not_to_prune_csv(M,N):
     # prune TRUE means let algo decide if take the thing
     # prune FALSE means always return all the things
     ###################
-    if settings.print_output:
-        print("Rectangles in M: {} and N: {}. Total: {}.".format(len(M), len(N), len(M) + len(N)))
-        print("PRUNE POINTS")
+    #print("Rectangles in M: {} and N: {}. Total: {}.".format(len(M), len(N), len(M) + len(N)))
+    #print("PRUNE POINTS")
     prune = True
 
     ######### M AND N can have MORE THAN ONE RECTANGLE
@@ -700,31 +699,29 @@ def to_prune_or_not_to_prune_csv(M,N):
     MN = [tr_m, bl_m, tr_n, bl_n]
     prune_start_time = time.time()
     prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
-    if settings.print_output:
-        print("\n")
+    #print("\n")
     prune_end_time = time.time()
     prune_time = prune_end_time - prune_start_time
 
     ################# NO PRUNE
-    if settings.print_output:
-        print("DON'T PRUNE POINTS")
-    prune = False
-    no_prune_start_time = time.time()
-    no_prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
-    no_prune_end_time = time.time()
-    no_prune_time = no_prune_end_time - no_prune_start_time
+    #print("DON'T PRUNE POINTS")
+    #prune = False
+    #no_prune_start_time = time.time()
+    #no_prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
+    #no_prune_end_time = time.time()
+    #no_prune_time = no_prune_end_time - no_prune_start_time
     
     #################### APPROX
     # also do the approx matching dist
-    if settings.print_output:
-        print("\nApproximate Matching Distance:")
+    #print("\nApproximate Matching Distance:")
     Mmod = example[2]
     Nmod = example[3]
     approx_start_time = time.time()
     max_dist_critpts, max_grids_lines = plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
     approx_end_time = time.time()
     approx_time = approx_end_time - approx_start_time
-    return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
+    #return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
+    return prune_time, approx_time, prune_match_dist, max_dist_critpts, max_grids_lines
 
 # Random rectangles
 def plot_rectangles(M,N,img_path):
