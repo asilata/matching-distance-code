@@ -45,7 +45,7 @@ if __name__ == '__main__':
         make_csv(file_path)
 
     else:
-        for i in range(1,3):
+        for i in range(1,2):
             # default (1,2) for non-cluster use
             rects_in_M = i
             rects_in_N = 1

@@ -211,51 +211,63 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
     sloppyslopestoiterateover = omega_slopes_collection
 
     Lines = []
-    Wb  = []
-
 
     ## Lines through pairs of points 
-
+    all_bottle_time = 0
     for x in range(len(pointstoiterateover)):
         for y in range(x, len(pointstoiterateover)):
             L = mod.line_through_2points(pointstoiterateover[x], pointstoiterateover[y]) ## here is the issue with none type error
             if L.positive == True:
                 Lines.append(L)
-                w = mod.compute_weighted_bottleneck(M,N,L)
-                Wb.append(w)
 
-                ##########
     ## Lines through a point and with a given slope
-
     for x in range(len(closureMN)): 
         for y in range(len(sloppyslopestoiterateover)):
             L = mod.Line(sloppyslopestoiterateover[y], closureMN[x])
             if L.positive == True:
-                Lines.append(L)
-                w = mod.compute_weighted_bottleneck(M,N,L)
-                Wb.append(w)
-                
+                Lines.append(L)         
 
 
-    # Lines of slope 1 through one point 
-                
+    # Lines of slope 1 through one point          
     for x in range(len(pointstoiterateover)):
         L = mod.Line((1,1), pointstoiterateover[x])
         if L.positive == True:
             Lines.append(L)
+
+    if settings.actually_compute_matching_distance:
+        # compute match dist separately out of for loops
+        all_ws = []
+        time_bottleneck = time.time()
+        for L in Lines:
             w = mod.compute_weighted_bottleneck(M,N,L)
-            Wb.append(w) 
-                
-            
-    matching_dist = max(Wb)
-    idx = Wb.index(matching_dist)
+            all_ws.append(w)
+        time_bottleneck_end = time.time()
+        
+        matching_dist = max(all_ws)
+        idx = all_ws.index(matching_dist)
+    else:
+        time_bottleneck = 0
+        time_bottleneck_end = 0
+        matching_dist = -1
+
+    # print("alt match dist {:.3f}".format(match_dist_2))
+
+    
+    # all_bottle_time += (bottletime_7 - bottletime_6)
+    # print("BOTTLETIME", all_bottle_time)
+
+    
 
     # print('Matching distance is {},'.format(matching_dist))
     # print('and is attained at the line with slope {} \nand intercept {}.'.format(Lines[idx].m, Lines[idx].b))
-    if settings.print_output:
+    if settings.print_output and settings.actually_compute_matching_distance:
         print('Matching dist: {:.3f} with slope ({:.3f}, {:.3f}) and intercept ({:.3f}, {:.3f}).'.format(matching_dist, Lines[idx].m[0], Lines[idx].m[1], Lines[idx].b[0], Lines[idx].b[1]))
     if settings.compare_line_counts:
         print('Lines counted: {}'.format(len(Lines)))
+    if settings.print_output and settings.actually_compute_matching_distance:
+        print("Time to compute bottleneck dists: {:.3f} sec".format(time_bottleneck_end - time_bottleneck))
+    if settings.actually_compute_matching_distance == False:
+        print("WARNING: no exact matching distance computed! ")
     return matching_dist
 
 def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
@@ -379,7 +391,8 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     if settings.print_output:
         print("Time elapsed:", "{:.3f}".format(tot_time),"sec")
         print("Time to compute switch pts:", "{:.3f}".format(switch_time),"sec")
-        print("Time to compute match dist:", "{:.3f}".format(match_time),"sec")
+        if settings.actually_compute_matching_distance:
+            print("Time to compute match dist:", "{:.3f}".format(match_time),"sec")
         print("______________________________________\nApprox\n----")
 
     return matching_dist
@@ -580,6 +593,10 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
     tot_time = end_time - start_time
     if settings.print_output:
         print("Time elapsed:", "{:.3f}".format(tot_time),"sec")
+        print("____________________")
+        print("END")
+        print("____________________")
+
     # if settings.compare_line_counts:
     #     print("hi, this is where line counts go")
     # if settings.save_figure:
