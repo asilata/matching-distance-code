@@ -8,5 +8,5 @@ print_output = TF
 save_figure = TF
 compare_line_counts = TF and print_output
 
-# for tests to run faster
+# for tests to run faster, set this to False. Note that this will NOT compute the bottleneck distance if false, which is the main point of the code.
 actually_compute_matching_distance = True
