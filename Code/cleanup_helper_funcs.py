@@ -253,7 +253,9 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
     # print('Matching distance is {},'.format(matching_dist))
     # print('and is attained at the line with slope {} \nand intercept {}.'.format(Lines[idx].m, Lines[idx].b))
     if settings.print_output:
-        print('Matching dist: {} with slope {} and intercept {}.'.format(matching_dist,Lines[idx].m, Lines[idx].b))
+        print('Matching dist: {:.3f} with slope ({:.3f}, {:.3f}) and intercept ({:.3f}, {:.3f}).'.format(matching_dist, Lines[idx].m[0], Lines[idx].m[1], Lines[idx].b[0], Lines[idx].b[1]))
+    if settings.compare_line_counts:
+        print('Lines counted: {}'.format(len(Lines)))
     return matching_dist
 
 def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
@@ -356,13 +358,18 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     # using the parent module information 
     lub = omega.closure_lub(critical_vals) 
 
+    start_time_switch_pts = time.time()
     ### run all three allgoriths 3v1, 2v2 paired , 2v2 unpaired
     critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, makegraphyesno = graph, title = " ")
     # combine the outputs together and deal with slopes vs points
     omega_points_collection, omega_slopes_collection = combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp)
+    end_time_switch_pts = time.time()
+    switch_time = end_time_switch_pts - start_time_switch_pts
 
-    # print("\n")
+    start_time_match_dist = time.time()
     matching_dist = compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N)
+    end_time_match_dist = time.time()
+    match_time = end_time_match_dist - start_time_match_dist
 
     # print("\n")
     if onedim_mods:
@@ -370,7 +377,11 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     end_time = time.time()
     tot_time = end_time - start_time
     if settings.print_output:
-        print("Time elapsed:", "{:.2f}".format(tot_time),"sec")
+        print("Time elapsed:", "{:.3f}".format(tot_time),"sec")
+        print("Time to compute switch pts:", "{:.3f}".format(switch_time),"sec")
+        print("Time to compute match dist:", "{:.3f}".format(match_time),"sec")
+        print("______________________________________\nApprox\n----")
+
     return matching_dist
 
 def make_example(M,N):
@@ -498,8 +509,10 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
     # print('There are {} lines through critical points'.format(len(Lines)))
     #print('Bottleneck distance for lines through critical points: ')
     #print(D)
-    if settings.print_output:     
-        print('Maximum distance for lines through critical points: {:.2f}'.format(max(DD)))
+    if settings.print_output: 
+        print('Maximum distance for lines through critical points: {:.3f}'.format(max(DD)))
+    if settings.compare_line_counts:
+        print('Lines counted crit pts: {}'.format(len(Lines)))   
     max_dist_critpts = max(DD)
     # print(max(DD))
     
@@ -525,11 +538,12 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
     val = max(Dist)
     idx = Dist.index(val)
     if settings.print_output:
-        print('Maximum distance computed for grid of lines: {:.2f}'.format(max(Dist)))
+        print('Maximum distance computed for grid of lines: {:.3f}'.format(max(Dist)))
+        print('Number of grid points: {}'.format(len(Dist)))
     max_grids_lines = max(Dist)
     # print(max(Dist))
 
-    if graph:     
+    if settings.save_figure and graph:     
         plt.figure(figsize=(8,8))
         plt.scatter(T, BB, c= Dist,s = 10, cmap = "summer")
         plt.scatter(T[idx], BB[idx], marker = 'x', color = 'red')
@@ -558,14 +572,18 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
         plt.title("Weighted bottleneck distance as a function of theta and b")
         plt.colorbar(label="Weighted distance", orientation="horizontal")
         plt.clim(0,max(Dist))
+        plt.show()
+        # plt.show()
         # plt.savefig(filename)
 
     end_time = time.time()
     tot_time = end_time - start_time
     if settings.print_output:
-        print("Time elapsed:", "{:.2f}".format(tot_time),"sec")
-    if graph:
-        plt.show()
+        print("Time elapsed:", "{:.3f}".format(tot_time),"sec")
+    # if settings.compare_line_counts:
+    #     print("hi, this is where line counts go")
+    # if settings.save_figure:
+    #     plt.show()
     return max_dist_critpts, max_grids_lines
     
 def compute_weighted_bottleneck_distances(M,N): 
@@ -599,10 +617,10 @@ def compute_weighted_bottleneck_distances(M,N):
                 Lines.append(line)
                 Crit.append([Crit_MN[i], Crit_MN[j]])
                 DD.append(d)
-    if settings.print_output:
-        print('There are {} lines through critical points'.format(len(Lines)))
-        print('Maximum distance for lines through critical points:')
-        print(max(DD))
+    # if settings.print_output:
+    #     print('Lines counted {} again'.format(len(Lines)))
+    #     print('Maximum distance for lines through critical points:')
+    #     print(max(DD))
     
     ## computing bottlneck for "every" line
     

@@ -1,0 +1,121 @@
+Rects in M:  1
+Rects in N:  1
+______________________________________ 1
+Exact
+----
+3v1: Computed 122 pts; 54 deduplicated
+-------------
+2v2paired: Computed 22 pts; 18 deduplicated
+-------------
+2v2unpaired: Computed 17 pts; 16 deduplicated
+______________________________________
+Matching dist: 3.276 with slope (0.955, 1.000) and intercept (-0.823, 0.823).
+Lines counted: 5238
+Time elapsed: 0.281 sec
+Time to compute switch pts: 0.216 sec
+Time to compute match dist: 0.065 sec
+______________________________________
+Approx
+----
+Maximum distance for lines through critical points: 3.276
+Lines counted crit pts: 20
+Maximum distance computed for grid of lines: 3.276
+Number of grid points: 9800
+Time elapsed: 0.076 sec
+-----------
+Rects in M:  1
+Rects in N:  1
+______________________________________ 2
+Exact
+----
+3v1: Computed 108 pts; 49 deduplicated
+-------------
+2v2paired: Computed 15 pts; 14 deduplicated
+-------------
+2v2unpaired: Computed 20 pts; 18 deduplicated
+______________________________________
+Matching dist: 0.697 with slope (1.000, 0.920) and intercept (-0.555, 0.555).
+Lines counted: 4527
+Time elapsed: 0.272 sec
+Time to compute switch pts: 0.226 sec
+Time to compute match dist: 0.046 sec
+______________________________________
+Approx
+----
+Maximum distance for lines through critical points: 0.697
+Lines counted crit pts: 20
+Maximum distance computed for grid of lines: 0.697
+Number of grid points: 9800
+Time elapsed: 0.071 sec
+Rects in M:  1
+Rects in N:  1
+______________________________________ 3
+Exact
+----
+3v1: Computed 141 pts; 73 deduplicated
+-------------
+2v2paired: Computed 15 pts; 15 deduplicated
+-------------
+2v2unpaired: Computed 28 pts; 26 deduplicated
+______________________________________
+Matching dist: 2.908 with slope (0.891, 1.000) and intercept (-1.727, 1.727).
+Lines counted: 8072
+Time elapsed: 0.411 sec
+Time to compute switch pts: 0.199 sec
+Time to compute match dist: 0.213 sec
+______________________________________
+Approx
+----
+Maximum distance for lines through critical points: 2.908
+Lines counted crit pts: 24
+Maximum distance computed for grid of lines: 2.908
+Number of grid points: 9800
+Time elapsed: 0.114 sec
+Rects in M:  1
+Rects in N:  1
+______________________________________ 4
+Exact
+----
+3v1: Computed 111 pts; 52 deduplicated
+-------------
+2v2paired: Computed 15 pts; 13 deduplicated
+-------------
+2v2unpaired: Computed 29 pts; 28 deduplicated
+______________________________________
+Matching dist: 0.945 with slope (0.826, 1.000) and intercept (5.011, -5.011).
+Lines counted: 5608
+Time elapsed: 0.280 sec
+Time to compute switch pts: 0.212 sec
+Time to compute match dist: 0.068 sec
+______________________________________
+Approx
+----
+Maximum distance for lines through critical points: 0.945
+Lines counted crit pts: 20
+Maximum distance computed for grid of lines: 0.945
+Number of grid points: 9800
+Time elapsed: 0.076 sec
+Rects in M:  2
+Rects in N:  1
+______________________________________5
+Exact
+----
+3v1: Computed 1117 pts; 533 deduplicated
+-------------
+2v2paired: Computed 124 pts; 106 deduplicated
+-------------
+2v2unpaired: Computed 202 pts; 180 deduplicated
+______________________________________
+Matching dist: 2.869 with slope (1.000, 0.837) and intercept (2.872, -2.872).
+Lines counted: 387115
+Time elapsed: 13.937 sec
+Time to compute switch pts: 1.217 sec
+Time to compute match dist: 12.720 sec
+______________________________________
+Approx
+----
+Maximum distance for lines through critical points: 2.869
+Lines counted crit pts: 108
+Maximum distance computed for grid of lines: 2.869
+Number of grid points: 9800
+Time elapsed: 0.224 sec

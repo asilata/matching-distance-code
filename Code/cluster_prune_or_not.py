@@ -45,7 +45,7 @@ if __name__ == '__main__':
         make_csv(file_path)
 
     else:
-        for i in range(1,2):
+        for i in range(1,3):
             # default (1,2) for non-cluster use
             rects_in_M = i
             rects_in_N = 1
@@ -58,6 +58,9 @@ if __name__ == '__main__':
                 img_path = '../output/cluster/img' + str(i) +'.png'
                 chf.plot_rectangles(M,N, img_path)
 
+            if settings.print_output:
+                print('Rects in M: ',rects_in_M)
+                print('Rects in N: ',rects_in_N)
             # prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines = chf.to_prune_or_not_to_prune_csv(M,N)
             prune_time, approx_time, prune_match_dist, max_dist_critpts, max_grids_lines = chf.to_prune_or_not_to_prune_csv(M,N)
 

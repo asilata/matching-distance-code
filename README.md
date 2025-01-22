@@ -15,3 +15,4 @@ To install the requirements, navigate to the ```matching-distance-code``` direct
 # after making the env, install the requirements 
 pip install -r requirements.txt
 ```
+cluster usage: run ```python3 ./Code/cluster_prune_or_not.py```. You can edit ```Code/settings.py``` to override normal settings, like terminal output, figure output, and system requirements (at your own risk).

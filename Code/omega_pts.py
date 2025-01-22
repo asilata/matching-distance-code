@@ -503,6 +503,7 @@ def output_alg_3_1(CritPts, name, prune):
     Pts = list(set(Pts))
     # print("Without duplicates {}".format(len(Pts)))
     if settings.print_output:
+        print("Exact\n----")
         print("3v1: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 
     # Dict_pts.sort()
