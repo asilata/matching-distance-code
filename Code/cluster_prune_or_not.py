@@ -50,9 +50,29 @@ if __name__ == '__main__':
             rects_in_M = i
             rects_in_N = 1
             seed = random.randint(0, 100)
+
+            #  one rectangle from create_random_rectangle: 
+            #  M and N are just lists of random rects
+            # corners 
+            # 0,0 to 4,4 M 
+            # 2,2 to 6,6 N
+            # [(tr_x, tr_y), (bl_x, bl_y)]
+            # M 0,7 x 0,8 and 0,7 x 4,11
+            # M1 x,y coords: (0,4) to (7,11)
+            # M2 x,y coords: (0,0) to (7,8)
+
+            # N 0,7 x 4,8 and 0,7 x 0,11
+            # N1 x,y coords: (0,0) to (7,11)
+            # N2 x,y coords: (0,4) to (7,8)
+
+            # [(tr_x, tr_y), (bl_x, bl_y)]
+            rects_in_M =  2
+            rects_in_N = 2
+            M = [[(7,11), (0,4)],[(7,8), (0,0)]]
+            N = [[(7,11), (0,0)], [(7,8), (0,4)]]
             
 
-            M, N = chf.generate_random_rectangles(rects_in_M,rects_in_N, seed=seed)
+            # M, N = chf.generate_random_rectangles(rects_in_M,rects_in_N, seed=seed)
 
             if settings.save_figure:
                 img_path = '../output/cluster/img' + str(i) +'.png'
