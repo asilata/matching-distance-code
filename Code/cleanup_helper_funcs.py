@@ -266,9 +266,9 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
         print('Lines counted: {}'.format(len(Lines)))
     if settings.print_output and settings.actually_compute_matching_distance:
         print("Time to compute bottleneck dists: {:.3f} sec".format(time_bottleneck_end - time_bottleneck))
-    if settings.actually_compute_matching_distance == False:
+    if settings.print_output == True and settings.actually_compute_matching_distance == False:
         print("WARNING: no exact matching distance computed! ")
-    return matching_dist
+    return matching_dist , len(Lines) ## C: added len(Lines) to return
 
 def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
     # # figuring stuff out: 
@@ -379,7 +379,7 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     switch_time = end_time_switch_pts - start_time_switch_pts
 
     start_time_match_dist = time.time()
-    matching_dist = compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N)
+    matching_dist, num_lines = compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N) ## C: added num_lines here 
     end_time_match_dist = time.time()
     match_time = end_time_match_dist - start_time_match_dist
 
@@ -395,7 +395,7 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
             print("Time to compute match dist:", "{:.3f}".format(match_time),"sec")
         print("______________________________________\nApprox\n----")
 
-    return matching_dist
+    return matching_dist, num_lines
 
 def make_example(M,N):
     # this is for two modules M and N 
@@ -634,10 +634,10 @@ def compute_weighted_bottleneck_distances(M,N):
                 Lines.append(line)
                 Crit.append([Crit_MN[i], Crit_MN[j]])
                 DD.append(d)
-    # if settings.print_output:
-    #     print('Lines counted {} again'.format(len(Lines)))
-    #     print('Maximum distance for lines through critical points:')
-    #     print(max(DD))
+    if settings.print_output:
+        print('Lines counted {} again'.format(len(Lines)))
+        print('Maximum distance for lines through critical points:')
+        print(max(DD))
     
     ## computing bottlneck for "every" line
     
@@ -733,7 +733,7 @@ def to_prune_or_not_to_prune_csv(M,N):
     example = make_example(M,N)
     MN = [tr_m, bl_m, tr_n, bl_n]
     prune_start_time = time.time()
-    prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
+    prune_match_dist, _ = do_all_the_things(one_rect_mods, graph, example, MN, prune) ## C: added empty _ here for the the second output of do_all_the_things
     #print("\n")
     prune_end_time = time.time()
     prune_time = prune_end_time - prune_start_time
@@ -863,3 +863,52 @@ def append_to_csv(file_path, new_data):
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
+
+
+
+
+
+def experiment_1(M,N):
+    """Code to get the data for experiment 1
+    Return the number of lines computed by our algorithm for the matching distanc
+    
+    """
+    prune = True
+
+    ######### M AND N can have MORE THAN ONE RECTANGLE
+    # set one_rect_mods -> FALSE
+    # M,N = ex.test_ex_more_rects()
+
+    graph = False
+    one_rect_mods = False
+
+    ################## PRUNE
+    tr_m, bl_m, tr_n, bl_n = ex.test_ex_one_rect()
+    example = make_example(M,N)
+    MN = [tr_m, bl_m, tr_n, bl_n]
+    prune_start_time = time.time()
+    prune_match_dist, num_lines = do_all_the_things(one_rect_mods, graph, example, MN, prune)
+    #print("\n")
+    prune_end_time = time.time()
+    prune_time = prune_end_time - prune_start_time
+
+    ################# NO PRUNE
+    #print("DON'T PRUNE POINTS")
+    #prune = False
+    #no_prune_start_time = time.time()
+    #no_prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
+    #no_prune_end_time = time.time()
+    #no_prune_time = no_prune_end_time - no_prune_start_time
+    
+    #################### APPROX
+    # also do the approx matching dist
+    #print("\nApproximate Matching Distance:")
+    Mmod = example[2]
+    Nmod = example[3]
+    #approx_start_time = time.time()
+    #max_dist_critpts, max_grids_lines = plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
+    #approx_end_time = time.time()
+    #approx_time = approx_end_time - approx_start_time
+    #return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
+    
+    return num_lines 
