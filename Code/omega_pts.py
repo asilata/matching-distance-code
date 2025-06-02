@@ -358,10 +358,18 @@ def algo_2v2_paired(CritPts, prune):
             eta = 2
         else:
             eta = 1
+        if settings.new_pruning_march_2025:
+                # print("prune 3")
+                if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
+                    continue
         if u.parent_module == v.parent_module:
             delta = 2
         else:
             delta = 1
+        if settings.new_pruning_march_2025:
+                # print("prune 4")
+                if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
+                    continue
         # prune is true by default, which would make the if check
         # always true. But by "prune true," we actually mean 
         # "let through fewer things."
@@ -503,7 +511,7 @@ def output_alg_3_1(CritPts, name, prune):
     Pts = list(set(Pts))
     # print("Without duplicates {}".format(len(Pts)))
     if settings.print_output:
-        print("Exact\n----")
+        print("EXACT\n_____________________________________")
         print("3v1: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 
     # Dict_pts.sort()
@@ -564,12 +572,18 @@ def algo_3vs1(CritPts, all_CritPts, prune):
                 eta = 2
             else:
                 eta = 1
-
+            if settings.new_pruning_march_2025:
+                # print("prune 1")
+                if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
+                    continue
             if u.parent_module == v.parent_module:
                 delta = 2
             else:
                 delta = 1
-
+            if settings.new_pruning_march_2025:
+                # print("prune 2")
+                if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
+                    continue
             ## Is indentation correct? yes same as paper
             if check_x_push_up(x.coords, u.coords, v.coords, w.coords) or not prune:
                 # adding this to include claudia's comment about matching having null cost
@@ -853,11 +867,18 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                 eta = 2
             else:
                 eta = 1
+            if settings.new_pruning_march_2025:
+                # print("prune 5")
+                if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
+                    continue
             if u.parent_module == v.parent_module:
                 delta = 2
             else:
                 delta = 1
-
+            if settings.new_pruning_march_2025:
+                # print("prune 6")
+                if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
+                    continue
         if check_pts_2v2_paired(x, v, w, u) or not prune:
             if (
                 (lub(u, v) == u.coords and lub(x, w) == w.coords)

@@ -1,0 +1,95 @@
+tests_9_may.txt
+
+NEW RUN BEGINS
+Rects in M:  1
+Rects in N:  1
+______________________________________
+Matching dist: 1.292 with slope (0.885, 1.000) and intercept (-0.309, 0.309).
+Lines counted: 2156
+Time to compute bottleneck dists: 0.017 sec
+Time elapsed: 0.332 sec
+Time to compute switch pts: 0.311 sec
+Time to compute match dist: 0.022 sec
+______________________________________
+Approx
+----
+approx time:  0.07841300964355469
+approx match dist grid:  1.2921890300699614
+
+
+
+
+NEW RUN BEGINS (new prune false)
+Rects in M:  2
+Rects in N:  1
+______________________________________
+Matching dist: 1.688 with slope (1.000, 0.682) and intercept (0.680, -0.680).
+Lines counted: 210644
+Time to compute bottleneck dists: 2.478 sec
+Time elapsed: 4.551 sec
+Time to compute switch pts: 1.444 sec
+Time to compute match dist: 3.107 sec
+______________________________________
+Approx
+----
+approx time:  0.11522603034973145
+approx match dist grid:  1.687895807604313
+
+
+
+
+NEW RUN BEGINS (new prune true)
+Rects in M:  2
+Rects in N:  1
+______________________________________
+Matching dist: 1.331 with slope (1.000, 0.998) and intercept (4.304, -4.304).
+Lines counted: 133090
+Time to compute bottleneck dists: 1.978 sec
+Time elapsed: 3.550 sec
+Time to compute switch pts: 1.178 sec
+Time to compute match dist: 2.372 sec
+______________________________________
+Approx
+----
+approx time:  0.09747695922851562
+approx match dist grid:  1.330940423945969
+
+
+
+set seed to be the same
+
+
+NEW RUN BEGINS (new prune True) (25% speedup)
+Rects in M:  2
+Rects in N:  1
+______________________________________
+Matching dist: 1.998 with slope (0.436, 1.000) and intercept (-0.917, 0.917).
+Lines counted: 106415
+Time to compute bottleneck dists: 1.081 sec
+Time elapsed: 2.676 sec
+Time to compute switch pts: 1.306 sec
+Time to compute match dist: 1.369 sec
+______________________________________
+Approx
+----
+approx time:  0.10712504386901855
+approx match dist grid:  1.997761323166562
+
+
+NEW RUN BEGINS (new prune False)
+Rects in M:  2
+Rects in N:  1
+______________________________________
+Matching dist: 1.998 with slope (0.976, 1.000) and intercept (-4.653, 4.653).
+Lines counted: 163779
+Time to compute bottleneck dists: 1.638 sec
+Time elapsed: 3.685 sec
+Time to compute switch pts: 1.602 sec
+Time to compute match dist: 2.083 sec
+______________________________________
+Approx
+----
+approx time:  0.10620522499084473
+approx match dist grid:  1.997761323166562
+
+NOTE: 5x5 rects way too much

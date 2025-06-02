@@ -393,7 +393,7 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
         print("Time to compute switch pts:", "{:.3f}".format(switch_time),"sec")
         if settings.actually_compute_matching_distance:
             print("Time to compute match dist:", "{:.3f}".format(match_time),"sec")
-        print("______________________________________\nApprox\n----")
+        # print("_____________________________________")
 
     return matching_dist, num_lines
 
@@ -593,9 +593,9 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
     tot_time = end_time - start_time
     if settings.print_output:
         print("Time elapsed:", "{:.3f}".format(tot_time),"sec")
-        print("____________________")
-        print("END")
-        print("____________________")
+        # print("____________________")
+        # print("END")
+        # print("____________________")
 
     # if settings.compare_line_counts:
     #     print("hi, this is where line counts go")
@@ -732,6 +732,20 @@ def to_prune_or_not_to_prune_csv(M,N):
     tr_m, bl_m, tr_n, bl_n = ex.test_ex_one_rect()
     example = make_example(M,N)
     MN = [tr_m, bl_m, tr_n, bl_n]
+
+    #################### APPROX
+    # also do the approx matching dist
+    #print("\nApproximate Matching Distance:")
+    Mmod = example[2]
+    Nmod = example[3]
+    approx_start_time = time.time()
+    max_dist_critpts, max_grids_lines = plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
+    settings.lower_bound_D = min(max_dist_critpts, max_grids_lines)
+    approx_end_time = time.time()
+    approx_time = approx_end_time - approx_start_time
+    #return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
+
+    ## This is the EXACT (slow) computation
     prune_start_time = time.time()
     prune_match_dist, _ = do_all_the_things(one_rect_mods, graph, example, MN, prune) ## C: added empty _ here for the the second output of do_all_the_things
     #print("\n")
@@ -746,16 +760,9 @@ def to_prune_or_not_to_prune_csv(M,N):
     #no_prune_end_time = time.time()
     #no_prune_time = no_prune_end_time - no_prune_start_time
     
-    #################### APPROX
-    # also do the approx matching dist
-    #print("\nApproximate Matching Distance:")
-    Mmod = example[2]
-    Nmod = example[3]
-    approx_start_time = time.time()
-    max_dist_critpts, max_grids_lines = plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
-    approx_end_time = time.time()
-    approx_time = approx_end_time - approx_start_time
-    #return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
+    # note: if it matters, APPROX used to be down here. Moved up 21 March 2025 for NEW PRUNE thingy
+    
+
     return prune_time, approx_time, prune_match_dist, max_dist_critpts, max_grids_lines
 
 # Random rectangles
