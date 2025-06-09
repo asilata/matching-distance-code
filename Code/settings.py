@@ -9,6 +9,7 @@ save_figure = True
 compare_line_counts = True and print_output
 new_pruning_march_2025 = True
 lower_bound_D = 100
+figure_title = ""
 
 # for tests to run faster, set this to False. Note that this will NOT compute the bottleneck distance if false, which is the main point of the code.
 actually_compute_matching_distance = True

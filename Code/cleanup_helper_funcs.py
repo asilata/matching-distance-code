@@ -389,10 +389,11 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     end_time = time.time()
     tot_time = end_time - start_time
     if settings.print_output:
-        print("Time elapsed:", "{:.3f}".format(tot_time),"sec")
         print("Time to compute switch pts:", "{:.3f}".format(switch_time),"sec")
         if settings.actually_compute_matching_distance:
             print("Time to compute match dist:", "{:.3f}".format(match_time),"sec")
+        print("Total time elapsed in exact computation:", "{:.3f}".format(tot_time),"sec")
+        
         # print("_____________________________________")
 
     return matching_dist, num_lines
@@ -527,6 +528,10 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
     if settings.compare_line_counts:
         print('Lines counted crit pts: {}'.format(len(Lines)))   
     max_dist_critpts = max(DD)
+    lines_time = time.time()
+    if settings.print_output:
+        print("Time to get approx. from crit pts: ", "{:.3f}".format(lines_time - start_time),"sec")
+
     # print(max(DD))
     
     ## computing bottlneck for "every" line
@@ -554,6 +559,9 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
         print('Maximum distance computed for grid of lines: {:.3f}'.format(max(Dist)))
         print('Number of grid points: {}'.format(len(Dist)))
     max_grids_lines = max(Dist)
+    end_time = time.time()
+    grid_time = end_time - lines_time
+    tot_time = end_time - start_time
     # print(max(Dist))
 
     if settings.save_figure and graph:     
@@ -589,10 +597,9 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
         # plt.show()
         # plt.savefig(filename)
 
-    end_time = time.time()
-    tot_time = end_time - start_time
+    
     if settings.print_output:
-        print("Time elapsed:", "{:.3f}".format(tot_time),"sec")
+        print("Time elapsed (theta b grid):", "{:.3f}".format(grid_time),"sec")
         # print("____________________")
         # print("END")
         # print("____________________")
@@ -789,8 +796,9 @@ def plot_rectangles(M,N,img_path):
         ax.add_patch(patches.Rectangle(bl, width, height, linewidth=1, edgecolor='b', facecolor='blue', alpha=0.5))
 
     # Set the limits of the plot
-    ax.set_xlim(-1, 10)
-    ax.set_ylim(-1, 12)
+    ax.set_xlim(-1, 20)
+    ax.set_ylim(-1, 20)
+    ax.set_title(settings.figure_title)
 
     # Set the aspect of the plot to be equal
     ax.set_aspect('equal')
