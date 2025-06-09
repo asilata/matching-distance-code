@@ -18,7 +18,7 @@ pip install -r requirements.txt
 cluster usage: run ```python3 ./Code/cluster_prune_or_not.py```. You can edit ```Code/settings.py``` to override normal settings, like terminal output, figure output, and system requirements (at your own risk).
 
 ## group experiment instructions: 
-1. Clone the repo.
+1. Clone the repo and go to the directory ```cd matching-distance-code```.
 2. Open terminal.
 3. First time: either install a virtual env as mentioned above with ```virtualenv venv``` (if you have other versions of python you are using in other projects and don't want to mess that up) or don't bother if this is the only python coding project you are using.
 4. If you made a virtual env, activate it ```source venv/bin/activate```.
