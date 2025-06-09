@@ -8,6 +8,7 @@ print_output = True
 save_figure = True
 compare_line_counts = True and print_output
 new_pruning_march_2025 = True
+old_pruning = True
 lower_bound_D = 100
 figure_title = ""
 

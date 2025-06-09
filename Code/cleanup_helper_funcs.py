@@ -691,7 +691,8 @@ def to_prune_or_not_to_prune(M,N):
     if settings.print_output:
         print("Rectangles in M: {} and N: {}. Total: {}.".format(len(M), len(N), len(M) + len(N)))
         print("PRUNE POINTS")
-    prune = True
+    # prune = True
+    prune = settings.old_pruning
 
     ######### M AND N can have MORE THAN ONE RECTANGLE
     # set one_rect_mods -> FALSE
