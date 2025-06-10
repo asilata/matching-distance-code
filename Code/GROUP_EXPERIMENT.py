@@ -11,7 +11,7 @@ if __name__ == '__main__':
     rects_in_N = 1
     seed = 3
     # only set this to True if you're fixing bad no-prune data
-    only_redo_bad_data = True
+    only_redo_bad_data = False
 ################# END OF SETTINGS TO CHANGE
     settings.print_output = True
     settings.save_figure = True
