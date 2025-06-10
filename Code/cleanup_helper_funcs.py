@@ -706,11 +706,12 @@ def to_prune_or_not_to_prune(M,N):
     example = make_example(M,N)
     MN = [tr_m, bl_m, tr_n, bl_n]
     do_all_the_things(one_rect_mods, graph, example, MN, prune)
-    if settings.print_output:
-        print("\n")
-        print("DON'T PRUNE POINTS")
-    prune = False
-    do_all_the_things(one_rect_mods, graph, example, MN, prune)
+    print("\n\n\n BOB \n\n\n")
+    # if settings.print_output:
+    #     print("\n")
+    #     print("DON'T PRUNE POINTS")
+    # prune = False
+    # do_all_the_things(one_rect_mods, graph, example, MN, prune)
 
     # also do the approx matching dist
     if settings.print_output:
@@ -727,7 +728,13 @@ def to_prune_or_not_to_prune_csv(M,N):
     ###################
     #print("Rectangles in M: {} and N: {}. Total: {}.".format(len(M), len(N), len(M) + len(N)))
     #print("PRUNE POINTS")
-    prune = True
+    # prune = True
+    prune = settings.old_pruning
+    # if settings.print_output:
+    #     if settings.old_pruning:
+    #         print("yes pruning")
+    #     else:
+    #         print("not pruning")
 
     ######### M AND N can have MORE THAN ONE RECTANGLE
     # set one_rect_mods -> FALSE

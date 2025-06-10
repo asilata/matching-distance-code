@@ -41,7 +41,7 @@ if __name__ == '__main__':
     # only OLD PRUNE now
     settings.old_pruning = True 
     settings.new_pruning_march_2025 = False
-    print("~~~OLD PRUNING~~~")
+    print("~~~ONLY OLD PRUNING~~~")
     if settings.print_output:
         print("_____________________________________\nAPPROX\n_____________________________________")
         print('Rects in M: ',rects_in_M)
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # ALL PRUNE now
     settings.old_pruning = True 
     settings.new_pruning_march_2025 = True 
-    print("~~~NEW PRUNING~~~")
+    print("~~~ALL (including NEW) PRUNING~~~")
     if settings.print_output:
         print("_____________________________________\nAPPROX\n_____________________________________")
         print('Rects in M: ',rects_in_M)
