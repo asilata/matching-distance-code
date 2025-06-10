@@ -7,9 +7,9 @@ import settings
 if __name__ == '__main__':
 
 ################# SETTINGS TO CHANGE (all settings are integers > 0)
-    rects_in_M = 1
+    rects_in_M = 2
     rects_in_N = 1
-    seed = 3
+    seed = 16
 ################# END OF SETTINGS TO CHANGE
 
     settings.new_pruning_march_2025 = False
