@@ -863,6 +863,34 @@ def generate_random_rectangles(num_M, num_N, seed = None):
 
     return M, N
 
+def generate_rects_experiment_2_12():
+    # M = [[(tr_x, tr_y), (bl_x, bl_y)],...]
+    # N = --"--- same
+    M = [[(100000000, 7),(2,2)]]
+    N = [[(100000000, 10),(2,2)]]
+    title = "Experiment_2.12"
+
+    return M, N, title
+
+def generate_rects_experiment_2_13():
+    # M = [[(tr_x, tr_y), (bl_x, bl_y)],...]
+    # N = --"--- same
+    M = [[(7,7), (0,0)], [(7,11), (0,4)]]
+    N = [[(7,11), (0,0)], [(7,7), (0,4)]]
+    title = "Experiment_2.13"
+
+    return M, N, title
+
+def generate_rects_experiment_2_14():
+    # M = [[(tr_x, tr_y), (bl_x, bl_y)],...]
+    # N = --"--- same
+    M = [[(7,8), (0,0)], [(7,11), (0,4)]]
+    N = [[(7,11), (0,0)], [(7,8), (0,4)]]
+    title = "Experiment_2.14"
+
+    return M, N, title
+
+
 def append_to_csv(file_path, new_data):
     column_name = new_data['Label']
     # Read the existing CSV into a list of dictionaries
