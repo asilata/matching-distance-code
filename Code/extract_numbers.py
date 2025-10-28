@@ -70,3 +70,16 @@ def extract_values(file_path):
         row = pd.Series({'M': M, 'N': N, 'seed': seed, 'match': dist_match, 'crit_pt_lines_counted': crit_pt_lines_counted, 'time_crit_pts': time_crit_pts, 'exact_lines_counted': exact_lines_counted, 'time_bneck': time_bneck, 'time_switch': time_switch, 'time_match_dist': time_match_dist, 'total_exact_time': total_exact_time, 'prune': section_name})
         df = pd.concat([df, row.to_frame().T], ignore_index=True)
     return df
+
+
+dfs = []
+
+# Example: simulate adding small DataFrames in a loop
+for file_path in ['5_1_2.txt', '1_5_2.txt', '2_4_2.txt', '4_2_2.txt', '3_3_2.txt']:
+    temp_df = extract_values(file_path)
+    dfs.append(temp_df)
+
+# Concatenate all DataFrames at once
+six_results = pd.concat(dfs, ignore_index=True)
+
+six_results.to_csv('six_results.csv', index=False)
