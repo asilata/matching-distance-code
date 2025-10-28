@@ -852,9 +852,12 @@ def generate_random_rectangles(num_M, num_N, seed = None):
                         tr_y = rnd.uniform(0, 15)
                         width = tr_x - bl_x
                         height = tr_y - bl_y
+                        # if settings.print_output == True:
+                        #     print("tr (", tr_x, tr_y, ")bl ("bl_x, bl_y, ")")
                     return [(tr_x, tr_y), (bl_x, bl_y)]
 
-
+    
+    
     # Generate M with num_M rectangles
     M = [create_random_rectangle() for _ in range(num_M)]
 
