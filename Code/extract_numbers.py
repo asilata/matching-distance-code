@@ -75,11 +75,11 @@ def extract_values(file_path):
 dfs = []
 
 # Example: simulate adding small DataFrames in a loop
-for file_path in ['5_1_2.txt', '1_5_2.txt', '2_4_2.txt', '4_2_2.txt', '3_3_2.txt']:
+for file_path in ['six_experiments/5_1_3.txt', 'six_experiments/1_5_3.txt', 'six_experiments/2_4_3.txt', 'six_experiments/4_2_3.txt', 'six_experiments/3_3_3.txt', 'six_experiments/5_1_4.txt', 'six_experiments/1_5_4.txt', 'six_experiments/2_4_4.txt', 'six_experiments/4_2_4.txt', 'six_experiments/3_3_4.txt', 'six_experiments/5_1_5.txt', 'six_experiments/1_5_5.txt', 'six_experiments/2_4_5.txt', 'six_experiments/4_2_5.txt', 'six_experiments/3_3_5.txt', 'six_experiments/5_1_6.txt', 'six_experiments/1_5_6.txt', 'six_experiments/2_4_6.txt', 'six_experiments/4_2_6.txt', 'six_experiments/3_3_6.txt', 'six_experiments/5_1_7.txt', 'six_experiments/1_5_7.txt', 'six_experiments/2_4_7.txt', 'six_experiments/4_2_7.txt', 'six_experiments/3_3_7.txt']:
     temp_df = extract_values(file_path)
     dfs.append(temp_df)
 
 # Concatenate all DataFrames at once
 six_results = pd.concat(dfs, ignore_index=True)
 
-six_results.to_csv('six_results.csv', index=False)
+six_results.to_csv('six_results_3_Nov.csv', index=False)
