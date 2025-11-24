@@ -1,0 +1,25 @@
+
+
+!!!!!
+|  NEW RUN BEGINS  |
+~~~NO PRUNING WHATSOEVER~~~
+_____________________________________
+APPROX
+_____________________________________
+Rects in M:  3
+Rects in N:  2
+Maximum distance for lines through critical points: 3.033
+Lines counted crit pts: 534
+Time to get approx. from crit pts:  0.016 sec
+Maximum distance computed for grid of lines: 3.033
+Number of grid points: 9800
+Time elapsed (theta b grid): 0.185 sec
+______________________________________
+EXACT
+_____________________________________
+3v1: Computed 47746 pts; 10346 deduplicated
+-------------
+2v2paired: Computed 1621 pts; 1078 deduplicated
+-------------
+2v2unpaired: Computed 13880 pts; 4127 deduplicated
+______________________________________

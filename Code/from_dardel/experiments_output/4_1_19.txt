@@ -1,0 +1,94 @@
+
+
+!!!!!
+|  NEW RUN BEGINS  |
+~~~NO PRUNING WHATSOEVER~~~
+_____________________________________
+APPROX
+_____________________________________
+Rects in M:  4
+Rects in N:  1
+Maximum distance for lines through critical points: 4.087
+Lines counted crit pts: 702
+Time to get approx. from crit pts:  0.061 sec
+Maximum distance computed for grid of lines: 4.241
+Number of grid points: 9800
+Time elapsed (theta b grid): 0.343 sec
+______________________________________
+EXACT
+_____________________________________
+3v1: Computed 53328 pts; 11201 deduplicated
+-------------
+2v2paired: Computed 1590 pts; 955 deduplicated
+-------------
+2v2unpaired: Computed 14375 pts; 3989 deduplicated
+______________________________________
+Matching dist: 4.241 with slope (1.000, 0.993) and intercept (-2.817, 2.817).
+Lines counted: 178646037
+Time to compute bottleneck dists: 7065.177 sec
+Time to compute switch pts: 41.164 sec
+Time to compute match dist: 8040.879 sec
+Total time elapsed in exact computation: 8082.044 sec
+_____________________________________
+END
+_____________________________________
+~~~ONLY OLD PRUNING~~~
+_____________________________________
+APPROX
+_____________________________________
+Rects in M:  4
+Rects in N:  1
+Maximum distance for lines through critical points: 4.087
+Lines counted crit pts: 702
+Time to get approx. from crit pts:  0.077 sec
+Maximum distance computed for grid of lines: 4.241
+Number of grid points: 9800
+Time elapsed (theta b grid): 0.580 sec
+______________________________________
+EXACT
+_____________________________________
+3v1: Computed 11587 pts; 4235 deduplicated
+-------------
+2v2paired: Computed 1590 pts; 955 deduplicated
+-------------
+2v2unpaired: Computed 2030 pts; 1331 deduplicated
+______________________________________
+Matching dist: 4.241 with slope (1.000, 0.989) and intercept (-2.804, 2.804).
+Lines counted: 25212323
+Time to compute bottleneck dists: 1169.357 sec
+Time to compute switch pts: 31.172 sec
+Time to compute match dist: 1280.002 sec
+Total time elapsed in exact computation: 1311.176 sec
+_____________________________________
+END
+_____________________________________
+~~~ALL (including NEW) PRUNING~~~
+_____________________________________
+APPROX
+_____________________________________
+Rects in M:  4
+Rects in N:  1
+Maximum distance for lines through critical points: 4.087
+Lines counted crit pts: 702
+Time to get approx. from crit pts:  0.037 sec
+Maximum distance computed for grid of lines: 4.241
+Number of grid points: 9800
+Time elapsed (theta b grid): 0.349 sec
+______________________________________
+EXACT
+_____________________________________
+3v1: Computed 3314 pts; 1667 deduplicated
+-------------
+2v2paired: Computed 278 pts; 223 deduplicated
+-------------
+2v2unpaired: Computed 2141 pts; 1521 deduplicated
+______________________________________
+Matching dist: 4.241 with slope (1.000, 0.990) and intercept (-2.799, 2.799).
+Lines counted: 5976894
+Time to compute bottleneck dists: 276.899 sec
+Time to compute switch pts: 11.085 sec
+Time to compute match dist: 302.804 sec
+Total time elapsed in exact computation: 313.889 sec
+_____________________________________
+END
+_____________________________________
