@@ -9,7 +9,7 @@ if __name__ == '__main__':
 ################# SETTINGS TO CHANGE (all settings are integers > 0)
     rects_in_M = 1
     rects_in_N = 1
-    seed = 3
+    seed = 11
     # only set this to True if you're fixing bad no-prune data
     only_redo_bad_data = False
 ################# END OF SETTINGS TO CHANGE
