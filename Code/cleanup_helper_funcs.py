@@ -1,3 +1,5 @@
+# pylance: reportUnboundVariable=false
+
 import modules as mod
 # from scipy.stats import qmc
 import numpy as np
@@ -16,6 +18,7 @@ from numpy import linalg as LA
 from math import cos, sin, pi, atan
 import time
 import settings
+
 
 def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
     # calculate other coords from tr and bl
@@ -132,7 +135,7 @@ def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, 
     # print("3v1:")
     omegapts_3v1, _, _ = omega.output_alg_3_1(critpts, "socg/" + title, prune)
     if makegraphyesno:
-        ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1")
+        ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1") # type: ignore
     
     if settings.print_output:
         print("-------------")
@@ -143,7 +146,7 @@ def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, 
     )
 
     if makegraphyesno:
-        ourplot.plot_c_o_with_inf(crits_no_lub, orderedomegas2v2p, is_inf_2v2p, title, dpi, "2v2 Paired")
+        ourplot.plot_c_o_with_inf(crits_no_lub, orderedomegas2v2p, is_inf_2v2p, title, dpi, "2v2 Paired") # type: ignore
 
     # algo 2v2 unpaired = Algorithm 7 in SoCG overleaf
     if settings.print_output:
@@ -158,7 +161,7 @@ def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, 
 
     if makegraphyesno:
         ourplot.plot_c_o_with_inf(
-            crits_no_lub, orderedomegas_2v2unp, is_inf_2v2unp_orig, title, dpi, "2v2 Unpaired"
+            crits_no_lub, orderedomegas_2v2unp, is_inf_2v2unp_orig, title, dpi, "2v2 Unpaired" # type: ignore
         )
     return critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp
 
@@ -261,7 +264,7 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
     # print('Matching distance is {},'.format(matching_dist))
     # print('and is attained at the line with slope {} \nand intercept {}.'.format(Lines[idx].m, Lines[idx].b))
     if settings.print_output and settings.actually_compute_matching_distance:
-        print('Matching dist: {:.3f} with slope ({:.3f}, {:.3f}) and intercept ({:.3f}, {:.3f}).'.format(matching_dist, Lines[idx].m[0], Lines[idx].m[1], Lines[idx].b[0], Lines[idx].b[1]))
+        print('Matching dist: {:.3f} with slope ({:.3f}, {:.3f}) and intercept ({:.3f}, {:.3f}).'.format(matching_dist, Lines[idx].m[0], Lines[idx].m[1], Lines[idx].b[0], Lines[idx].b[1])) # type: ignore
     if settings.compare_line_counts:
         print('Lines counted: {}'.format(len(Lines)))
     if settings.print_output and settings.actually_compute_matching_distance:
@@ -368,18 +371,19 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
 
     ## computes the least upper bound CM and CN separately 
     # using the parent module information 
-    lub = omega.closure_lub(critical_vals) 
+            #pylance: disable-reportUnboundVariable
+    lub = omega.closure_lub(critical_vals) # type: ignore
 
     start_time_switch_pts = time.time()
     ### run all three allgoriths 3v1, 2v2 paired , 2v2 unpaired
-    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, makegraphyesno = graph, title = " ")
+    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, makegraphyesno = graph, title = " ") # type: ignore
     # combine the outputs together and deal with slopes vs points
     omega_points_collection, omega_slopes_collection = combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp)
     end_time_switch_pts = time.time()
     switch_time = end_time_switch_pts - start_time_switch_pts
 
     start_time_match_dist = time.time()
-    matching_dist, num_lines = compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N) ## C: added num_lines here 
+    matching_dist, num_lines = compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N) # type: ignore 
     end_time_match_dist = time.time()
     match_time = end_time_match_dist - start_time_match_dist
 
@@ -567,7 +571,7 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
     if settings.save_figure and graph:     
         plt.figure(figsize=(8,8))
         plt.scatter(T, BB, c= Dist,s = 10, cmap = "summer")
-        plt.scatter(T[idx], BB[idx], marker = 'x', color = 'red')
+        plt.scatter(T[idx], BB[idx], marker = 'x', color = 'red') # type: ignore
         # print(T[idx])
         # print(BB[idx])
         
@@ -582,11 +586,11 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
             theta_crit.append(theta)
         
         for j in range(len(Lines)): 
-            plt.scatter(theta_crit[j], b_crit[j], marker = 'x', color = 'grey')
+            plt.scatter(theta_crit[j], b_crit[j], marker = 'x', color = 'grey') # type: ignore
             #plt.text(theta_crit[j], b_crit[j], str(Crit[j]))
         val = max(DD)
         idx=DD.index(val)
-        plt.scatter(theta_crit[idx], b_crit[idx], marker = 'x', color = 'black')
+        plt.scatter(theta_crit[idx], b_crit[idx], marker = 'x', color = 'black') # type: ignore
         ## plot titles
         plt.xlabel('theta')
         plt.ylabel('b')
@@ -859,10 +863,10 @@ def generate_random_rectangles(num_M, num_N, seed = None):
     
     
     # Generate M with num_M rectangles
-    M = [create_random_rectangle() for _ in range(num_M)]
+    M = [create_random_rectangle() for _ in range(num_M)] # type: ignore
 
     # Generate N with num_N rectangles
-    N = [create_random_rectangle() for _ in range(num_N)]
+    N = [create_random_rectangle() for _ in range(num_N)] # type: ignore
 
     return M, N
 
@@ -913,7 +917,7 @@ def append_to_csv(file_path, new_data):
     
     # Write the updated rows back to the CSV
     with open(file_path, 'w', newline='') as csv_file:
-        fieldnames = reader.fieldnames + [column_name]
+        fieldnames = reader.fieldnames + [column_name] # type: ignore
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
