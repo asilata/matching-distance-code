@@ -11,6 +11,7 @@ new_pruning_march_2025 = True
 old_pruning = True
 lower_bound_D = 100
 figure_title = ""
+debug = False
 
 # for tests to run faster, set this to False. Note that this will NOT compute the bottleneck distance if false, which is the main point of the code.
 actually_compute_matching_distance = True

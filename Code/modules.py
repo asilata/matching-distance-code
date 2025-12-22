@@ -248,7 +248,7 @@ class Rectangle:
     def print_info(self):
         print("bottom left:", self.bottom_left)
         print("top right:", self.top_right)
-        print("rectanle type:". self.type)
+        # print("rectangle type:". self.type)
         print("dimension:", self.dim)
         print("parent mod:", self.parent, "\n")
         
@@ -474,7 +474,7 @@ def rotate_line(line, center, theta):
 def compute_bottleneck(M,N,line): 
     dgmM = M.compute_barcode(line)
     dgmN = N.compute_barcode(line) 
-    db= gudhi.bottleneck_distance(dgmN,dgmM)
+    db= gudhi.bottleneck_distance(dgmN,dgmM) # type: ignore
     
     return db
 
@@ -482,7 +482,7 @@ def compute_bottleneck(M,N,line):
 def compute_weighted_bottleneck(M,N,line): 
     dgmM = M.compute_barcode(line)
     dgmN = N.compute_barcode(line) 
-    db= gudhi.bottleneck_distance(dgmN,dgmM)
+    db= gudhi.bottleneck_distance(dgmN,dgmM) # type: ignore
     w = min(line.m) 
     
     return w*db

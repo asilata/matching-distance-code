@@ -1,30 +1,23 @@
 import gudhi
 from math import cos, sin, pi
 import numpy as np
-
 import modules as mod
 import numpy.linalg
-
-## for checking if in convex hull
 import scipy.spatial
 from scipy.optimize import linprog
 from itertools import combinations
-
 import modules as mod
 import settings
-
 import csv
 
 
 ###### Convex hull functions ####
 
-def in_hull(points, x):
+def in_convex_hull(points, x):
     """Checks if x is in the convex hull of points
     points = array of pts in R^2
     """
-
-    ## Maybe we need to double check the linearr programing part
-
+    ## Maybe we need to double check the linear programming part
     n_points = len(points)
     c = np.zeros(n_points)
     A = np.r_[points.T, np.ones((1, n_points))]
@@ -36,56 +29,50 @@ def in_hull(points, x):
     )
     return lp.success
 
-
 def sort_bottom_and_right(u, v, w):
     """return the rightmost and bottommost points of u,v,w"""
-    ## C: This seems correct to me
-    rm = u
-    if v[0] > rm[0]:
-        rm = v
-    if w[0] > rm[0]:
-        rm = w
+    right_most = u
+    if v[0] > right_most[0]:
+        right_most = v
+    if w[0] > right_most[0]:
+        right_most = w
 
-    bm = u
-    if v[1] < bm[1]:
-        bm = v
-    if w[1] < bm[1]:
-        bm = w
+    bottom_most = u
+    if v[1] < bottom_most[1]:
+        bottom_most = v
+    if w[1] < bottom_most[1]:
+        bottom_most = w
 
-    return bm, rm
-
+    return bottom_most, right_most
 
 def sort_top_and_left(u, v, w):
     """return the leftmost and topmost points of u,v,w"""
-    ## C: This seems correct to me
-    lm = u
-    if v[0] < lm[0]:
-        lm = v
-    if w[0] < lm[0]:
-        lm = w
+    left_most = u
+    if v[0] < left_most[0]:
+        left_most = v
+    if w[0] < left_most[0]:
+        left_most = w
 
-    tm = u
-    if v[1] > tm[1]:
-        tm = v
-    if w[1] > tm[1]:
-        tm = w
+    top_most = u
+    if v[1] > top_most[1]:
+        top_most = v
+    if w[1] > top_most[1]:
+        top_most = w
 
-    return tm, lm
+    return top_most, left_most
 
-
-def check_in_quadrant_tl(x, p, q):
+def check_is_in_top_left_quadrant(x, p, q):
     """ "assume p is the bottommost pt of u,v,w
     assume q is the rightmost of u,v,w
     return True if x is in the top left quadrant
     """
-    ## C: looks fine to me
+
     if x[0] <= q[0] and p[1] <= x[1]:
         return True
     else:
         return False
 
-
-def check_x_push_up(
+def check_x_pushes_up(
     x, u, v, w
 ):  ## Check-point-A and Check-point-B like in the overleaf
     """Check if the points x,u,v,w are admissible for:
@@ -94,20 +81,16 @@ def check_x_push_up(
     returns True if they are an admissible quadruple
     and False if they are not admissible or would create superfluous omegapoints
     """
-    ## C: looks fine to me
-
     p, q = sort_bottom_and_right(
         u, v, w
     )  ## p is the bottommost pt, q is the rightmost pt
     a = (q[0], p[1])
 
-    ## First check if x is in the upper left quadrant:
-    if check_in_quadrant_tl(x, p, q):
-        ## Check if x is in convex hull
-        if in_hull(np.array([u, v, w]), x):
+    if check_is_in_top_left_quadrant(x, p, q):
+        if in_convex_hull(np.array([u, v, w]), x):
             return False
 
-        elif in_hull(np.array([u, v, w, a]), x):
+        elif in_convex_hull(np.array([u, v, w, a]), x):
             return True
 
         else:
@@ -116,8 +99,7 @@ def check_x_push_up(
     else:
         return True
 
-
-def check_in_quadrant_br(x, p, q):
+def check_is_in_bottom_right_quadrant(x, p, q):
     """ "assume p is the topmost pt of u,v,w
     assume q is the leftmost of u,v,w
     return True if x is in the bottom right quadrant(including the boundary)
@@ -128,8 +110,7 @@ def check_in_quadrant_br(x, p, q):
     else:
         return False
 
-
-def check_x_push_right(x, u, v, w):
+def check_x_pushes_right(x, u, v, w):
     """Check if the points x,u,v,w are admissible for:
         - x pushing right
         - u,v,w pushing up
@@ -141,42 +122,37 @@ def check_x_push_right(x, u, v, w):
     a = (q[0], p[1])
 
     ## First check if x is in the upper left quadrant:
-    if check_in_quadrant_br(x, p, q):
+    if check_is_in_bottom_right_quadrant(x, p, q):
         ## Check if x is in convex hull
-        if in_hull(np.array([u, v, w]), x):
+        if in_convex_hull(np.array([u, v, w]), x):
             return False
 
-        elif in_hull(np.array([u, v, w, a]), x):
+        elif in_convex_hull(np.array([u, v, w, a]), x):
             return True
         else:
             return False
     else:
         return True
 
-
-###
-
-
-def check_3distinct(C):
+def check_three_distinct(C):
     # this function checks that 3 out of 4 things in a set are distinct
-    assert len(C) == 4, "C is not of length 4 "
+    # DEBUG TODO: why is this ==4? (crashes if not)
+    # did we actually mean to only check four distinct, or is sth the wrong lenght? 
+    assert len(C) == 4, "C is not of length three"
     if (len(C) - len(set(C))) > 1:
         return False
     else:
         return True
 
-
-def check_4distinct(C):
+def check_four_distinct(C):
     # this function checks that all things in a set (of 4) are distinct
-    assert len(C) == 4, "C is not of length 4 "
+    assert len(C) == 4, "C is not of length four "
     if (len(C) - len(set(C))) > 0:
-        # print("beepbeep", C)
         return False
     else:
         return True
 
-
-def check_c_distinct(c, C):
+def check_that_c_is_distinct(c, C):
     """this function checks that c, assumed to be in C, is not repeated in C"""
     C_new = C.copy()
     C_new.remove(c)
@@ -191,8 +167,6 @@ def check_c_distinct(c, C):
 
     return val
 
-
-####
 def check_omega_x_below(u, v, w, x, omega):
     """Here we assume we are in the case where x pushes up and u,v,w push right, i.e. x is below a line separating u,v,w from x
     We check if the omegapoint is valid
@@ -202,11 +176,10 @@ def check_omega_x_below(u, v, w, x, omega):
     if omega[1] <= x.coords[1]:  ### We reject omega if it is below x , Double check
         return False
     # elif check_x_push_up(u.coords,v.coords, w.coords, omega): ## UUuugh shouldn't this be:  check_x_push_up(omega, u.coords,v.coords, w.coords): ??
-    elif check_x_push_up(omega, u.coords, v.coords, w.coords):
+    elif check_x_pushes_up(omega, u.coords, v.coords, w.coords):
         return True
     else:
         return False
-
 
 def check_omega_x_above(u, v, w, x, omega):
     """Function to be implemented later to check if the computed omegapoint is valid"""
@@ -215,14 +188,13 @@ def check_omega_x_above(u, v, w, x, omega):
     ):  ### We reject omega if it is to the left of x, DOUBLE CHECK
         return False
     # elif check_x_push_right(u.coords, v.coords, w.coords,omega):## UUuugh shouldn't this be:  check_x_push_right(omega, u.coords,v.coords, w.coords): ??
-    elif check_x_push_right(omega, u.coords, v.coords, w.coords):
+    elif check_x_pushes_right(omega, u.coords, v.coords, w.coords):
         return True
     else:
         return False
 
 ###############################
 #### 2 vs 2 PAIRED  ####
-
 def check_pts_2v2_paired(
     x, w, u, v
 ):  ### corresponds the the function CheckPts2 in the paper
@@ -262,10 +234,10 @@ def check_pts_2v2_paired(
         bm = v.coords
     corner_Q = (rm[0], bm[1])  ## corner of the quandrant Q
 
-    if check_in_quadrant_br(u.coords, tm, lm) or check_in_quadrant_br(v.coords, tm, lm):
+    if check_is_in_bottom_right_quadrant(u.coords, tm, lm) or check_is_in_bottom_right_quadrant(v.coords, tm, lm):
         # check if u or v are in the quandrant containing R
         if m1 > 0:
-            if in_hull(np.array([x.coords, w.coords, corner_R]), u.coords) or in_hull(
+            if in_convex_hull(np.array([x.coords, w.coords, corner_R]), u.coords) or in_convex_hull(
                 np.array([x.coords, w.coords, corner_R]), v.coords
             ):
                 # check if u or v are in the triangle cut out of R
@@ -276,13 +248,13 @@ def check_pts_2v2_paired(
         else:  # R is a quandrant
             return False
 
-    elif check_in_quadrant_tl(x.coords, bm, rm) or check_in_quadrant_tl(
+    elif check_is_in_top_left_quadrant(x.coords, bm, rm) or check_is_in_top_left_quadrant(
         w.coords, bm, rm
     ):
         # check if x or w are in the quandrant containing Q
 
         if m2 > 0:
-            if in_hull(np.array([u.coords, v.coords, corner_Q]), x.coords) or in_hull(
+            if in_convex_hull(np.array([u.coords, v.coords, corner_Q]), x.coords) or in_convex_hull(
                 np.array([u.coords, v.coords, corner_Q]), w.coords
             ):
                 # check if x or w are in the triangle cut out of Q
@@ -318,13 +290,12 @@ def check_pts_2v2_paired(
     # if yes return False
     # if no return True
 
-
 def algo_2v2_paired(CritPts, prune):
     critptscoords = []
     for x in CritPts:
         critptscoords.append(x.coords)
 
-    assert check_4distinct(
+    assert check_four_distinct(
         critptscoords
     ), "There is more than one repeated point in the list"
 
@@ -397,7 +368,6 @@ def algo_2v2_paired(CritPts, prune):
 
     return Omega_pts, info_list
 
-
 def output_alg_2_2_paired(CritPts, name, prune):
     Pts = []
     Total_info_list = [["omega_pts", "x", "u", "v", "w", "eta", "delta", "m"]]
@@ -408,7 +378,7 @@ def output_alg_2_2_paired(CritPts, name, prune):
         for b in range(a + 1, length):
             for c in range(b + 1, length):
                 for d in range(c, length):
-                    if check_4distinct(
+                    if check_four_distinct(
                         [
                             CritPts[a].coords,
                             CritPts[b].coords,
@@ -483,7 +453,7 @@ def output_alg_3_1(CritPts, name, prune):
         for b in range(a + 1, length):
             for c in range(b + 1, length):
                 for d in range(c, length):
-                    if check_3distinct(
+                    if check_three_distinct(
                         [
                             CritPts[a].coords,
                             CritPts[b].coords,
@@ -523,7 +493,6 @@ def output_alg_3_1(CritPts, name, prune):
 
     return Pts, num_duplicates, len(Pts) 
 
-
 def algo_3vs1(CritPts, all_CritPts, prune):
     """discards the omega points that are not valid"""
     ## input: 4 critical points from C_M and C_N
@@ -534,7 +503,7 @@ def algo_3vs1(CritPts, all_CritPts, prune):
     for x in CritPts:
         critptscoords.append(x.coords)
 
-    assert check_3distinct(
+    assert check_three_distinct(
         critptscoords
     ), "There is more than one repeated point in the list"
 
@@ -543,7 +512,7 @@ def algo_3vs1(CritPts, all_CritPts, prune):
 
     for c in CritPts:
         # Trying to find x (of the points x,w,u,v in the paper)
-        if check_c_distinct(
+        if check_that_c_is_distinct(
             c, CritPts
         ):  ## want a critical point x that is distinct from u,v,w
             x = c
@@ -585,7 +554,7 @@ def algo_3vs1(CritPts, all_CritPts, prune):
                 if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
                     continue
             ## Is indentation correct? yes same as paper
-            if check_x_push_up(x.coords, u.coords, v.coords, w.coords) or not prune:
+            if check_x_pushes_up(x.coords, u.coords, v.coords, w.coords) or not prune:
                 # adding this to include claudia's comment about matching having null cost
                 if u.coords[1] == v.coords[1]:
                     continue
@@ -640,7 +609,7 @@ def algo_3vs1(CritPts, all_CritPts, prune):
                     )
 
             ### Is indentation correct? yes, same as above
-            if check_x_push_right(x.coords, u.coords, v.coords, w.coords) or not prune:
+            if check_x_pushes_right(x.coords, u.coords, v.coords, w.coords) or not prune:
                 # adding because of claudia's null cost comment
                 if u.coords[0] == v.coords[0]:
                     continue
@@ -833,7 +802,7 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
     for x in CritPts:
         critptscoords.append(x.coords)
 
-    assert check_3distinct(
+    assert check_three_distinct(
         critptscoords
     ), "There is more than one repeated point in the list"
 
@@ -853,7 +822,7 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
             else:
                 w = f
         CritPtsno_x_v_w = CritPts_no_x_v.copy()
-        CritPtsno_x_v_w.remove(w)
+        CritPtsno_x_v_w.remove(w) # type: ignore
         # setting eta and delta to any value to get rid of type errors 
         # when checking inequality/equality (literal vs unbounded if unset)
         eta = 1
@@ -863,13 +832,13 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                 continue
             else:
                 u = g
-            if x.parent_module == w.parent_module:
+            if x.parent_module == w.parent_module: # type: ignore
                 eta = 2
             else:
                 eta = 1
             if settings.new_pruning_march_2025:
                 # print("prune 5")
-                if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
+                if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D: # type: ignore
                     continue
             if u.parent_module == v.parent_module:
                 delta = 2
@@ -879,31 +848,31 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                 # print("prune 6")
                 if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
                     continue
-        if check_pts_2v2_paired(x, v, w, u) or not prune:
+        if check_pts_2v2_paired(x, v, w, u) or not prune: # type: ignore
             if (
-                (lub(u, v) == u.coords and lub(x, w) == w.coords)
-                or (lub(u, v) == v.coords and lub(x, w) == x.coords)
-                or lub(u, v) not in [u.coords, v.coords]
-                or lub(x, w) not in [x.coords, w.coords]
+                (lub(u, v) == u.coords and lub(x, w) == w.coords) # type: ignore
+                or (lub(u, v) == v.coords and lub(x, w) == x.coords) # type: ignore
+                or lub(u, v) not in [u.coords, v.coords] # type: ignore
+                or lub(x, w) not in [x.coords, w.coords] # type: ignore
             ):
                 # this is the new thing that robyn just added
                 if (
                     (delta == eta)
                     and (v.coords[0] != x.coords[0])
-                    and (u.coords[1] != w.coords[1])
+                    and (u.coords[1] != w.coords[1]) # type: ignore
                 ):
                     omega = (
                         v.coords[0] - x.coords[0],
-                        u.coords[1] - w.coords[1],
+                        u.coords[1] - w.coords[1], # type: ignore
                     )  ## line 29 pseudo code . check this!!!
-                    m = (u.coords[1] - w.coords[1]) / (v.coords[0] - x.coords[0])
+                    m = (u.coords[1] - w.coords[1]) / (v.coords[0] - x.coords[0]) # type: ignore
                     # added here (on tuesday) that m > 0
                     if (
                         max(
-                            x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0]
+                            x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0] # type: ignore
                         )
                         < min(
-                            u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0]
+                            u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0] # type: ignore
                         )
                         and m > 0
                     ):
@@ -913,9 +882,9 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                             [
                                 omega,
                                 x.coords,
-                                u.coords,
+                                u.coords, # type: ignore
                                 v.coords,
-                                w.coords,
+                                w.coords, # type: ignore
                                 eta,
                                 delta,
                                 m,
@@ -925,10 +894,10 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                 elif delta != eta:
                     omega = (
                         (eta * v.coords[0] - delta * x.coords[0]) / (eta - delta),
-                        (eta * u.coords[1] - delta * w.coords[1]) / (eta - delta),
+                        (eta * u.coords[1] - delta * w.coords[1]) / (eta - delta), # type: ignore
                     )
                     if (
-                        check_omega_3(omega, u.coords, v.coords, w.coords, x.coords)
+                        check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) # type: ignore
                         and omega not in all_CritPts
                     ) or not prune:
                         Omega_pts.append(omega)
@@ -936,9 +905,9 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                             [
                                 omega,
                                 x.coords,
-                                u.coords,
+                                u.coords, # type: ignore
                                 v.coords,
-                                w.coords,
+                                w.coords, # type: ignore
                                 eta,
                                 delta,
                                 None,
@@ -946,23 +915,23 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                         )
 
         if (
-            (lub(u, v) == u.coords and lub(x, w) == x.coords)
-            or (lub(u, v) == v.coords and lub(x, w) == w.coords)
-            or lub(u, v) not in [u.coords, v.coords]
-            or lub(x, w) not in [x.coords, w.coords]
+            (lub(u, v) == u.coords and lub(x, w) == x.coords) # type: ignore
+            or (lub(u, v) == v.coords and lub(x, w) == w.coords) # type: ignore
+            or lub(u, v) not in [u.coords, v.coords] # type: ignore
+            or lub(x, w) not in [x.coords, w.coords] # type: ignore
         ):
             omega = (
                 (eta * v.coords[0] + delta * x.coords[0]) / (eta + delta),
-                (eta * u.coords[1] + delta * w.coords[1]) / (eta + delta),
+                (eta * u.coords[1] + delta * w.coords[1]) / (eta + delta), # type: ignore
             )
 
             if (
-                check_omega_3(omega, u.coords, v.coords, w.coords, x.coords)
+                check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) # type: ignore
                 and omega not in all_CritPts
             ) or not prune:  ## corresponds to CheckOmega2 in the pseudo code
                 Omega_pts.append(omega)
                 info_list.append(
-                    [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None]
+                    [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None] # type: ignore
                 )
 
     return Omega_pts, info_list
@@ -989,7 +958,7 @@ def output_alg_2_2_unpaired(CritPts, name, prune):
         for b in range(a + 1, length):
             for c in range(b + 1, length):
                 for d in range(c, length):
-                    if check_3distinct(
+                    if check_three_distinct(
                         [
                             CritPts[a].coords,
                             CritPts[b].coords,
