@@ -11,7 +11,6 @@ if __name__ == '__main__':
     rects_in_N = 1
     seed = 11
 ################# END OF SETTINGS TO CHANGE
-    settings.print_output = True
     settings.save_figure = True
     settings.debug = True
 
@@ -31,40 +30,34 @@ if __name__ == '__main__':
         img_path = 'GROUP_FIGS/' + 'm'+ str(rects_in_M) + '_n' + str(rects_in_N) + '_seed' + str(seed) +'.png'
         chf.plot_rectangles(M,N, img_path)
 
-    if settings.print_output:
-        print("_____________________________________\nAPPROX\n_____________________________________")
-        print('Rects in M: ',rects_in_M)
-        print('Rects in N: ',rects_in_N)
+    print("_____________________________________\nAPPROX\n_____________________________________")
+    print('Rects in M: ',rects_in_M)
+    print('Rects in N: ',rects_in_N)
 
     prune_time, approx_time, prune_match_dist, max_dist_critpts, max_grids_lines = chf.to_prune_or_not_to_prune_csv(M,N)
 
-    if settings.print_output:
-        print("_____________________________________\nEND\n_____________________________________")
+    print("_____________________________________\nEND\n_____________________________________")
 
     # only OLD PRUNE now
     settings.old_pruning = True 
     settings.new_pruning_march_2025 = False
     print("~~~ONLY OLD PRUNING~~~")
-    if settings.print_output:
-        print("_____________________________________\nAPPROX\n_____________________________________")
-        print('Rects in M: ',rects_in_M)
-        print('Rects in N: ',rects_in_N)
+    print("_____________________________________\nAPPROX\n_____________________________________")
+    print('Rects in M: ',rects_in_M)
+    print('Rects in N: ',rects_in_N)
 
     prune_time, approx_time, prune_match_dist, max_dist_critpts, max_grids_lines = chf.to_prune_or_not_to_prune_csv(M,N)
 
-    if settings.print_output:
-        print("_____________________________________\nEND\n_____________________________________")
+    print("_____________________________________\nEND\n_____________________________________")
 
     # ALL PRUNE now
     settings.old_pruning = True 
     settings.new_pruning_march_2025 = True 
     print("~~~ALL (including NEW) PRUNING~~~")
-    if settings.print_output:
-        print("_____________________________________\nAPPROX\n_____________________________________")
-        print('Rects in M: ',rects_in_M)
-        print('Rects in N: ',rects_in_N)
+    print("_____________________________________\nAPPROX\n_____________________________________")
+    print('Rects in M: ',rects_in_M)
+    print('Rects in N: ',rects_in_N)
 
     prune_time, approx_time, prune_match_dist, max_dist_critpts, max_grids_lines = chf.to_prune_or_not_to_prune_csv(M,N)
 
-    if settings.print_output:
-        print("_____________________________________\nEND\n_____________________________________")
+    print("_____________________________________\nEND\n_____________________________________")
