@@ -24,7 +24,7 @@ cluster usage: run `python3 ./Code/cluster_prune_or_not.py`. You can edit `Code/
 
 1. If you need to reinstall anything, follow the instructions above.
 2. `git pull`
-3. remember to activate the virtual environment `source venv/bin/activate`
+3. remember to activate the virtual environment `source match_dist_venv/bin/activate`
 4. Find the `M`, `N`, and `seed` values for a unicorn in the google sheets
 5. in `matching-distance-code/Code/UNICORN_HUNT.py`, update `rects_in_M`, `rects_in_N`, and `seed` (and `path` if you don't want to overwrite other figures).
 6. From a terminal (with virtual environment) in `matching-distance-code/Code`, run `python ./UNICORN_HUNT.py`
