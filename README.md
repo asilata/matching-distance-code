@@ -34,8 +34,8 @@ cluster usage: run `python3 ./Code/cluster_prune_or_not.py`. You can edit `Code/
 
 1. Clone the repo and go to the directory `cd matching-distance-code`.
 2. Open terminal.
-3. First time: either install a virtual env as mentioned above with `virtualenv venv` (if you have other versions of python you are using in other projects and don't want to mess that up) or don't bother if this is the only python coding project you are using.
-4. If you made a virtual env, activate it `source venv/bin/activate`.
+3. First time: either install a virtual env as mentioned above with `virtualenv match_dist_venv` (if you have other versions of python you are using in other projects and don't want to mess that up) or don't bother if this is the only python coding project you are using.
+4. If you made a virtual env, activate it `source match_dist_venv/bin/activate`.
 5. First time: install the requirements with `pip install -r requirements.txt`
 6. Navigate to the Code directory: `cd Code`
 7. Run the code by typing `python ./GROUP_EXPERIMENT.py`
