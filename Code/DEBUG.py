@@ -23,12 +23,17 @@ if __name__ == '__main__':
     print("|  NEW RUN BEGINS  |")
     print("~~~NO PRUNING WHATSOEVER~~~")
     
-
+    # TODO: save best lines from all outputs overlaid on figure
     if settings.save_figure:
         settings.figure_title = 'M:'+ str(rects_in_M) +  ' N:' + str(rects_in_N) + ' seed:' + str(seed)
 
-        img_path = 'GROUP_FIGS/' + 'm'+ str(rects_in_M) + '_n' + str(rects_in_N) + '_seed' + str(seed) +'.png'
+        img_path = 'DEBUG_FIGS/' + 'm'+ str(rects_in_M) + '_n' + str(rects_in_N) + '_seed' + str(seed) +'.png'
         chf.plot_rectangles(M,N, img_path)
+        if settings.debug:
+            debug_M = M
+            debug_N = N
+            debug_seed = seed
+            # go plot the figure in place with slopes
 
     print("_____________________________________\nAPPROX\n_____________________________________")
     print('Rects in M: ',rects_in_M)

@@ -360,6 +360,10 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     if onedim_mods:
         critical_vals, nolub, M, N, critval_coords = make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n)
 
+    # 19 JAN: for quick insertion of critical values for testing figures (ref: file BUNNYFIGURE), we do the horrendous coding practice of just overwriting shit here
+    if settings.overwrite_critvals:
+        critical_vals = settings.critvals_to_overwrite
+
     if not onedim_mods:
         critical_vals, nolub, M, N = example[0], example[1], example[2], example[3]
         critval_coords = []
@@ -367,8 +371,7 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
         for i in range(len(critical_vals)):
             critval_coords.append(critical_vals[i].coords)
         
-        
-
+    
     ## computes the least upper bound CM and CN separately 
     # using the parent module information 
             #pylance: disable-reportUnboundVariable
