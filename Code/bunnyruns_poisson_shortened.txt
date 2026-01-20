@@ -1,0 +1,58 @@
+all of these are ALL INCL NEW PRUNING
+
+NUMBER OF CRITVALS:  4
+_____________________________________
+3v1: Computed 22 pts; 11 deduplicated
+-------------
+2v2paired: Computed 2 pts; 2 deduplicated
+-------------
+2v2unpaired: Computed 1 pts; 1 deduplicated
+______________________________________
+
+
+NUMBER OF CRITVALS:  9
+_____________________________________
+3v1: Computed 1360 pts; 1002 deduplicated
+-------------
+2v2paired: Computed 178 pts; 178 deduplicated
+-------------
+2v2unpaired: Computed 254 pts; 254 deduplicated
+______________________________________
+
+
+NUMBER OF CRITVALS:  16
+_____________________________________
+3v1: Computed 14709 pts; 10998 deduplicated
+-------------
+2v2paired: Computed 2381 pts; 2381 deduplicated
+-------------
+2v2unpaired: Computed 2409 pts; 2409 deduplicated
+______________________________________
+
+
+NUMBER OF CRITVALS:  23
+_____________________________________
+3v1: Computed 72549 pts; 54037 deduplicated
+-------------
+2v2paired: Computed 11659 pts; 11659 deduplicated
+-------------
+2v2unpaired: Computed 12739 pts; 12739 deduplicated
+______________________________________
+
+
+
+NUMBER OF CRITVALS:  34
+_____________________________________
+3v1: Computed 379412 pts; 288967 deduplicated
+-------------
+2v2paired: Computed 61277 pts; 61277 deduplicated
+-------------
+2v2unpaired: Computed 64869 pts; 64869 deduplicated
+______________________________________
+
+
+
+
+
+
+

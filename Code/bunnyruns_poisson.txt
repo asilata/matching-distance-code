@@ -1,0 +1,193 @@
+!!!!!
+|  NEW RUN BEGINS  |
+NUMBER OF CRITVALS:  4
+~~~ALL (including NEW) PRUNING~~~
+_____________________________________
+APPROX
+_____________________________________
+Rects in M:  1
+Rects in N:  1
+Maximum distance for lines through critical points: 0.398
+Lines counted crit pts: 16
+Time to get approx. from crit pts:  0.000 sec
+Maximum distance computed for grid of lines: 3.206
+Number of grid points: 9800
+Time elapsed (theta b grid): 0.073 sec
+WARNING: OVERWRITING CRITICAL VALUES!
+______________________________________
+EXACT
+_____________________________________
+3v1: Computed 22 pts; 11 deduplicated
+-------------
+2v2paired: Computed 2 pts; 2 deduplicated
+-------------
+2v2unpaired: Computed 1 pts; 1 deduplicated
+______________________________________
+Matching dist: 3.206 with slope (1.000, 1.000) and intercept (-2.422, 2.422).
+Lines counted: 188
+Time to compute bottleneck dists: 0.001 sec
+Time to compute switch pts: 0.023 sec
+Time to compute match dist: 0.002 sec
+Total time elapsed in exact computation: 0.025 sec
+_____________________________________
+END
+
+
+
+
+
+
+
+
+
+
+
+
+!!!!!
+|  NEW RUN BEGINS  |
+NUMBER OF CRITVALS:  9
+~~~ALL (including NEW) PRUNING~~~
+_____________________________________
+APPROX
+_____________________________________
+Rects in M:  1
+Rects in N:  1
+Maximum distance for lines through critical points: 0.398
+Lines counted crit pts: 16
+Time to get approx. from crit pts:  0.000 sec
+Maximum distance computed for grid of lines: 3.206
+Number of grid points: 9800
+Time elapsed (theta b grid): 0.073 sec
+WARNING: OVERWRITING CRITICAL VALUES!
+______________________________________
+EXACT
+_____________________________________
+3v1: Computed 1360 pts; 1002 deduplicated
+-------------
+2v2paired: Computed 178 pts; 178 deduplicated
+-------------
+2v2unpaired: Computed 254 pts; 254 deduplicated
+______________________________________
+Matching dist: 3.206 with slope (0.973, 1.000) and intercept (-2.147, 2.147).
+Lines counted: 1389928
+Time to compute bottleneck dists: 8.824 sec
+Time to compute switch pts: 1.284 sec
+Time to compute match dist: 13.728 sec
+Total time elapsed in exact computation: 15.012 sec
+_____________________________________
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+!!!!!
+|  NEW RUN BEGINS  |
+NUMBER OF CRITVALS:  16
+~~~ALL (including NEW) PRUNING~~~
+_____________________________________
+APPROX
+_____________________________________
+Rects in M:  1
+Rects in N:  1
+Maximum distance for lines through critical points: 0.398
+Lines counted crit pts: 16
+Time to get approx. from crit pts:  0.000 sec
+Maximum distance computed for grid of lines: 3.206
+Number of grid points: 9800
+Time elapsed (theta b grid): 0.075 sec
+WARNING: OVERWRITING CRITICAL VALUES!
+______________________________________
+EXACT
+_____________________________________
+3v1: Computed 14709 pts; 10998 deduplicated
+-------------
+2v2paired: Computed 2381 pts; 2381 deduplicated
+-------------
+2v2unpaired: Computed 2409 pts; 2409 deduplicated
+______________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+!!!!!
+|  NEW RUN BEGINS  |
+NUMBER OF CRITVALS:  23
+~~~ALL (including NEW) PRUNING~~~
+_____________________________________
+APPROX
+_____________________________________
+Rects in M:  1
+Rects in N:  1
+Maximum distance for lines through critical points: 0.398
+Lines counted crit pts: 16
+Time to get approx. from crit pts:  0.000 sec
+Maximum distance computed for grid of lines: 3.206
+Number of grid points: 9800
+Time elapsed (theta b grid): 0.075 sec
+WARNING: OVERWRITING CRITICAL VALUES!
+______________________________________
+EXACT
+_____________________________________
+3v1: Computed 72549 pts; 54037 deduplicated
+-------------
+2v2paired: Computed 11659 pts; 11659 deduplicated
+-------------
+2v2unpaired: Computed 12739 pts; 12739 deduplicated
+______________________________________
+
+
+
+
+
+
+
+
+!!!!!
+|  NEW RUN BEGINS  |
+NUMBER OF CRITVALS:  34
+~~~ALL (including NEW) PRUNING~~~
+_____________________________________
+APPROX
+_____________________________________
+Rects in M:  1
+Rects in N:  1
+Maximum distance for lines through critical points: 0.398
+Lines counted crit pts: 16
+Time to get approx. from crit pts:  0.000 sec
+Maximum distance computed for grid of lines: 3.206
+Number of grid points: 9800
+Time elapsed (theta b grid): 0.074 sec
+WARNING: OVERWRITING CRITICAL VALUES!
+______________________________________
+EXACT
+_____________________________________
+3v1: Computed 379412 pts; 288967 deduplicated
+-------------
+2v2paired: Computed 61277 pts; 61277 deduplicated
+-------------
+2v2unpaired: Computed 64869 pts; 64869 deduplicated
+______________________________________
+
+
+
+
+
+
+
