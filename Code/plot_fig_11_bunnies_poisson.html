@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customizable Poisson Grapher</title>
+    <title>High-Res Poisson Grapher (Fixed Legend)</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body {
@@ -179,7 +179,7 @@
 <body>
 
     <div class="container">
-        <h1>Poisson Point Process Grapher</h1>
+        <h1>High-Res Poisson Grapher</h1>
 
         <div class="flex-row">
             <div class="input-section">
@@ -205,8 +205,8 @@ _____________________________________
                     <div class="setting-group" style="flex: 1;">
                         <label>Font Family:</label>
                         <select id="fontSelect">
-                            <option value="Arial, sans-serif">Arial (Sans-serif)</option>
                             <option value="'Times New Roman', serif" selected>Times New Roman (Serif)</option>
+                            <option value="Arial, sans-serif">Arial (Sans-serif)</option>
                             <option value="'Courier New', monospace">Courier New (Mono)</option>
                             <option value="Verdana, sans-serif">Verdana</option>
                             <option value="Georgia, serif">Georgia</option>
@@ -367,11 +367,10 @@ _____________________________________
             const X = globalDataPoints.map(p => p.x);
             const traces = [];
 
-            // Updated Helper: Now grabs style from dropdown
             function addTrace(id, yKey, defaultColor, defaultMode, defaultMarker) {
                 const isChecked = document.getElementById('chk_' + id).checked;
                 const label = document.getElementById('lbl_' + id).value;
-                const style = document.getElementById('style_' + id).value; // Get solid/dash/dot
+                const style = document.getElementById('style_' + id).value;
 
                 if (isChecked) {
                     traces.push({
@@ -385,20 +384,11 @@ _____________________________________
                 }
             }
 
-            // 1. Theoretical Max (Red)
             addTrace('theory', 'y_theoretical', 'red', 'lines+markers', { symbol: 'diamond', size: 6 });
-
-            // 2. 3v1 (Black)
-            // Changed mode to 'lines+markers' and added marker object
             addTrace('3v1', 'y3v1_total', 'black', 'lines+markers', { size: 8 });
             addTrace('3v1_dedup', 'y3v1_dedup', 'black', 'lines+markers', { size: 8, symbol: 'circle-open' });
-
-            // 3. 2v2 Paired (Blue)
-            // Changed mode to 'lines+markers' and added marker object
             addTrace('2v2p', 'y2v2p_total', 'blue', 'lines+markers', { size: 8 });
             addTrace('2v2p_dedup', 'y2v2p_dedup', 'blue', 'lines+markers', { size: 8, symbol: 'circle-open' });
-
-            // 4. 2v2 Unpaired (Gold)
             addTrace('2v2u', 'y2v2u_total', '#E6A800', 'lines+markers', { size: 8 });
             addTrace('2v2u_dedup', 'y2v2u_dedup', '#E6A800', 'lines+markers', { size: 8, symbol: 'circle-open' });
 
@@ -407,7 +397,7 @@ _____________________________________
 
             const layout = {
                 title: customTitle,
-                font: { family: selectedFont, size: 14 }, // Global font setting
+                font: { family: selectedFont, size: 14 },
                 xaxis: {
                     title: 'Number of critical values',
                     type: 'linear'
@@ -418,8 +408,9 @@ _____________________________________
                     exponentformat: 'power'
                 },
                 legend: {
-                    x: 1, xanchor: 'right',
-                    y: 0, yanchor: 'bottom',
+                    // Moved from 1.0/0.0 to 0.98/0.02 to prevent clipping on export
+                    x: 0.98, xanchor: 'right',
+                    y: 0.02, yanchor: 'bottom',
                     bgcolor: 'rgba(255,255,255,0.9)',
                     bordercolor: '#ccc',
                     borderwidth: 1
@@ -427,7 +418,18 @@ _____________________________________
                 hovermode: 'x unified'
             };
 
-            Plotly.newPlot('graph-area', traces, layout);
+            const config = {
+                responsive: true,
+                toImageButtonOptions: {
+                    format: 'png',
+                    filename: 'poisson_graph_high_res',
+                    height: 800,
+                    width: 1200,
+                    scale: 3
+                }
+            };
+
+            Plotly.newPlot('graph-area', traces, layout, config);
         }
 
         function loadExample() {

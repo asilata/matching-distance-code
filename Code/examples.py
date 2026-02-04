@@ -503,18 +503,21 @@ def critvals_poisson(poisson_intensity, seed):
 def bunny_into_critvals(bunnypoints, seed):
     rnd.seed(seed)
     critvals = []
+    no_lub = []
     for row in bunnypoints:
-        c = mod.critical_val((row[0], row[1]), rnd.randint(0, 1))
+        r = rnd.randint(0, 1)
+        c = mod.critical_val((row[0], row[1]), r)
+        no_lub.append(((row[0], row[1]), r))
         critvals.append(c)
 
-    fig, ax = plt.subplots()
-    ax.set_aspect("equal")
-    for c in critvals:
-        if c.parent_module == 0:
-            ax.plot(c.coords[0], c.coords[1], "o", color="red")
-        else:
-            ax.plot(c.coords[0], c.coords[1], "o", color="blue")
-    return critvals
+    # fig, ax = plt.subplots()
+    # ax.set_aspect("equal")
+    # for c in critvals:
+    #     if c.parent_module == 0:
+    #         ax.plot(c.coords[0], c.coords[1], "o", color="red")
+    #     else:
+    #         ax.plot(c.coords[0], c.coords[1], "o", color="blue")
+    return critvals, no_lub
 
 
 def test_example():

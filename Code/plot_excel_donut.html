@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Area Graph Tool</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .control-group input,
+        .control-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #3367d6;
+        }
+
+        #myDiv {
+            width: 100%;
+            height: 600px;
+            margin-top: 20px;
+            border: 1px solid #eee;
+        }
+
+        .note {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Custom Area Graph Generator</h2>
+
+        <div class="grid-layout">
+            <div>
+                <div class="control-group">
+                    <label>Paste Data (Headers required)</label>
+                    <textarea id="dataInput" placeholder="Paste data here...
+# rects    No pruning    Old pruning    All pruning
+2          0.5           0.2            0.1
+2          0.6           0.3            0.1
+..."></textarea>
+                </div>
+                <button onclick="processAndDraw()">Update Graph</button>
+            </div>
+
+            <div>
+                <div class="control-group">
+                    <label>Chart Title</label>
+                    <input type="text" id="chartTitle" value="# rects vs |log| of computation time">
+                </div>
+
+                <div class="grid-layout" style="margin-bottom: 0; gap: 10px;">
+                    <div class="control-group">
+                        <label>X-Axis Label</label>
+                        <input type="text" id="xAxisLabel" value="">
+                    </div>
+                    <div class="control-group">
+                        <label>Y-Axis Label</label>
+                        <input type="text" id="yAxisLabel" value="Time / Value">
+                    </div>
+                </div>
+
+                <div class="grid-layout" style="margin-bottom: 0; gap: 10px;">
+                    <div class="control-group">
+                        <label>Font Family</label>
+                        <select id="fontFamily">
+                            <option value="Arial, sans-serif">Arial (Sans-serif)</option>
+                            <option value="'Times New Roman', serif">Times New Roman (Serif)</option>
+                            <option value="'Courier New', monospace">Courier (Monospace)</option>
+                            <option value="'Roboto', sans-serif">Roboto</option>
+                            <option value="'Verdana', sans-serif">Verdana</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Layer Order (Indices)</label>
+                        <input type="text" id="layerOrder" placeholder="e.g. 1, 2, 3">
+                        <div class="note">Comma-separated column indices. The last number is drawn ON TOP. Leave empty
+                            for default.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="myDiv"></div>
+    </div>
+
+    <script>
+        function processAndDraw() {
+            const rawInput = document.getElementById('dataInput').value.trim();
+            if (!rawInput) { alert("Please paste some data first!"); return; }
+
+            // --- 1. CONFIGURATION ---
+            const userTitle = document.getElementById('chartTitle').value;
+            const userXLabel = document.getElementById('xAxisLabel').value;
+            const userYLabel = document.getElementById('yAxisLabel').value;
+            const userFont = document.getElementById('fontFamily').value;
+            const layerOrderStr = document.getElementById('layerOrder').value.trim();
+
+            // --- 2. PARSE DATA ---
+            const rows = rawInput.split('\n').map(row => row.split(/\t/));
+            const headers = rows[0];
+            const dataRows = rows.slice(1);
+
+            // Sort data by first column (numeric sort)
+            dataRows.sort((a, b) => parseFloat(a[0]) - parseFloat(b[0]));
+
+            // --- 3. PREPARE SERIES ---
+            const xValues = dataRows.map(row => row[0]);
+            let seriesList = [];
+
+            // Solid Opaque Colors
+            const colorPalette = [
+                '#F4B400', // Yellow
+                '#DB4437', // Red
+                '#4285F4', // Blue
+                '#0F9D58', // Green
+                '#AB47BC'  // Purple
+            ];
+
+            // Create initial series objects
+            for (let colIdx = 1; colIdx < headers.length; colIdx++) {
+                seriesList.push({
+                    originalIndex: colIdx,
+                    name: headers[colIdx],
+                    y: dataRows.map(row => parseFloat(row[colIdx])),
+                    type: 'scatter',
+                    mode: 'lines',
+                    fill: 'tozeroy',
+                    line: { width: 2, color: colorPalette[(colIdx - 1) % colorPalette.length] },
+                    fillcolor: colorPalette[(colIdx - 1) % colorPalette.length] // Solid fill matching line
+                });
+            }
+
+            // --- 4. HANDLE LAYERING ---
+            // If user specified an order, re-arrange the seriesList array.
+            // The Plotly drawing order is sequential: index 0 is bottom, last index is top.
+            if (layerOrderStr) {
+                const indices = layerOrderStr.split(',').map(s => parseInt(s.trim()));
+                const newOrder = [];
+                indices.forEach(idx => {
+                    // Find the series that matches this original column index
+                    const found = seriesList.find(s => s.originalIndex === idx);
+                    if (found) newOrder.push(found);
+                });
+                // Replace seriesList only if we found matches
+                if (newOrder.length > 0) seriesList = newOrder;
+            }
+
+            // --- 5. CALCULATE CENTERED TICKS ---
+            const tickVals = [];
+            const tickText = [];
+            let currentGroup = null;
+            let startIndex = 0;
+
+            xValues.forEach((val, index) => {
+                if (val !== currentGroup) {
+                    if (currentGroup !== null) {
+                        const midpoint = startIndex + (index - startIndex) / 2;
+                        tickVals.push(midpoint);
+                        tickText.push(currentGroup);
+                    }
+                    currentGroup = val;
+                    startIndex = index;
+                }
+            });
+            if (currentGroup !== null) {
+                const midpoint = startIndex + (xValues.length - startIndex) / 2;
+                tickVals.push(midpoint);
+                tickText.push(currentGroup);
+            }
+
+            // --- 6. LAYOUT ---
+            const layout = {
+                title: {
+                    text: userTitle,
+                    font: { family: userFont, size: 24 }
+                },
+                font: { family: userFont },
+                xaxis: {
+                    tickmode: 'array',
+                    tickvals: tickVals,
+                    ticktext: tickText,
+                    title: { text: userXLabel || headers[0], font: { family: userFont } },
+                    showgrid: false
+                },
+                yaxis: {
+                    title: { text: userYLabel, font: { family: userFont } },
+                    gridcolor: '#eee',
+                    zeroline: false
+                },
+                showlegend: true,
+                legend: {
+                    orientation: 'h',
+                    y: 1.1,
+                    font: { family: userFont }
+                },
+                margin: { l: 60, r: 30, t: 80, b: 60 }
+            };
+
+            // --- 7. DRAW ---
+            Plotly.newPlot('myDiv', seriesList, layout);
+        }
+    </script>
+
+</body>
+
+</html>

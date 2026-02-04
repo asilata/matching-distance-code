@@ -205,6 +205,9 @@ def combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_
     return omega_points_collection, omega_slopes_collection
 
 def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N):
+    time_why_match_slow = time.time()
+    print("Computing matching dist! ", time_why_match_slow)
+
 
     lub0  = list(set(lub[0]))
     lub1 = list(set(lub[1]))
@@ -214,7 +217,7 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
     sloppyslopestoiterateover = omega_slopes_collection
 
     Lines = []
-
+    print("Lines through pairs of pts ", time.time() - time_why_match_slow, " so far")
     ## Lines through pairs of points 
     all_bottle_time = 0
     for x in range(len(pointstoiterateover)):
@@ -224,24 +227,27 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
                 Lines.append(L)
 
     ## Lines through a point and with a given slope
+    print("Lines through pairs of pts with given slope", time.time() - time_why_match_slow, " so far")
     for x in range(len(closureMN)): 
         for y in range(len(sloppyslopestoiterateover)):
             L = mod.Line(sloppyslopestoiterateover[y], closureMN[x])
             if L.positive == True:
                 Lines.append(L)         
 
-
+    print("Lines of slope one", time.time() - time_why_match_slow, " so far")
     # Lines of slope 1 through one point          
     for x in range(len(pointstoiterateover)):
         L = mod.Line((1,1), pointstoiterateover[x])
         if L.positive == True:
             Lines.append(L)
 
+    print("Gudhi time", time.time() - time_why_match_slow, " so far")
     if settings.actually_compute_matching_distance:
         # compute match dist separately out of for loops
         all_ws = []
         time_bottleneck = time.time()
         for L in Lines:
+            # this uses gudhi
             w = mod.compute_weighted_bottleneck(M,N,L)
             all_ws.append(w)
         time_bottleneck_end = time.time()
@@ -372,6 +378,7 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     # 19 JAN: for quick insertion of critical values for testing figures (ref: file BUNNYFIGURE), we do the horrendous coding practice of just overwriting shit here
     if settings.overwrite_critvals:
         critical_vals = settings.critvals_to_overwrite
+        print("CV LEN: ", len(critical_vals)) # type: ignore
         nolub = settings.nolub_to_overwrite
         print("WARNING: OVERWRITING CRITICAL VALUES!")
         # print(critical_vals)
@@ -385,6 +392,11 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     # using the parent module information 
             #pylance: disable-reportUnboundVariable
     lub = omega.closure_lub(critical_vals) # type: ignore
+    print("NUMBER OF CRITVALS: ", len(critical_vals)) # type: ignore
+
+    if settings.overwrite_critvals:
+        print("CV LEN: ", len(critical_vals)) # type: ignore
+        print("LUB LENGTH: ", len(lub))
 
     start_time_switch_pts = time.time()
     ### run all three allgoriths 3v1, 2v2 paired , 2v2 unpaired
