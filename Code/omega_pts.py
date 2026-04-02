@@ -556,113 +556,111 @@ def algo_3vs1(CritPts, all_CritPts, prune):
             ## Is indentation correct? yes same as paper
             if check_x_pushes_up(x.coords, u.coords, v.coords, w.coords) or not prune:
                 # adding this to include claudia's comment about matching having null cost
-                if u.coords[1] == v.coords[1]:
-                    continue
-
-                if (
-                    u.coords[1] < v.coords[1]
-                ):  ## at some point there was confusion about <= or <; changed to < on 13 july to match current paper. maybe shouldn't have?
-                    temp_u = u
-                    u = v
-                    v = temp_u
-                if (
-                    w.coords[0] >= x.coords[0] and w.coords[1] >= x.coords[1]
-                ):  ## should this be strict inequality? , also check the coordinates 0 and 1
-                    omega = (
-                        x.coords[0],
-                        (eta / delta) * (v.coords[1] - u.coords[1]) + w.coords[1],
-                    )
-
-                elif w.coords[0] <= x.coords[0] and w.coords[1] <= x.coords[1]:
-                    omega = (
-                        x.coords[0],
-                        (eta / delta) * (u.coords[1] - v.coords[1]) + w.coords[1],
-                    )
-
-                else:
-                    omega = (
-                        x.coords[0],
-                        (eta / delta) * (u.coords[1] - v.coords[1]) + w.coords[1],
-                    )
-                    omega1 = (
-                        x.coords[0],
-                        (eta / delta) * (v.coords[1] - u.coords[1]) + w.coords[1],
-                    )
+                if u.coords[1] != v.coords[1]:
 
                     if (
-                        check_omega_x_below(u, v, w, x, omega1)
-                        and omega1 not in all_CritPts
-                    ) or (not prune):
-                        Omega_pts.append(omega1)  ## append
-                        ##  add omega pts to dictionary
-                        dict_omega_pts.append(
-                            [omega1, x.coords, u.coords, v.coords, w.coords, eta, delta]
+                        u.coords[1] < v.coords[1]
+                    ):  ## at some point there was confusion about <= or <; changed to < on 13 july to match current paper. maybe shouldn't have?
+                        temp_u = u
+                        u = v
+                        v = temp_u
+                    if (
+                        w.coords[0] >= x.coords[0] and w.coords[1] >= x.coords[1]
+                    ):  ## should this be strict inequality? , also check the coordinates 0 and 1
+                        omega = (
+                            x.coords[0],
+                            (eta / delta) * (v.coords[1] - u.coords[1]) + w.coords[1],
                         )
 
-                    # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                    elif w.coords[0] <= x.coords[0] and w.coords[1] <= x.coords[1]:
+                        omega = (
+                            x.coords[0],
+                            (eta / delta) * (u.coords[1] - v.coords[1]) + w.coords[1],
+                        )
 
-                if (check_omega_x_below(u, v, w, x, omega) and omega not in all_CritPts) or (not prune):
-                    Omega_pts.append(omega)  ## in any case we append omegaa
-                    # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
-                    dict_omega_pts.append(
-                        [omega, x.coords, u.coords, v.coords, w.coords, eta, delta]
-                    )
+                    else:
+                        omega = (
+                            x.coords[0],
+                            (eta / delta) * (u.coords[1] - v.coords[1]) + w.coords[1],
+                        )
+                        omega1 = (
+                            x.coords[0],
+                            (eta / delta) * (v.coords[1] - u.coords[1]) + w.coords[1],
+                        )
+
+                        if (
+                            check_omega_x_below(u, v, w, x, omega1)
+                            and omega1 not in all_CritPts
+                        ) or (not prune):
+                            Omega_pts.append(omega1)  ## append
+                            ##  add omega pts to dictionary
+                            dict_omega_pts.append(
+                                [omega1, x.coords, u.coords, v.coords, w.coords, eta, delta]
+                            )
+
+                        # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+
+                    if (check_omega_x_below(u, v, w, x, omega) and omega not in all_CritPts) or (not prune):
+                        Omega_pts.append(omega)  ## in any case we append omegaa
+                        # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                        dict_omega_pts.append(
+                            [omega, x.coords, u.coords, v.coords, w.coords, eta, delta]
+                        )
 
             ### Is indentation correct? yes, same as above
             if check_x_pushes_right(x.coords, u.coords, v.coords, w.coords) or not prune:
                 # adding because of claudia's null cost comment
-                if u.coords[0] == v.coords[0]:
-                    continue
-
-                if (
-                    u.coords[0] < v.coords[0]
-                ):  ## confusion about <= or <, but updated 13 july to match paper
-                    temp_u = u
-                    u = v
-                    v = temp_u
-                if (
-                    w.coords[0] >= x.coords[0] and w.coords[1] >= x.coords[1]
-                ):  ## check < vs <= and coordinates 0,1
-                    omega = (
-                        (eta / delta) * (v.coords[0] - u.coords[0]) + w.coords[0],
-                        x.coords[1],
-                    )
-
-                elif w.coords[0] <= x.coords[0] and w.coords[1] <= x.coords[1]:
-                    omega = (
-                        (eta / delta) * (u.coords[0] - v.coords[0]) + w.coords[0],
-                        x.coords[1],
-                    )
-
-                else:
-                    omega = (
-                        (eta / delta) * (v.coords[0] - u.coords[0]) + w.coords[0],
-                        x.coords[1],
-                    )
-                    omega1 = (
-                        (eta / delta) * (u.coords[0] - v.coords[0]) + w.coords[0],
-                        x.coords[1],
-                    )
+                if u.coords[0] != v.coords[0]:
 
                     if (
-                        check_omega_x_above(u, v, w, x, omega1)
-                        and omega1 not in all_CritPts
-                    ) or not prune:  # not check_in_list(omega1, critptscoords):
-                        Omega_pts.append(omega1)
-                        ## dict for debuging
-                        # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
-                        dict_omega_pts.append(
-                            [omega1, x.coords, u.coords, v.coords, w.coords, eta, delta]
+                        u.coords[0] < v.coords[0]
+                    ):  ## confusion about <= or <, but updated 13 july to match paper
+                        temp_u = u
+                        u = v
+                        v = temp_u
+                    if (
+                        w.coords[0] >= x.coords[0] and w.coords[1] >= x.coords[1]
+                    ):  ## check < vs <= and coordinates 0,1
+                        omega = (
+                            (eta / delta) * (v.coords[0] - u.coords[0]) + w.coords[0],
+                            x.coords[1],
                         )
 
-                if (
-                    check_omega_x_above(u, v, w, x, omega) and omega not in all_CritPts
-                ) or not prune:  # and not check_in_list(omega, critptscoords):
-                    Omega_pts.append(omega)
-                    # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
-                    dict_omega_pts.append(
-                        [omega, x.coords, u.coords, v.coords, w.coords, eta, delta]
-                    )
+                    elif w.coords[0] <= x.coords[0] and w.coords[1] <= x.coords[1]:
+                        omega = (
+                            (eta / delta) * (u.coords[0] - v.coords[0]) + w.coords[0],
+                            x.coords[1],
+                        )
+
+                    else:
+                        omega = (
+                            (eta / delta) * (v.coords[0] - u.coords[0]) + w.coords[0],
+                            x.coords[1],
+                        )
+                        omega1 = (
+                            (eta / delta) * (u.coords[0] - v.coords[0]) + w.coords[0],
+                            x.coords[1],
+                        )
+
+                        if (
+                            check_omega_x_above(u, v, w, x, omega1)
+                            and omega1 not in all_CritPts
+                        ) or not prune:  # not check_in_list(omega1, critptscoords):
+                            Omega_pts.append(omega1)
+                            ## dict for debuging
+                            # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                            dict_omega_pts.append(
+                                [omega1, x.coords, u.coords, v.coords, w.coords, eta, delta]
+                            )
+
+                    if (
+                        check_omega_x_above(u, v, w, x, omega) and omega not in all_CritPts
+                    ) or not prune:  # and not check_in_list(omega, critptscoords):
+                        Omega_pts.append(omega)
+                        # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                        dict_omega_pts.append(
+                            [omega, x.coords, u.coords, v.coords, w.coords, eta, delta]
+                        )
 
     """with open('test.csv', 'a', newline='') as file:  #### find a way to write everything in file
         writer = csv.DictWriter(file, fieldnames = fields,dialect='excel')
@@ -772,7 +770,7 @@ def check_omega_3(omega, u, v, w, x):
                             r_s = 0
 
             if r_s > 0:
-                for t in S:
+                for t in P:
                     if Q[s] == 1:
                         if Q[t] == 3:
                             if m[s] > m[t]:
@@ -848,91 +846,91 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                 # print("prune 6")
                 if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
                     continue
-        if check_pts_2v2_paired(x, v, w, u) or not prune: # type: ignore
+            if check_pts_2v2_paired(x, v, w, u) or not prune: # type: ignore
+                if (
+                    (lub(u, v) == u.coords and lub(x, w) == w.coords) # type: ignore
+                    or (lub(u, v) == v.coords and lub(x, w) == x.coords) # type: ignore
+                    or lub(u, v) not in [u.coords, v.coords] # type: ignore
+                    or lub(x, w) not in [x.coords, w.coords] # type: ignore
+                ):
+                    # this is the new thing that robyn just added
+                    if (
+                        (delta == eta)
+                        and (v.coords[0] != x.coords[0])
+                        and (u.coords[1] != w.coords[1]) # type: ignore
+                    ):
+                        omega = (
+                            v.coords[0] - x.coords[0],
+                            u.coords[1] - w.coords[1], # type: ignore
+                        )  ## line 29 pseudo code . check this!!!
+                        m = (u.coords[1] - w.coords[1]) / (v.coords[0] - x.coords[0]) # type: ignore
+                        # added here (on tuesday) that m > 0
+                        if (
+                            max(
+                                x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0] # type: ignore
+                            )
+                            < min(
+                                u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0] # type: ignore
+                            )
+                            and m > 0
+                        ):
+                            Omega_pts.append(omega)
+                            ## append the slope
+                            info_list.append(
+                                [
+                                    omega,
+                                    x.coords,
+                                    u.coords, # type: ignore
+                                    v.coords,
+                                    w.coords, # type: ignore
+                                    eta,
+                                    delta,
+                                    m,
+                                ]
+                            )
+
+                    elif delta != eta:
+                        omega = (
+                            (eta * v.coords[0] - delta * x.coords[0]) / (eta - delta),
+                            (eta * u.coords[1] - delta * w.coords[1]) / (eta - delta), # type: ignore
+                        )
+                        if (
+                            check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) # type: ignore
+                            and omega not in all_CritPts
+                        ) or not prune:
+                            Omega_pts.append(omega)
+                            info_list.append(
+                                [
+                                    omega,
+                                    x.coords,
+                                    u.coords, # type: ignore
+                                    v.coords,
+                                    w.coords, # type: ignore
+                                    eta,
+                                    delta,
+                                    None,
+                                ]
+                            )
+
             if (
-                (lub(u, v) == u.coords and lub(x, w) == w.coords) # type: ignore
-                or (lub(u, v) == v.coords and lub(x, w) == x.coords) # type: ignore
+                (lub(u, v) == u.coords and lub(x, w) == x.coords) # type: ignore
+                or (lub(u, v) == v.coords and lub(x, w) == w.coords) # type: ignore
                 or lub(u, v) not in [u.coords, v.coords] # type: ignore
                 or lub(x, w) not in [x.coords, w.coords] # type: ignore
             ):
-                # this is the new thing that robyn just added
-                if (
-                    (delta == eta)
-                    and (v.coords[0] != x.coords[0])
-                    and (u.coords[1] != w.coords[1]) # type: ignore
-                ):
-                    omega = (
-                        v.coords[0] - x.coords[0],
-                        u.coords[1] - w.coords[1], # type: ignore
-                    )  ## line 29 pseudo code . check this!!!
-                    m = (u.coords[1] - w.coords[1]) / (v.coords[0] - x.coords[0]) # type: ignore
-                    # added here (on tuesday) that m > 0
-                    if (
-                        max(
-                            x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0] # type: ignore
-                        )
-                        < min(
-                            u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0] # type: ignore
-                        )
-                        and m > 0
-                    ):
-                        Omega_pts.append(omega)
-                        ## append the slope
-                        info_list.append(
-                            [
-                                omega,
-                                x.coords,
-                                u.coords, # type: ignore
-                                v.coords,
-                                w.coords, # type: ignore
-                                eta,
-                                delta,
-                                m,
-                            ]
-                        )
-
-                elif delta != eta:
-                    omega = (
-                        (eta * v.coords[0] - delta * x.coords[0]) / (eta - delta),
-                        (eta * u.coords[1] - delta * w.coords[1]) / (eta - delta), # type: ignore
-                    )
-                    if (
-                        check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) # type: ignore
-                        and omega not in all_CritPts
-                    ) or not prune:
-                        Omega_pts.append(omega)
-                        info_list.append(
-                            [
-                                omega,
-                                x.coords,
-                                u.coords, # type: ignore
-                                v.coords,
-                                w.coords, # type: ignore
-                                eta,
-                                delta,
-                                None,
-                            ]
-                        )
-
-        if (
-            (lub(u, v) == u.coords and lub(x, w) == x.coords) # type: ignore
-            or (lub(u, v) == v.coords and lub(x, w) == w.coords) # type: ignore
-            or lub(u, v) not in [u.coords, v.coords] # type: ignore
-            or lub(x, w) not in [x.coords, w.coords] # type: ignore
-        ):
-            omega = (
-                (eta * v.coords[0] + delta * x.coords[0]) / (eta + delta),
-                (eta * u.coords[1] + delta * w.coords[1]) / (eta + delta), # type: ignore
-            )
-
-            if (
-                check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) # type: ignore
-                and omega not in all_CritPts
-            ) or not prune:  ## corresponds to CheckOmega2 in the pseudo code
-                Omega_pts.append(omega)
-                info_list.append(
-                    [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None] # type: ignore
+                omega = (
+                    (eta * v.coords[0] + delta * x.coords[0]) / (eta + delta),
+                    (eta * u.coords[1] + delta * w.coords[1]) / (eta + delta), # type: ignore
                 )
+
+                if (
+                    check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) # type: ignore
+                    and omega not in all_CritPts
+                ) or not prune:  ## corresponds to CheckOmega2 in the pseudo code
+                    Omega_pts.append(omega)
+                    info_list.append(
+                        [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None] # type: ignore
+                    )
 
     return Omega_pts, info_list
 

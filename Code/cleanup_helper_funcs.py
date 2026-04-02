@@ -172,15 +172,12 @@ def combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_
 
     is_inf_2v2unp = is_inf_2v2unp_orig  
 
-    for n in range(len(omegapts_3v1)):
-        omega_points_collection.append(omegapts_3v1[n])
-
-    omega_points_collection += omegapts_3v1[0:] 
+    omega_points_collection += omegapts_3v1
 
 
     for s in is_inf_2v2p[1:]:
-        m1 = s 
-        m2 = 1
+        m1 = 1
+        m2 = s
         omega_slopes_collection.append((m1, m2))
         
         
@@ -192,7 +189,7 @@ def combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_
 
 
     is_inf_2v2unp = is_inf_2v2unp[1:]
-    for thing in range(len(orderedomegas_2v2unp_copy)-1):
+    for thing in range(len(orderedomegas_2v2unp_copy)):
         if is_inf_2v2unp[thing] == None: 
             omega_points_collection.append(orderedomegas_2v2unp_copy[thing])
 
@@ -783,7 +780,7 @@ def to_prune_or_not_to_prune_csv(M,N):
     Nmod = example[3]
     approx_start_time = time.time()
     max_dist_critpts, max_grids_lines = plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
-    settings.lower_bound_D = min(max_dist_critpts, max_grids_lines)
+    settings.lower_bound_D = max(max_dist_critpts, max_grids_lines)
     approx_end_time = time.time()
     approx_time = approx_end_time - approx_start_time
     #return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
