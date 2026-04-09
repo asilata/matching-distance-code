@@ -215,7 +215,7 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
 
     Lines = []
     print("Lines through pairs of pts ", time.time() - time_why_match_slow, " so far")
-    ## Lines through pairs of points 
+    ## Lines through pairs of points
     all_bottle_time = 0
     for x in range(len(pointstoiterateover)):
         for y in range(x, len(pointstoiterateover)):
@@ -225,14 +225,14 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
 
     ## Lines through a point and with a given slope
     print("Lines through pairs of pts with given slope", time.time() - time_why_match_slow, " so far")
-    for x in range(len(closureMN)): 
+    for x in range(len(closureMN)):
         for y in range(len(sloppyslopestoiterateover)):
             L = mod.Line(sloppyslopestoiterateover[y], closureMN[x])
             if L.positive == True:
                 Lines.append(L)         
 
     print("Lines of slope one", time.time() - time_why_match_slow, " so far")
-    # Lines of slope 1 through one point          
+    # Lines of slope 1 through one point
     for x in range(len(pointstoiterateover)):
         L = mod.Line((1,1), pointstoiterateover[x])
         if L.positive == True:
@@ -251,6 +251,9 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
         
         matching_dist = max(all_ws)
         idx = all_ws.index(matching_dist)
+        if settings.debug:
+            max_line = Lines[idx]
+            print(f"DEBUG: max line idx={idx}, m={max_line.m}, b={max_line.b}, dist={matching_dist:.6f}")
     else:
         time_bottleneck = 0
         time_bottleneck_end = 0

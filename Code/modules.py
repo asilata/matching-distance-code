@@ -332,19 +332,19 @@ class RectangleModule:
         return list(set(Crit_pts))
 
        
-    def compute_barcode(self, line): 
+    def compute_barcode(self, line):
         Int, params = self.find_intersection(line)
         dgm = []
-        for rect, i in zip(self.rectangles, range(len(self.rectangles))): 
+        for rect, i in zip(self.rectangles, range(len(self.rectangles))):
             dim = rect.dim
-            if len(params[i]) ==2: 
+            if len(params[i]) >= 2:
                 for d in range(dim):
-                    dgm.append([params[i][0],params[i][1]])
-                     
+                    dgm.append([min(params[i]), max(params[i])])
+
             elif len(params[i]) ==1:
                 for d in range(dim):
                     dgm.append([params[i][0],np.inf])
-        return dgm 
+        return dgm
     
     def closure_lub(self): 
         """ Find the closure under least upper boud of the critical points"""
