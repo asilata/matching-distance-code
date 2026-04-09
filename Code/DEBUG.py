@@ -7,9 +7,9 @@ import settings
 if __name__ == "__main__":
 
     ################# SETTINGS TO CHANGE (all settings are integers > 0)
-    rects_in_M = 3
+    rects_in_M = 2
     rects_in_N = 1
-    seed = 4
+    seed = 13
     ################# END OF SETTINGS TO CHANGE
     settings.save_figure = True
     settings.debug = False

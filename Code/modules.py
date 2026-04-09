@@ -89,25 +89,26 @@ class Rectangle:
     
     def find_intersection(self, line):
         """Find the intersection of the given line with self, in the appropriate notation."""
-        #### what about intersection at a corner...????  
+        #### what about intersection at a corner...????
         b = line.b[0]
         m1 = line.m[0]
         m2 = line.m[1]
         inter = []
         params = []
-        
+        EPS = 1e-12  # floating-point tolerance for boundary checks
+
         if self.type == 'finite':
-            ## intersection with bottom side: 
+            ## intersection with bottom side:
             bl = self.bottom_left[1]
             t_bs = (bl+b)/m2
             pt_bs = (m1*t_bs +b, bl)
 
-            ## intersection with top side: 
+            ## intersection with top side:
             tl = self.find_tl()[1]
             t_ts = (tl+b)/m2
             pt_ts = (m1*t_ts +b, tl)
 
-            ## intersection with right side: 
+            ## intersection with right side:
             br= self.find_br()[0]
             t_rs = (br-b)/m1
             pt_rs = (br, m2*t_rs-b)
@@ -117,43 +118,43 @@ class Rectangle:
             t_ls = (bl-b)/m1
             pt_ls = (bl, m2*t_ls-b)
 
-            if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
+            if self.bottom_left[0] - EPS <= pt_bs[0] <= self.find_br()[0] + EPS:
                 inter.append(pt_bs)
                 params.append(t_bs)
 
-            if self.bottom_left[1] <= pt_ls[1] <= self.find_tl()[1]: 
-                if pt_ls not in inter: 
+            if self.bottom_left[1] - EPS <= pt_ls[1] <= self.find_tl()[1] + EPS:
+                if pt_ls not in inter:
                     inter.append(pt_ls)
-                    params.append(t_ls) 
+                    params.append(t_ls)
 
-            if self.find_tl()[0] <= pt_ts[0] <= self.top_right[0]: 
+            if self.find_tl()[0] - EPS <= pt_ts[0] <= self.top_right[0] + EPS:
                     inter.append(pt_ts)
                     params.append(t_ts)
 
 
-            if self.find_br()[1] <= pt_rs[1] <= self.top_right[1]: 
+            if self.find_br()[1] - EPS <= pt_rs[1] <= self.top_right[1] + EPS:
                 if pt_rs not in inter:
                     inter.append(pt_rs)
                     params.append(t_rs)
-            
+
             if len(params) == 1:
                 pt = inter[0]
                 t = params[0]
                 inter.append(pt)
                 params.append(t)
-         
-        if self.type == 'top infinite': 
 
-            ## intersection with bottom side: 
+        if self.type == 'top infinite':
+
+            ## intersection with bottom side:
             bl = self.bottom_left[1]
             t_bs = (bl+b)/m2
             pt_bs = (m1*t_bs +b, bl)
 
-            ## intersection with top side: 
+            ## intersection with top side:
             t_ts = np.inf
             pt_ts = (np.inf,np.inf)
 
-            ## intersection with right side: 
+            ## intersection with right side:
             br= self.find_br()[0]
             t_rs = (br-b)/m1
             pt_rs = (br, m2*t_rs-b)
@@ -163,33 +164,33 @@ class Rectangle:
             t_ls = (bl-b)/m1
             pt_ls = (bl, m2*t_ls-b)
 
-            if self.bottom_left[0] <= pt_bs[0] <= self.find_br()[0]:
+            if self.bottom_left[0] - EPS <= pt_bs[0] <= self.find_br()[0] + EPS:
                 inter.append(pt_bs)
                 params.append(t_bs)
 
-            if self.bottom_left[1] <= pt_ls[1]: 
-                if pt_ls not in inter: 
+            if self.bottom_left[1] - EPS <= pt_ls[1]:
+                if pt_ls not in inter:
                     inter.append(pt_ls)
-                    params.append(t_ls) 
+                    params.append(t_ls)
 
-            if self.find_br()[1] <= pt_rs[1]:
+            if self.find_br()[1] - EPS <= pt_rs[1]:
                 if pt_rs not in inter:
                     inter.append(pt_rs)
                     params.append(t_rs)
 
         if self.type == 'right infinite':
-                ## intersection with bottom side: 
-                 ## intersection with bottom side: 
+                ## intersection with bottom side:
+                 ## intersection with bottom side:
             bl = self.bottom_left[1]
             t_bs = (bl+b)/m2
             pt_bs = (m1*t_bs +b, bl)
-        
-            ## intersection with top side: 
+
+            ## intersection with top side:
             tl = self.find_tl()[1]
             t_ts = (tl+b)/m2
             pt_ts = (m1*t_ts +b, tl)
 
-            ## intersection with right side: 
+            ## intersection with right side:
             t_rs = np.inf
             pt_rs = (np.inf,np.inf)
             ## intersection with left side:
@@ -198,30 +199,30 @@ class Rectangle:
             pt_ls = (bl, m2*t_ls-b)
 
             #print(pt_bs)
-            if self.bottom_left[0] <= pt_bs[0]: #<= self.find_br()[0]:
+            if self.bottom_left[0] - EPS <= pt_bs[0]: #<= self.find_br()[0]:
                 inter.append(pt_bs)
                 params.append(t_bs)
 
-            if self.bottom_left[1] <= pt_ls[1] <= self.find_tl()[1]: 
-                if pt_ls not in inter: 
+            if self.bottom_left[1] - EPS <= pt_ls[1] <= self.find_tl()[1] + EPS:
+                if pt_ls not in inter:
                     inter.append(pt_ls)
-                    params.append(t_ls) 
+                    params.append(t_ls)
 
-            if self.find_tl()[0] <= pt_ts[0]: # <= self.top_right[0]: 
+            if self.find_tl()[0] - EPS <= pt_ts[0]: # <= self.top_right[0]:
                 inter.append(pt_ts)
                 params.append(t_ts)
 
-      
+
         if self.type == 'infinite quadrant':
-             ## intersection with bottom side: 
+             ## intersection with bottom side:
             bl = self.bottom_left[1]
             t_bs = (bl+b)/m2
             pt_bs = (m1*t_bs +b, bl)
 
-            ## intersection with top 
+            ## intersection with top
             t_ts = np.inf
             pt_ts = (np.inf,np.inf)
-            ## intersection with right side: 
+            ## intersection with right side:
             t_rs = np.inf
             pt_rs = (np.inf,np.inf)
 
@@ -233,16 +234,16 @@ class Rectangle:
             inter = []
             params = []
 
-            if self.bottom_left[0] <= pt_bs[0]:
+            if self.bottom_left[0] - EPS <= pt_bs[0]:
                 inter.append(pt_bs)
                 params.append(t_bs)
 
-            if self.bottom_left[1] <= pt_ls[1]: 
-                if pt_ls not in inter: 
+            if self.bottom_left[1] - EPS <= pt_ls[1]:
+                if pt_ls not in inter:
                     inter.append(pt_ls)
-                    params.append(t_ls) 
+                    params.append(t_ls)
 
-        return inter, params 
+        return inter, params
      
 
     def print_info(self):
