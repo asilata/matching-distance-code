@@ -70,6 +70,6 @@ if __name__ == '__main__':
     print('Rects in M: ',rects_in_M)
     print('Rects in N: ',rects_in_N)
 
-    prune_time, approx_time, prune_match_dist, max_dist_critpts, max_grids_lines = chf.to_prune_or_not_to_prune_csv(M,N)
+    prune_time, approx_time, prune_match_dist, max_dist_critpts, max_grids_lines, _ = chf.to_prune_or_not_to_prune_csv(M,N)
 
     print("_____________________________________\nEND\n_____________________________________")

@@ -1,6 +1,7 @@
 # pylance: reportUnboundVariable=false
 
 import modules as mod
+
 # from scipy.stats import qmc
 import numpy as np
 import matplotlib
@@ -12,6 +13,7 @@ import modules as mod
 import examples as ex
 import plot as ourplot
 import csv
+
 # import bunny_smaller
 import omega_pts as omega
 from numpy import linalg as LA
@@ -22,10 +24,10 @@ import settings
 
 def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
     # calculate other coords from tr and bl
-    tl_m = np.array([bl_m[0],tr_m[1]])
-    br_m = np.array([tr_m[0],bl_m[1]])
-    tl_n = np.array([bl_n[0],tr_n[1]])
-    br_n = np.array([tr_n[0],bl_n[1]])
+    tl_m = np.array([bl_m[0], tr_m[1]])
+    br_m = np.array([tr_m[0], bl_m[1]])
+    tl_n = np.array([bl_n[0], tr_n[1]])
+    br_n = np.array([tr_n[0], bl_n[1]])
 
     #######################
     a1 = ((bl_m[0], bl_m[1]), 0)
@@ -36,7 +38,7 @@ def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
     b2 = ((tl_n[0], tl_n[1]), 1)
     b3 = ((br_n[0], br_n[1]), 1)
 
-    ############## make them into crit vals 
+    ############## make them into crit vals
     c1 = mod.critical_val((bl_m[0], bl_m[1]), 0)
     c2 = mod.critical_val((br_m[0], br_m[1]), 0)
     c3 = mod.critical_val((tl_m[0], tl_m[1]), 0)
@@ -48,23 +50,40 @@ def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
     crits_no_lub = [a1, a2, a3, b1, b2, b3]
     critpts = [c1, c2, c3, d1, d2, d3]
 
-   #(self, top_left,top_right, bottom_left, 
+    # (self, top_left,top_right, bottom_left,
     # bottom_right, dim = 1, parent = 1):
 
-    m1 = mod.Rectangle((tl_m[0], tl_m[1]), (tr_m[0], tr_m[1]), (bl_m[0], bl_m[1]), (br_m[0], br_m[1]), 1, 0)
-    n1 = mod.Rectangle((tl_n[0], tl_n[1]), (tr_n[0], tr_n[1]), (bl_n[0], bl_n[1]), (br_n[0], br_n[1]), 1, 1)   
+    m1 = mod.Rectangle(
+        (tl_m[0], tl_m[1]),
+        (tr_m[0], tr_m[1]),
+        (bl_m[0], bl_m[1]),
+        (br_m[0], br_m[1]),
+        1,
+        0,
+    )
+    n1 = mod.Rectangle(
+        (tl_n[0], tl_n[1]),
+        (tr_n[0], tr_n[1]),
+        (bl_n[0], bl_n[1]),
+        (br_n[0], br_n[1]),
+        1,
+        1,
+    )
 
     M = mod.RectangleModule([m1])
     N = mod.RectangleModule([n1])
 
     # put the modules into the correct format (eg like in examples.py)
-    critval_coords = [] ## forgets the parent modules 
+    critval_coords = []  ## forgets the parent modules
     for i in range(len(critpts)):
         critval_coords.append(critpts[i].coords)
 
     return critpts, crits_no_lub, M, N, critval_coords
 
-def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, title = 'title'):
+
+def compute_switch_points(
+    critpts, crits_no_lub, prune, makegraphyesno=False, title="title"
+):
 
     ############################
     ### originally from socg_examples.ipynb
@@ -80,7 +99,11 @@ def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, 
 
         fig.suptitle("Input rectangle modules M and N")
         for i in [0, 3, 6]:
-            p1, p2, p3 = crits_no_lub[0 + i][0], crits_no_lub[1 + i][0], crits_no_lub[2 + i][0]
+            p1, p2, p3 = (
+                crits_no_lub[0 + i][0],
+                crits_no_lub[1 + i][0],
+                crits_no_lub[2 + i][0],
+            )
             p4 = np.array(p2) + np.array(p3) - np.array(p1)
             x = [p1[0], p2[0], p4[0], p3[0], p1[0]]
             y = [p1[1], p2[1], p4[1], p3[1], p1[1]]
@@ -113,7 +136,6 @@ def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, 
                     markersize=3,
                 )
 
-
         black_patch = mpatches.Patch(color="black", label="critical values from M")
         orange_patch = mpatches.Patch(color="orange", label="critical values from N")
         ax0.legend(
@@ -121,7 +143,6 @@ def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, 
             loc="upper right",
         )
         plt.show()
-
 
     ############# do computations
     # algo 3v1 = Algorithm 3 in SoCG overleaf
@@ -131,12 +152,11 @@ def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, 
     # print("Running the three algorithms.")
     # print("-------------")
 
-
     # print("3v1:")
     omegapts_3v1, _, _ = omega.output_alg_3_1(critpts, "socg/" + title, prune)
     if makegraphyesno:
-        ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1") # type: ignore
-    
+        ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1")  # type: ignore
+
     if settings.print_output:
         print("-------------")
     # algo 2v2 paired = Algorithm 5 in SoCG overleaf
@@ -146,114 +166,125 @@ def compute_switch_points(critpts, crits_no_lub, prune, makegraphyesno = False, 
     )
 
     if makegraphyesno:
-        ourplot.plot_c_o_with_inf(crits_no_lub, orderedomegas2v2p, is_inf_2v2p, title, dpi, "2v2 Paired") # type: ignore
+        ourplot.plot_c_o_with_inf(crits_no_lub, orderedomegas2v2p, is_inf_2v2p, title, dpi, "2v2 Paired")  # type: ignore
 
     # algo 2v2 unpaired = Algorithm 7 in SoCG overleaf
     if settings.print_output:
         print("-------------")
 
     # print("2v2unpaired:")
-    omegapts_2v2_unp, _, _, is_inf_2v2unp_orig , orderedomegas_2v2unp = omega.output_alg_2_2_unpaired(
-        critpts, "socg/" + title, prune
+    omegapts_2v2_unp, _, _, is_inf_2v2unp_orig, orderedomegas_2v2unp = (
+        omega.output_alg_2_2_unpaired(critpts, "socg/" + title, prune)
     )
     if settings.print_output:
         print("______________________________________")
 
     if makegraphyesno:
         ourplot.plot_c_o_with_inf(
-            crits_no_lub, orderedomegas_2v2unp, is_inf_2v2unp_orig, title, dpi, "2v2 Unpaired" # type: ignore
+            crits_no_lub, orderedomegas_2v2unp, is_inf_2v2unp_orig, title, dpi, "2v2 Unpaired"  # type: ignore
         )
-    return critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp
+    return (
+        critpts,
+        crits_no_lub,
+        is_inf_2v2unp_orig,
+        omegapts_3v1,
+        is_inf_2v2p,
+        orderedomegas_2v2unp,
+    )
+
 
 def combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp):
 
     omega_points_collection = []
     omega_slopes_collection = []
 
-    is_inf_2v2unp = is_inf_2v2unp_orig  
+    is_inf_2v2unp = is_inf_2v2unp_orig
 
     omega_points_collection += omegapts_3v1
-
 
     for s in is_inf_2v2p[1:]:
         m1 = 1
         m2 = s
         omega_slopes_collection.append((m1, m2))
-        
-        
+
     orderedomegas_2v2unp_copy = orderedomegas_2v2unp.copy()
 
     orderedomegas_2v2unp_copy.pop(0)
 
     # print(orderedomegas_2v2unp_copy)
 
-
     is_inf_2v2unp = is_inf_2v2unp[1:]
     for thing in range(len(orderedomegas_2v2unp_copy)):
-        if is_inf_2v2unp[thing] == None: 
+        if is_inf_2v2unp[thing] == None:
             omega_points_collection.append(orderedomegas_2v2unp_copy[thing])
 
         else:
             omega_slopes_collection.append(orderedomegas_2v2unp_copy[thing])
-            # print(orderedomegas_2v2unp_copy[thing]) 
-
-            
+            # print(orderedomegas_2v2unp_copy[thing])
 
     return omega_points_collection, omega_slopes_collection
 
-def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N):
+
+def compute_matching_dist(
+    lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N
+):
     time_why_match_slow = time.time()
-    print("Computing matching dist! ", time_why_match_slow)
+    print("Computing matching dist!")
 
-
-    lub0  = list(set(lub[0]))
+    lub0 = list(set(lub[0]))
     lub1 = list(set(lub[1]))
     closureMN = critval_coords + lub0 + lub1
 
-    pointstoiterateover = closureMN + omega_points_collection  ### do we need to add again the critical values here 
+    pointstoiterateover = (
+        closureMN + omega_points_collection
+    )  ### do we need to add again the critical values here
     sloppyslopestoiterateover = omega_slopes_collection
 
     Lines = []
-    print("Lines through pairs of pts ", time.time() - time_why_match_slow, " so far")
+    print(f"Lines through pairs of pts: {time.time() - time_why_match_slow:.3f} sec")
     ## Lines through pairs of points
     all_bottle_time = 0
     for x in range(len(pointstoiterateover)):
         for y in range(x, len(pointstoiterateover)):
-            L = mod.line_through_2points(pointstoiterateover[x], pointstoiterateover[y]) ## here is the issue with none type error
+            L = mod.line_through_2points(
+                pointstoiterateover[x], pointstoiterateover[y]
+            )  ## here is the issue with none type error
             if L.positive == True:
                 Lines.append(L)
 
     ## Lines through a point and with a given slope
-    print("Lines through pairs of pts with given slope", time.time() - time_why_match_slow, " so far")
+    print(f"Lines through pts with given slope: {time.time() - time_why_match_slow:.3f} sec")
     for x in range(len(closureMN)):
         for y in range(len(sloppyslopestoiterateover)):
             L = mod.Line(sloppyslopestoiterateover[y], closureMN[x])
             if L.positive == True:
-                Lines.append(L)         
+                Lines.append(L)
 
-    print("Lines of slope one", time.time() - time_why_match_slow, " so far")
+    print(f"Lines of slope one: {time.time() - time_why_match_slow:.3f} sec")
     # Lines of slope 1 through one point
     for x in range(len(pointstoiterateover)):
-        L = mod.Line((1,1), pointstoiterateover[x])
+        L = mod.Line((1, 1), pointstoiterateover[x])
         if L.positive == True:
             Lines.append(L)
 
-    print("Gudhi time", time.time() - time_why_match_slow, " so far")
+    print(f"Gudhi time: {time.time() - time_why_match_slow:.3f} sec")
     if settings.actually_compute_matching_distance:
         # compute match dist separately out of for loops
         all_ws = []
         time_bottleneck = time.time()
         for L in Lines:
             # this uses gudhi
-            w = mod.compute_weighted_bottleneck(M,N,L)
+            w = mod.compute_weighted_bottleneck(M, N, L)
             all_ws.append(w)
         time_bottleneck_end = time.time()
-        
+
         matching_dist = max(all_ws)
         idx = all_ws.index(matching_dist)
         if settings.debug:
             max_line = Lines[idx]
-            print(f"DEBUG: max line idx={idx}, m={max_line.m}, b={max_line.b}, dist={matching_dist:.6f}")
+            print(
+                f"DEBUG: max line idx={idx}, m={max_line.m}, b={max_line.b}, dist={matching_dist:.6f}"
+            )
     else:
         time_bottleneck = 0
         time_bottleneck_end = 0
@@ -261,26 +292,32 @@ def compute_matching_dist(lub, critval_coords, omega_points_collection, omega_sl
 
     # print("alt match dist {:.3f}".format(match_dist_2))
 
-    
     # all_bottle_time += (bottletime_7 - bottletime_6)
     # print("BOTTLETIME", all_bottle_time)
-
-    
 
     # print('Matching distance is {},'.format(matching_dist))
     # print('and is attained at the line with slope {} \nand intercept {}.'.format(Lines[idx].m, Lines[idx].b))
     if settings.print_output and settings.actually_compute_matching_distance:
-        print('Matching dist: {:.3f} with slope ({:.3f}, {:.3f}) and intercept ({:.3f}, {:.3f}).'.format(matching_dist, Lines[idx].m[0], Lines[idx].m[1], Lines[idx].b[0], Lines[idx].b[1])) # type: ignore
+        print("Matching dist: {:.3f} with slope ({:.3f}, {:.3f}) and intercept ({:.3f}, {:.3f}).".format(matching_dist, Lines[idx].m[0], Lines[idx].m[1], Lines[idx].b[0], Lines[idx].b[1]))  # type: ignore
     if settings.compare_line_counts:
-        print('Lines counted: {}'.format(len(Lines)))
+        print("Lines counted: {}".format(len(Lines)))
     if settings.print_output and settings.actually_compute_matching_distance:
-        print("Time to compute bottleneck dists: {:.3f} sec".format(time_bottleneck_end - time_bottleneck))
-    if settings.print_output == True and settings.actually_compute_matching_distance == False:
+        print(
+            "Time to compute bottleneck dists: {:.3f} sec".format(
+                time_bottleneck_end - time_bottleneck
+            )
+        )
+    if (
+        settings.print_output == True
+        and settings.actually_compute_matching_distance == False
+    ):
         print("WARNING: no exact matching distance computed! ")
-    return matching_dist , len(Lines) ## C: added len(Lines) to return
+    best_line = Lines[idx] if settings.actually_compute_matching_distance else None  # type: ignore
+    return matching_dist, len(Lines), best_line
+
 
 def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
-    # # figuring stuff out: 
+    # # figuring stuff out:
     # bl tr YES
     ai = bl_m
     bi = tr_m
@@ -288,13 +325,12 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
     ci = bl_n
     di = tr_n
 
-
-    min_ba = min((bi[0] - ai[0])/2, (bi[1] - ai[1])/2 )
-    min_cd = min((di[0] - ci[0])/2, (di[1] - ci[1])/2 )
+    min_ba = min((bi[0] - ai[0]) / 2, (bi[1] - ai[1]) / 2)
+    min_cd = min((di[0] - ci[0]) / 2, (di[1] - ci[1]) / 2)
     max_abcd = max(min_ba, min_cd)
 
-    infnorm_ca= LA.norm(ci - ai, np.inf)
-    infnorm_db= LA.norm(di - bi, np.inf)
+    infnorm_ca = LA.norm(ci - ai, np.inf)
+    infnorm_db = LA.norm(di - bi, np.inf)
 
     max_infs = max(infnorm_ca, infnorm_db)
 
@@ -306,25 +342,26 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
     if graph:
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        plt.grid(visible = True )
-        ## rectangles 
-        # a1 = rect_m1.bottom_left 
+        plt.grid(visible=True)
+        ## rectangles
+        # a1 = rect_m1.bottom_left
         a1 = bl_m
         # h1= rect_m1.top_right[0]- a1[0]
         h1 = tr_m[0] - a1[0]
         # v1= rect_m1.top_right[1]- a1[1]
         v1 = tr_m[1] - a1[1]
-        # a2 = rect_m2.bottom_left 
+        # a2 = rect_m2.bottom_left
         a2 = bl_n
         # h2= rect_m2.top_right[0]- a2[0]
         h2 = tr_n[0] - a2[0]
         # v2= rect_m2.top_right[1]- a2[1]
         v2 = tr_n[1] - a2[1]
         from matplotlib import patches
+
         # m
-        rect1 = patches.Rectangle(a1,h1,v1,color ='blue', alpha = 0.2)
+        rect1 = patches.Rectangle(a1, h1, v1, color="blue", alpha=0.2)
         # n
-        rect2 = patches.Rectangle(a2,h2,v2, color ='green',alpha = 0.2)
+        rect2 = patches.Rectangle(a2, h2, v2, color="green", alpha=0.2)
 
         # ## lines
         # x = np.linspace(-2, 10, 1000)
@@ -343,13 +380,14 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
         plt.ylim([min(bl_m[1], bl_n[1]) - 1, max(tr_m[1], tr_n[1]) + 1])
         plt.xlim([min(bl_m[0], bl_n[0]) - 1, max(tr_m[0], tr_n[0]) + 1])
 
-        plt.title('Modules')  
-        #plt.savefig('moduleM')
+        plt.title("Modules")
+        # plt.savefig('moduleM')
         plt.show()
     #########
     return
 
-def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
+
+def do_all_the_things(onedim_mods, graph, example, MN, prune=True):
     start_time = time.time()
     tr_m, bl_m, tr_n, bl_n = MN[0], MN[1], MN[2], MN[3]
     # tl_m = np.array([bl_m[0],tr_m[1]])
@@ -359,55 +397,58 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     graphh = False
     if onedim_mods and graph:
         if settings.print_output:
-            print("⚠️ Warning: Currently cannot print graphs from one-dim mod option.\nContinuing without graphs.\n")
+            print(
+                "⚠️ Warning: Currently cannot print graphs from one-dim mod option.\nContinuing without graphs.\n"
+            )
         graph = False
         graphh = True
 
     if onedim_mods:
-        critical_vals, nolub, M, N, critval_coords = make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n)
-
-    
+        critical_vals, nolub, M, N, critval_coords = make_1dim_MN_example(
+            tr_m, bl_m, tr_n, bl_n
+        )
 
     if not onedim_mods:
         critical_vals, nolub, M, N = example[0], example[1], example[2], example[3]
         critval_coords = []
-        ## forgets the parent modules 
+        ## forgets the parent modules
         for i in range(len(critical_vals)):
             critval_coords.append(critical_vals[i].coords)
 
     # 19 JAN: for quick insertion of critical values for testing figures (ref: file BUNNYFIGURE), we do the horrendous coding practice of just overwriting shit here
     if settings.overwrite_critvals:
         critical_vals = settings.critvals_to_overwrite
-        print("CV LEN: ", len(critical_vals)) # type: ignore
+        print("CV LEN: ", len(critical_vals))  # type: ignore
         nolub = settings.nolub_to_overwrite
         print("WARNING: OVERWRITING CRITICAL VALUES!")
         # print(critical_vals)
         critval_coords = []
-        ## forgets the parent modules 
+        ## forgets the parent modules
         for i in range(len(critical_vals)):
             critval_coords.append(critical_vals[i].coords)
-        
-    
-    ## computes the least upper bound CM and CN separately 
-    # using the parent module information 
-            #pylance: disable-reportUnboundVariable
-    lub = omega.closure_lub(critical_vals) # type: ignore
-    print("NUMBER OF CRITVALS: ", len(critical_vals)) # type: ignore
+
+    ## computes the least upper bound CM and CN separately
+    # using the parent module information
+    # pylance: disable-reportUnboundVariable
+    lub = omega.closure_lub(critical_vals)  # type: ignore
+    print("NUMBER OF CRITVALS: ", len(critical_vals))  # type: ignore
 
     if settings.overwrite_critvals:
-        print("CV LEN: ", len(critical_vals)) # type: ignore
+        print("CV LEN: ", len(critical_vals))  # type: ignore
         print("LUB LENGTH: ", len(lub))
 
     start_time_switch_pts = time.time()
     ### run all three allgoriths 3v1, 2v2 paired , 2v2 unpaired
-    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, makegraphyesno = graph, title = " ") # type: ignore
+    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, makegraphyesno=graph, title=" ")  # type: ignore
     # combine the outputs together and deal with slopes vs points
-    omega_points_collection, omega_slopes_collection = combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp)
+    omega_points_collection, omega_slopes_collection = combine_omegas(
+        is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp
+    )
     end_time_switch_pts = time.time()
     switch_time = end_time_switch_pts - start_time_switch_pts
 
     start_time_match_dist = time.time()
-    matching_dist, num_lines = compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N) # type: ignore 
+    matching_dist, num_lines, best_line = compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N)  # type: ignore
     end_time_match_dist = time.time()
     match_time = end_time_match_dist - start_time_match_dist
 
@@ -417,31 +458,33 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune = True):
     end_time = time.time()
     tot_time = end_time - start_time
     if settings.print_output:
-        print("Time to compute switch pts:", "{:.3f}".format(switch_time),"sec")
+        print("Time to compute switch pts:", "{:.3f}".format(switch_time), "sec")
         if settings.actually_compute_matching_distance:
-            print("Time to compute match dist:", "{:.3f}".format(match_time),"sec")
-        print("Total time elapsed in exact computation:", "{:.3f}".format(tot_time),"sec")
-        
+            print("Time to compute match dist:", "{:.3f}".format(match_time), "sec")
+        print(
+            "Total time elapsed in exact computation:", "{:.3f}".format(tot_time), "sec"
+        )
+
         # print("_____________________________________")
 
-    return matching_dist, num_lines
+    return matching_dist, num_lines, best_line
 
-def make_example(M,N):
-    # this is for two modules M and N 
 
-    # input example (this is small_socg_ex_M_N): 
-    # tr, bl 
+def make_example(M, N):
+    # this is for two modules M and N
+
+    # input example (this is small_socg_ex_M_N):
+    # tr, bl
     # M = [[(6.0, 6.0),(0.0, 0.0)]]
     # N = [[(8.0, 4.0),(4.0, 2.0)],
     #     [(2.0, 10.0),(1.0, 5.0)]]
-
 
     # M gets parent index 0
     # N gets parent index 1
     crits_no_lub = []
     critpts = []
-    #(self, top_left,top_right, bottom_left, bottom_right, 
-            # dim (num of rectangles), parent (M is 0, N is 1)):
+    # (self, top_left,top_right, bottom_left, bottom_right,
+    # dim (num of rectangles), parent (M is 0, N is 1)):
 
     m_rects = []
     n_rects = []
@@ -458,15 +501,15 @@ def make_example(M,N):
         m_i = mod.Rectangle(tl, tr, bl, br, 1, 0)
         m_rects.append(m_i)
 
-        #bl, br, tl, NO tr
-        crits_no_lub.append((bl,0))
-        crits_no_lub.append((br,0))
-        crits_no_lub.append((tl,0))
+        # bl, br, tl, NO tr
+        crits_no_lub.append((bl, 0))
+        crits_no_lub.append((br, 0))
+        crits_no_lub.append((tl, 0))
         # crits_no_lub.append((tr,0))
-        #bl, br, tl, NO tr
-        critpts.append(mod.critical_val(bl,0))
-        critpts.append(mod.critical_val(br,0))
-        critpts.append(mod.critical_val(tl,0))
+        # bl, br, tl, NO tr
+        critpts.append(mod.critical_val(bl, 0))
+        critpts.append(mod.critical_val(br, 0))
+        critpts.append(mod.critical_val(tl, 0))
         # critpts.append(mod.critical_val(tr,0))
 
     for i in range(len(N)):
@@ -479,44 +522,45 @@ def make_example(M,N):
         n_i = mod.Rectangle(tl, tr, bl, br, 1, 1)
         n_rects.append(n_i)
 
-        #bl, br, tl, NO tr
-        crits_no_lub.append((bl,1))
-        crits_no_lub.append((br,1))
-        crits_no_lub.append((tl,1))
+        # bl, br, tl, NO tr
+        crits_no_lub.append((bl, 1))
+        crits_no_lub.append((br, 1))
+        crits_no_lub.append((tl, 1))
         # crits_no_lub.append((tr,1))
-        #bl, br, tl, NO tr
-        critpts.append(mod.critical_val(bl,1))
-        critpts.append(mod.critical_val(br,1))
-        critpts.append(mod.critical_val(tl,1))
+        # bl, br, tl, NO tr
+        critpts.append(mod.critical_val(bl, 1))
+        critpts.append(mod.critical_val(br, 1))
+        critpts.append(mod.critical_val(tl, 1))
         # critpts.append(mod.critical_val(tr,1))
 
     retM = mod.RectangleModule(m_rects)
     retN = mod.RectangleModule(n_rects)
-        
+
     return critpts, crits_no_lub, retM, retN
 
 
-
 ###########################
-### Approximation functions 
+### Approximation functions
 
-def closure_lub(Points): 
-        """ Find the closure under least upper boud of the critical points
-            Input: list of points
-        """
-         
-        l = len(Points)
-        for i in range(l): 
-            p = Points[i]
-            for j in range(i+1, l): 
-                q = Points[j]
-                if not mod.are_comparable(p,q):
-                    lub = (max(p[0],q[0]), max(p[1],q[1]))
-                    Points.append(lub)
 
-        return list(set(Points))
-    
-def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance'):
+def closure_lub(Points):
+    """Find the closure under least upper boud of the critical points
+    Input: list of points
+    """
+
+    l = len(Points)
+    for i in range(l):
+        p = Points[i]
+        for j in range(i + 1, l):
+            q = Points[j]
+            if not mod.are_comparable(p, q):
+                lub = (max(p[0], q[0]), max(p[1], q[1]))
+                Points.append(lub)
+
+    return list(set(Points))
+
+
+def plot_weighted_bottleneck(M, N, graph, filename="weightedBottlneckDistance"):
     start_time = time.time()
     """Takes M and N as RectangleModules 
         example: 
@@ -527,107 +571,112 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
         rect_n2 = mod.Rectangle((0,4),(7,7),1)
         N= mod.RectangleModule([rect_n1,rect_n2])
     """
-    
-    Crit_M = M.closure_lub() 
-    Crit_N = N.closure_lub() 
-    C = list(set(Crit_M+Crit_N))
+
+    Crit_M = M.closure_lub()
+    Crit_N = N.closure_lub()
+    C = list(set(Crit_M + Crit_N))
     Crit_MN = closure_lub(C)
-    #print(len(Crit_MN))
-    #Crit_MN=list(set(Crit_M+Crit_N))
+    # print(len(Crit_MN))
+    # Crit_MN=list(set(Crit_M+Crit_N))
     Lines = []
     DD = []
     k = 0
     Crit = []
-    for i in range(len(Crit_MN)-1):
+    for i in range(len(Crit_MN) - 1):
         p = Crit_MN[i]
-        for j in range(i+1,len(Crit_MN)):
-            q = Crit_MN[j] 
+        for j in range(i + 1, len(Crit_MN)):
+            q = Crit_MN[j]
             line = mod.line_through_2points(Crit_MN[i], Crit_MN[j])
-            if line.positive: 
-                d = mod.compute_weighted_bottleneck(M,N,line)
+            if line.positive:
+                d = mod.compute_weighted_bottleneck(M, N, line)
                 Lines.append(line)
                 Crit.append([Crit_MN[i], Crit_MN[j]])
                 DD.append(d)
     # print('There are {} lines through critical points'.format(len(Lines)))
-    #print('Bottleneck distance for lines through critical points: ')
-    #print(D)
-    if settings.print_output: 
-        print('Maximum distance for lines through critical points: {:.3f}'.format(max(DD)))
+    # print('Bottleneck distance for lines through critical points: ')
+    # print(D)
+    if settings.print_output:
+        print(
+            "Maximum distance for lines through critical points: {:.3f}".format(max(DD))
+        )
     if settings.compare_line_counts:
-        print('Lines counted crit pts: {}'.format(len(Lines)))   
+        print("Lines counted crit pts: {}".format(len(Lines)))
     max_dist_critpts = max(DD)
     lines_time = time.time()
     if settings.print_output:
-        print("Time to get approx. from crit pts: ", "{:.3f}".format(lines_time - start_time),"sec")
+        print(
+            "Time to get approx. from crit pts: ",
+            "{:.3f}".format(lines_time - start_time),
+            "sec",
+        )
 
     # print(max(DD))
-    
+
     ## computing bottlneck for "every" line
-    
-    Theta = np.linspace(0,pi/2,100)[1:-1]
-    B = np.linspace(-5,5,100)
-    D= np.zeros((len(Theta), len(B)))
+
+    Theta = np.linspace(0, pi / 2, 100)[1:-1]
+    B = np.linspace(-5, 5, 100)
+    D = np.zeros((len(Theta), len(B)))
     T = []
-    BB= []
+    BB = []
     Dist = []
-    for t in range(len(Theta)): 
-        for n in range(len(B)): 
+    for t in range(len(Theta)):
+        for n in range(len(B)):
             s = sin(Theta[t])
             c = cos(Theta[t])
-            maxm = max(s,c)
-            line = mod.Line((c/maxm, s/maxm), (B[n],-B[n]))
-            d = mod.compute_weighted_bottleneck(M,N,line)
-            D[t,n] = d
+            maxm = max(s, c)
+            line = mod.Line((c / maxm, s / maxm), (B[n], -B[n]))
+            d = mod.compute_weighted_bottleneck(M, N, line)
+            D[t, n] = d
             T.append(Theta[t])
             BB.append(B[n])
             Dist.append(d)
     val = max(Dist)
     idx = Dist.index(val)
     if settings.print_output:
-        print('Maximum distance computed for grid of lines: {:.3f}'.format(max(Dist)))
-        print('Number of grid points: {}'.format(len(Dist)))
+        print("Maximum distance computed for grid of lines: {:.3f}".format(max(Dist)))
+        print("Number of grid points: {}".format(len(Dist)))
     max_grids_lines = max(Dist)
     end_time = time.time()
     grid_time = end_time - lines_time
     tot_time = end_time - start_time
     # print(max(Dist))
 
-    if settings.save_figure and graph:     
-        plt.figure(figsize=(8,8))
-        plt.scatter(T, BB, c= Dist,s = 10, cmap = "summer")
-        plt.scatter(T[idx], BB[idx], marker = 'x', color = 'red') # type: ignore
+    if settings.save_figure and graph:
+        plt.figure(figsize=(8, 8))
+        plt.scatter(T, BB, c=Dist, s=10, cmap="summer")
+        plt.scatter(T[idx], BB[idx], marker="x", color="red")  # type: ignore
         # print(T[idx])
         # print(BB[idx])
-        
+
         ## plot markers for the lines through critical points
         b_crit = []
         theta_crit = []
         for j in range(len(Lines)):
             Line = Lines[j]
-            b= Line.b[0]
-            theta = atan(Line.m[1]/Line.m[0])
+            b = Line.b[0]
+            theta = atan(Line.m[1] / Line.m[0])
             b_crit.append(b)
             theta_crit.append(theta)
-        
-        for j in range(len(Lines)): 
-            plt.scatter(theta_crit[j], b_crit[j], marker = 'x', color = 'grey') # type: ignore
-            #plt.text(theta_crit[j], b_crit[j], str(Crit[j]))
+
+        for j in range(len(Lines)):
+            plt.scatter(theta_crit[j], b_crit[j], marker="x", color="grey")  # type: ignore
+            # plt.text(theta_crit[j], b_crit[j], str(Crit[j]))
         val = max(DD)
-        idx=DD.index(val)
-        plt.scatter(theta_crit[idx], b_crit[idx], marker = 'x', color = 'black') # type: ignore
+        idx = DD.index(val)
+        plt.scatter(theta_crit[idx], b_crit[idx], marker="x", color="black")  # type: ignore
         ## plot titles
-        plt.xlabel('theta')
-        plt.ylabel('b')
+        plt.xlabel("theta")
+        plt.ylabel("b")
         plt.title("Weighted bottleneck distance as a function of theta and b")
         plt.colorbar(label="Weighted distance", orientation="horizontal")
-        plt.clim(0,max(Dist))
+        plt.clim(0, max(Dist))
         plt.show()
         # plt.show()
         # plt.savefig(filename)
 
-    
     if settings.print_output:
-        print("Time elapsed (theta b grid):", "{:.3f}".format(grid_time),"sec")
+        print("Time elapsed (theta b grid):", "{:.3f}".format(grid_time), "sec")
         # print("____________________")
         # print("END")
         # print("____________________")
@@ -637,87 +686,94 @@ def plot_weighted_bottleneck(M,N, graph, filename = 'weightedBottlneckDistance')
     # if settings.save_figure:
     #     plt.show()
     return max_dist_critpts, max_grids_lines
-    
-def compute_weighted_bottleneck_distances(M,N): 
-    """Takes M and N as RectangleModules 
-        example: 
-        rect_m1 = mod.Rectangle((0,0),(7,7),1)
-        rect_m2 = mod.Rectangle((0,4),(7,11),1)
-        M = mod.RectangleModule([rect_m1,rect_m2])
-        rect_n1 = mod.Rectangle((0,0),(7,11),1)
-        rect_n2 = mod.Rectangle((0,4),(7,7),1)
-        N= mod.RectangleModule([rect_n1,rect_n2])
+
+
+def compute_weighted_bottleneck_distances(M, N):
+    """Takes M and N as RectangleModules
+    example:
+    rect_m1 = mod.Rectangle((0,0),(7,7),1)
+    rect_m2 = mod.Rectangle((0,4),(7,11),1)
+    M = mod.RectangleModule([rect_m1,rect_m2])
+    rect_n1 = mod.Rectangle((0,0),(7,11),1)
+    rect_n2 = mod.Rectangle((0,4),(7,7),1)
+    N= mod.RectangleModule([rect_n1,rect_n2])
     """
-    
-    Crit_M = M.closure_lub() 
-    Crit_N = N.closure_lub() 
-    C = list(set(Crit_M+Crit_N))
+
+    Crit_M = M.closure_lub()
+    Crit_N = N.closure_lub()
+    C = list(set(Crit_M + Crit_N))
     Crit_MN = closure_lub(C)
-    #print(len(Crit_MN))
-    #Crit_MN=list(set(Crit_M+Crit_N))
+    # print(len(Crit_MN))
+    # Crit_MN=list(set(Crit_M+Crit_N))
     Lines = []
     DD = []
     k = 0
     Crit = []
-    for i in range(len(Crit_MN)-1):
+    for i in range(len(Crit_MN) - 1):
         p = Crit_MN[i]
-        for j in range(i+1,len(Crit_MN)):
-            q = Crit_MN[j] 
+        for j in range(i + 1, len(Crit_MN)):
+            q = Crit_MN[j]
             line = mod.line_through_2points(Crit_MN[i], Crit_MN[j])
-            if line.positive: 
-                d = mod.compute_weighted_bottleneck(M,N,line)
+            if line.positive:
+                d = mod.compute_weighted_bottleneck(M, N, line)
                 Lines.append(line)
                 Crit.append([Crit_MN[i], Crit_MN[j]])
                 DD.append(d)
     if settings.print_output:
-        print('Lines counted {} again'.format(len(Lines)))
-        print('Maximum distance for lines through critical points:')
+        print("Lines counted {} again".format(len(Lines)))
+        print("Maximum distance for lines through critical points:")
         print(max(DD))
-    
+
     ## computing bottlneck for "every" line
-    
-    Theta = np.linspace(0,pi/2,100)[1:-1]
-    B = np.linspace(-5,5,100)
-    D= np.zeros((len(Theta), len(B)))
+
+    Theta = np.linspace(0, pi / 2, 100)[1:-1]
+    B = np.linspace(-5, 5, 100)
+    D = np.zeros((len(Theta), len(B)))
     T = []
-    BB= []
+    BB = []
     Dist = []
-    for t in range(len(Theta)): 
-        for n in range(len(B)): 
+    for t in range(len(Theta)):
+        for n in range(len(B)):
             s = sin(Theta[t])
             c = cos(Theta[t])
-            maxm = max(s,c)
-            line = mod.Line((c/maxm, s/maxm), (B[n],-B[n]))
-            d = mod.compute_weighted_bottleneck(M,N,line)
-            D[t,n] = d
+            maxm = max(s, c)
+            line = mod.Line((c / maxm, s / maxm), (B[n], -B[n]))
+            d = mod.compute_weighted_bottleneck(M, N, line)
+            D[t, n] = d
             T.append(Theta[t])
             BB.append(B[n])
             Dist.append(d)
     val = max(Dist)
     idx = Dist.index(val)
     if settings.print_output:
-        print('Maximum distance computed from grid of lines:')
-        print(max(Dist))     
+        print("Maximum distance computed from grid of lines:")
+        print(max(Dist))
         print(T[idx])
         print(BB[idx])
-    
+
     s = sin(T[idx])
     c = cos(T[idx])
-    maxm = max(s,c)
-    L_max = mod.Line((c/maxm, s/maxm), (BB[idx],-BB[idx]))
-    return T,BB, idx, L_max
+    maxm = max(s, c)
+    L_max = mod.Line((c / maxm, s / maxm), (BB[idx], -BB[idx]))
+    return T, BB, idx, L_max
+
 
 ######################
 # EXPERIMENTS
 
-def to_prune_or_not_to_prune(M,N):
+
+def to_prune_or_not_to_prune(M, N):
     # prune by default true
-    # what we want: 
+    # what we want:
     # prune TRUE means let algo decide if take the thing
     # prune FALSE means always return all the things
     ###################
     if settings.print_output:
-        print("Rectangles in M: {} and N: {}. Total: {}.".format(len(M), len(N), len(M) + len(N)))
+        print(
+            "Rectangles in M: {} and N: {}. Total: {}.".format(
+                len(M), len(N), len(M) + len(N)
+            )
+        )
         print("PRUNE POINTS")
     # prune = True
     prune = settings.old_pruning
@@ -731,7 +787,7 @@ def to_prune_or_not_to_prune(M,N):
 
     ##################
     tr_m, bl_m, tr_n, bl_n = ex.test_ex_one_rect()
-    example = make_example(M,N)
+    example = make_example(M, N)
     MN = [tr_m, bl_m, tr_n, bl_n]
     do_all_the_things(one_rect_mods, graph, example, MN, prune)
     print("\n\n\n BOB \n\n\n")
@@ -746,16 +802,17 @@ def to_prune_or_not_to_prune(M,N):
         print("\nApproximate Matching Distance:")
     Mmod = example[2]
     Nmod = example[3]
-    plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
+    plot_weighted_bottleneck(Mmod, Nmod, False, "test_figure")
 
-def to_prune_or_not_to_prune_csv(M,N):
+
+def to_prune_or_not_to_prune_csv(M, N):
     # prune by default true
-    # what we want: 
+    # what we want:
     # prune TRUE means let algo decide if take the thing
     # prune FALSE means always return all the things
     ###################
-    #print("Rectangles in M: {} and N: {}. Total: {}.".format(len(M), len(N), len(M) + len(N)))
-    #print("PRUNE POINTS")
+    # print("Rectangles in M: {} and N: {}. Total: {}.".format(len(M), len(N), len(M) + len(N)))
+    # print("PRUNE POINTS")
     # prune = True
     prune = settings.old_pruning
     # if settings.print_output:
@@ -773,44 +830,56 @@ def to_prune_or_not_to_prune_csv(M,N):
 
     ################## PRUNE
     tr_m, bl_m, tr_n, bl_n = ex.test_ex_one_rect()
-    example = make_example(M,N)
+    example = make_example(M, N)
     MN = [tr_m, bl_m, tr_n, bl_n]
 
     #################### APPROX
     # also do the approx matching dist
-    #print("\nApproximate Matching Distance:")
+    # print("\nApproximate Matching Distance:")
     Mmod = example[2]
     Nmod = example[3]
     approx_start_time = time.time()
-    max_dist_critpts, max_grids_lines = plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
+    max_dist_critpts, max_grids_lines = plot_weighted_bottleneck(
+        Mmod, Nmod, False, "test_figure"
+    )
     settings.lower_bound_D = max(max_dist_critpts, max_grids_lines)
     approx_end_time = time.time()
     approx_time = approx_end_time - approx_start_time
-    #return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
+    # return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
 
     ## This is the EXACT (slow) computation
     prune_start_time = time.time()
-    prune_match_dist, _ = do_all_the_things(one_rect_mods, graph, example, MN, prune) ## C: added empty _ here for the the second output of do_all_the_things
-    #print("\n")
+    prune_match_dist, _, best_line = do_all_the_things(
+        one_rect_mods, graph, example, MN, prune
+    )  ## C: added empty _ here for the the second output of do_all_the_things
+    # print("\n")
     prune_end_time = time.time()
     prune_time = prune_end_time - prune_start_time
 
     ################# NO PRUNE
-    #print("DON'T PRUNE POINTS")
-    #prune = False
-    #no_prune_start_time = time.time()
-    #no_prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
-    #no_prune_end_time = time.time()
-    #no_prune_time = no_prune_end_time - no_prune_start_time
-    
-    # note: if it matters, APPROX used to be down here. Moved up 21 March 2025 for NEW PRUNE thingy
-    
+    # print("DON'T PRUNE POINTS")
+    # prune = False
+    # no_prune_start_time = time.time()
+    # no_prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
+    # no_prune_end_time = time.time()
+    # no_prune_time = no_prune_end_time - no_prune_start_time
 
-    return prune_time, approx_time, prune_match_dist, max_dist_critpts, max_grids_lines
+    # note: if it matters, APPROX used to be down here. Moved up 21 March 2025 for NEW PRUNE thingy
+
+    return (
+        prune_time,
+        approx_time,
+        prune_match_dist,
+        max_dist_critpts,
+        max_grids_lines,
+        best_line,
+    )
+
 
 # Random rectangles
-def plot_rectangles(M,N,img_path):
+def plot_rectangles(M, N, img_path):
     from matplotlib import patches
+
     # Get rectangles from the example function
     # M, N = ex.test_ex_more_rects()
 
@@ -822,14 +891,34 @@ def plot_rectangles(M,N,img_path):
         tr, bl = rect
         width = tr[0] - bl[0]
         height = tr[1] - bl[1]
-        ax.add_patch(patches.Rectangle(bl, width, height, linewidth=1, edgecolor='r', facecolor='red', alpha=0.5))
+        ax.add_patch(
+            patches.Rectangle(
+                bl,
+                width,
+                height,
+                linewidth=1,
+                edgecolor="r",
+                facecolor="red",
+                alpha=0.5,
+            )
+        )
 
     # Plot rectangles in N (colored blue)
     for rect in N:
         tr, bl = rect
         width = tr[0] - bl[0]
         height = tr[1] - bl[1]
-        ax.add_patch(patches.Rectangle(bl, width, height, linewidth=1, edgecolor='b', facecolor='blue', alpha=0.5))
+        ax.add_patch(
+            patches.Rectangle(
+                bl,
+                width,
+                height,
+                linewidth=1,
+                edgecolor="b",
+                facecolor="blue",
+                alpha=0.5,
+            )
+        )
 
     # Set the limits of the plot
     ax.set_xlim(-1, 20)
@@ -837,22 +926,22 @@ def plot_rectangles(M,N,img_path):
     ax.set_title(settings.figure_title)
 
     # Set the aspect of the plot to be equal
-    ax.set_aspect('equal')
+    ax.set_aspect("equal")
 
     import matplotlib.lines as mlines
 
-    eight = mlines.Line2D([], [], color='red', marker='D', ls='', label='M')
-    nine = mlines.Line2D([], [], color='blue', marker='D', ls='', label='N')
+    eight = mlines.Line2D([], [], color="red", marker="D", ls="", label="M")
+    nine = mlines.Line2D([], [], color="blue", marker="D", ls="", label="N")
     # etc etc
     ax.legend(handles=[eight, nine])
 
-    fig.savefig(img_path, format='png', dpi=250)
+    fig.savefig(img_path, format="png", dpi=250)
 
     # Show the plot
     # plt.show()
 
 
-def generate_random_rectangles(num_M, num_N, seed = None):
+def generate_random_rectangles(num_M, num_N, seed=None):
     # Set the random seed if provided
     if seed is not None:
         rnd.seed(seed)
@@ -884,76 +973,74 @@ def generate_random_rectangles(num_M, num_N, seed = None):
                         #     print("tr (", tr_x, tr_y, ")bl ("bl_x, bl_y, ")")
                     return [(tr_x, tr_y), (bl_x, bl_y)]
 
-    
-    
     # Generate M with num_M rectangles
-    M = [create_random_rectangle() for _ in range(num_M)] # type: ignore
+    M = [create_random_rectangle() for _ in range(num_M)]  # type: ignore
 
     # Generate N with num_N rectangles
-    N = [create_random_rectangle() for _ in range(num_N)] # type: ignore
+    N = [create_random_rectangle() for _ in range(num_N)]  # type: ignore
 
     return M, N
+
 
 def generate_rects_experiment_2_12():
     # M = [[(tr_x, tr_y), (bl_x, bl_y)],...]
     # N = --"--- same
-    M = [[(100000000, 7),(2,2)]]
-    N = [[(100000000, 10),(2,2)]]
+    M = [[(100000000, 7), (2, 2)]]
+    N = [[(100000000, 10), (2, 2)]]
     title = "Experiment_2.12"
 
     return M, N, title
 
+
 def generate_rects_experiment_2_13():
     # M = [[(tr_x, tr_y), (bl_x, bl_y)],...]
     # N = --"--- same
-    M = [[(7,7), (0,0)], [(7,11), (0,4)]]
-    N = [[(7,11), (0,0)], [(7,7), (0,4)]]
+    M = [[(7, 7), (0, 0)], [(7, 11), (0, 4)]]
+    N = [[(7, 11), (0, 0)], [(7, 7), (0, 4)]]
     title = "Experiment_2.13"
 
     return M, N, title
 
+
 def generate_rects_experiment_2_14():
     # M = [[(tr_x, tr_y), (bl_x, bl_y)],...]
     # N = --"--- same
-    M = [[(7,8), (0,0)], [(7,11), (0,4)]]
-    N = [[(7,11), (0,0)], [(7,8), (0,4)]]
+    M = [[(7, 8), (0, 0)], [(7, 11), (0, 4)]]
+    N = [[(7, 11), (0, 0)], [(7, 8), (0, 4)]]
     title = "Experiment_2.14"
 
     return M, N, title
 
 
 def append_to_csv(file_path, new_data):
-    column_name = new_data['Label']
+    column_name = new_data["Label"]
     # Read the existing CSV into a list of dictionaries
-    with open(file_path, 'r') as csv_file:
+    with open(file_path, "r") as csv_file:
         reader = csv.DictReader(csv_file)
         rows = list(reader)
-    # if settings.print_output: 
+    # if settings.print_output:
     #     print(rows[:2])
-    
+
     # Add the new data to each row based on the 'Label' column
     for row in rows:
-        key = row['Label']  # Now we explicitly look for the 'Label' column
+        key = row["Label"]  # Now we explicitly look for the 'Label' column
         if key in new_data:
             row[column_name] = new_data[key]
     # if settings.print_output:
     #     print(rows[:2])
-    
+
     # Write the updated rows back to the CSV
-    with open(file_path, 'w', newline='') as csv_file:
-        fieldnames = reader.fieldnames + [column_name] # type: ignore
+    with open(file_path, "w", newline="") as csv_file:
+        fieldnames = reader.fieldnames + [column_name]  # type: ignore
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
 
 
-
-
-
-def experiment_1(M,N):
+def experiment_1(M, N):
     """Code to get the data for experiment 1
     Return the number of lines computed by our algorithm for the matching distanc
-    
+
     """
     prune = True
 
@@ -966,31 +1053,33 @@ def experiment_1(M,N):
 
     ################## PRUNE
     tr_m, bl_m, tr_n, bl_n = ex.test_ex_one_rect()
-    example = make_example(M,N)
+    example = make_example(M, N)
     MN = [tr_m, bl_m, tr_n, bl_n]
     prune_start_time = time.time()
-    prune_match_dist, num_lines = do_all_the_things(one_rect_mods, graph, example, MN, prune)
-    #print("\n")
+    prune_match_dist, num_lines, _ = do_all_the_things(
+        one_rect_mods, graph, example, MN, prune
+    )
+    # print("\n")
     prune_end_time = time.time()
     prune_time = prune_end_time - prune_start_time
 
     ################# NO PRUNE
-    #print("DON'T PRUNE POINTS")
-    #prune = False
-    #no_prune_start_time = time.time()
-    #no_prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
-    #no_prune_end_time = time.time()
-    #no_prune_time = no_prune_end_time - no_prune_start_time
-    
+    # print("DON'T PRUNE POINTS")
+    # prune = False
+    # no_prune_start_time = time.time()
+    # no_prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
+    # no_prune_end_time = time.time()
+    # no_prune_time = no_prune_end_time - no_prune_start_time
+
     #################### APPROX
     # also do the approx matching dist
-    #print("\nApproximate Matching Distance:")
+    # print("\nApproximate Matching Distance:")
     Mmod = example[2]
     Nmod = example[3]
-    #approx_start_time = time.time()
-    #max_dist_critpts, max_grids_lines = plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
-    #approx_end_time = time.time()
-    #approx_time = approx_end_time - approx_start_time
-    #return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
-    
-    return num_lines 
+    # approx_start_time = time.time()
+    # max_dist_critpts, max_grids_lines = plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
+    # approx_end_time = time.time()
+    # approx_time = approx_end_time - approx_start_time
+    # return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
+
+    return num_lines
