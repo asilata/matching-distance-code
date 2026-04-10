@@ -175,15 +175,16 @@ def main():
     )
 
     # Step 2: Select which to re-run and choose output file
+    suffix = f"_n{args.n}_seed{args.seed}.csv"
     if args.just_unicorns:
         to_run = unicorns[: args.n]
-        output_csv = os.path.join(os.path.dirname(__file__), "new_vs_old_unicorns.csv")
+        output_csv = os.path.join(os.path.dirname(__file__), f"new_vs_old_unicorns{suffix}")
         print(f"Will re-run {len(to_run)} unicorns")
     elif args.no_unicorns:
         rng = random.Random(args.seed)
         sample_size = min(args.n, len(non_unicorns))
         to_run = rng.sample(non_unicorns, sample_size)
-        output_csv = os.path.join(os.path.dirname(__file__), "new_vs_old_non_unicorns.csv")
+        output_csv = os.path.join(os.path.dirname(__file__), f"new_vs_old_non_unicorns{suffix}")
         print(f"Will re-run {len(to_run)} non-unicorns")
     else:
         to_run = unicorns[: args.n]
@@ -192,7 +193,7 @@ def main():
             rng = random.Random(args.seed)
             sample_size = min(remaining, len(non_unicorns))
             to_run += rng.sample(non_unicorns, sample_size)
-        output_csv = OUTPUT_CSV
+        output_csv = os.path.join(os.path.dirname(__file__), f"new_vs_old{suffix}")
         n_unicorns_to_run = min(len(unicorns), args.n)
         print(f"Will re-run {len(to_run)} cases ({n_unicorns_to_run} unicorns + {len(to_run) - n_unicorns_to_run} non-unicorns)")
 
