@@ -1,4 +1,5 @@
 import sys
+import argparse
 from imports import *
 import csv
 import random
@@ -6,12 +7,19 @@ import settings
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser(description="Compute matching distance for random rectangle modules.")
+    parser.add_argument("M", nargs="?", type=int, default=None, help="Number of rectangles in M")
+    parser.add_argument("N", nargs="?", type=int, default=None, help="Number of rectangles in N")
+    parser.add_argument("seed", nargs="?", type=int, default=None, help="Random seed")
+    parser.add_argument("--no-figure", action="store_true", help="Skip figure generation")
+    args = parser.parse_args()
+
     ################# SETTINGS TO CHANGE (all settings are integers > 0)
-    rects_in_M = 2
-    rects_in_N = 1
-    seed = 13
+    rects_in_M = args.M if args.M is not None else 2
+    rects_in_N = args.N if args.N is not None else 1
+    seed = args.seed if args.seed is not None else 13
     ################# END OF SETTINGS TO CHANGE
-    settings.save_figure = True
+    settings.save_figure = not args.no_figure
     settings.debug = False
 
     M, N = chf.generate_random_rectangles(rects_in_M, rects_in_N, seed=seed)
