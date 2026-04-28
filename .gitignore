@@ -3,3 +3,6 @@ venv
 .vscode
 __pycache__
 Code/final_cleanup/
+Code/.DS_Store
+.Rhistory
+/Code/.DS_Store
