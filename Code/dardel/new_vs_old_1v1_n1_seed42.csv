@@ -1,0 +1,2 @@
+M,N,seed,was_unicorn,is_unicorn,old_exact,new_exact,new_same_as_old,grid_approx,crit_pts_approx,a_bl_M_x,a_bl_M_y,b_tr_M_x,b_tr_M_y,c_bl_N_x,c_bl_N_y,d_tr_N_x,d_tr_N_y
+1,1,1,False,False,3.033,3.033,True,3.033,3.033,7.431526306,6.742365972,9.773894591,11.830850267,1.407893802,0.425212148,12.536476559,6.491506019
