@@ -44,6 +44,15 @@ python3 dardel/compare_old_new.py --just-unicorns --n 5
 # Re-run only non-unicorns
 python3 dardel/compare_old_new.py --no-unicorns --n 10
 
+# Re-run only M=1 N=1 cases (fast — ~1 sec each)
+python3 dardel/compare_old_new.py --only-1-v-1 --n 33
+
+# Re-run 1v1 cases AND export rectangle corner coordinates
+python3 dardel/compare_old_new.py --only-1-v-1 --corners-to-csv --n 33
+
+# Re-run 1v1 cases AND save figures to DEBUG_FIGS/
+python3 dardel/compare_old_new.py --only-1-v-1 --save-figures --n 33
+
 # Re-run all unicorns + some non-unicorns (e.g., 100 total)
 python3 dardel/compare_old_new.py --n 100
 
@@ -53,11 +62,27 @@ python3 dardel/compare_old_new.py --no-unicorns --n 50 --seed 123
 
 Arguments:
 - `--n` — total number of cases to re-run (default: 10). In default mode, unicorns are run first; remaining slots are filled with random non-unicorns.
-- `--just-unicorns` — only run unicorns (writes to `new_vs_old_unicorns.csv`)
-- `--no-unicorns` — only run non-unicorns (writes to `new_vs_old_non_unicorns.csv`)
+- `--just-unicorns` — only run unicorns (writes to `new_vs_old_unicorns_n{n}_seed{seed}.csv`)
+- `--no-unicorns` — only run non-unicorns (writes to `new_vs_old_non_unicorns_n{n}_seed{seed}.csv`)
+- `--only-1-v-1` — only run M=1 N=1 cases (writes to `new_vs_old_1v1_n{n}_seed{seed}.csv`)
+- `--corners-to-csv` — add rectangle corner coordinates to CSV (requires `--only-1-v-1`)
+- `--save-figures` — save figures to `DEBUG_FIGS/` for each run (slower; off by default)
 - `--seed` — random seed for sampling non-unicorns (default: 42)
 
-`--just-unicorns` and `--no-unicorns` are mutually exclusive. Each mode writes to a separate CSV file to avoid overwriting.
+`--just-unicorns`, `--no-unicorns`, and `--only-1-v-1` are mutually exclusive. Each mode writes to a separate CSV file to avoid overwriting.
+
+#### Corner naming convention
+
+When `--corners-to-csv` is set, eight columns are added with 9-digit precision. Column names embed both naming conventions (a/b/c/d and bl/tr_M/N):
+
+| Column | Means |
+|--------|-------|
+| `a_bl_M_x`, `a_bl_M_y` | bottom-left of M's rectangle (point a) |
+| `b_tr_M_x`, `b_tr_M_y` | top-right of M's rectangle (point b) |
+| `c_bl_N_x`, `c_bl_N_y` | bottom-left of N's rectangle (point c) |
+| `d_tr_N_x`, `d_tr_N_y` | top-right of N's rectangle (point d) |
+
+So M's rectangle is `[a, b]` and N's rectangle is `[c, d]`.
 
 ### What is a "unicorn"?
 

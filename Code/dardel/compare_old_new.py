@@ -9,12 +9,17 @@ Usage:
 """
 
 import os
+import sys
 import re
 import csv
 import random
 import subprocess
 import argparse
 import glob
+
+# Allow importing from Code/ when running from dardel/
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+import cleanup_helper_funcs as chf  # noqa: E402
 
 EXPERIMENTS_DIR = os.path.join(os.path.dirname(__file__), "experiments_output")
 OUTPUT_CSV = os.path.join(os.path.dirname(__file__), "new_vs_old.csv")
@@ -88,9 +93,11 @@ def is_unicorn(result):
     )
 
 
-def run_debug(m, n, seed):
+def run_debug(m, n, seed, save_figures=False):
     """Run DEBUG.py with given parameters and return parsed output."""
-    cmd = ["python3", "DEBUG.py", str(m), str(n), str(seed), "--no-figure"]
+    cmd = ["python3", "DEBUG.py", str(m), str(n), str(seed)]
+    if not save_figures:
+        cmd.append("--no-figure")
     try:
         result = subprocess.run(
             cmd,
@@ -127,7 +134,22 @@ def main():
         "--no-unicorns", action="store_true",
         help="Only run non-unicorns (skip unicorns)",
     )
+    mode.add_argument(
+        "--only-1-v-1", action="store_true",
+        help="Only run M=1 N=1 cases (fast; ~1 sec each)",
+    )
+    parser.add_argument(
+        "--corners-to-csv", action="store_true",
+        help="Add rectangle corner coordinates to CSV (requires --only-1-v-1)",
+    )
+    parser.add_argument(
+        "--save-figures", action="store_true",
+        help="Save figures to DEBUG_FIGS/ for each run (slower)",
+    )
     args = parser.parse_args()
+
+    if args.corners_to_csv and not args.only_1_v_1:
+        parser.error("--corners-to-csv requires --only-1-v-1")
 
     # Step 1: Parse all old txt files
     txt_files = glob.glob(os.path.join(EXPERIMENTS_DIR, "*.txt"))
@@ -186,6 +208,11 @@ def main():
         to_run = rng.sample(non_unicorns, sample_size)
         output_csv = os.path.join(os.path.dirname(__file__), f"new_vs_old_non_unicorns{suffix}")
         print(f"Will re-run {len(to_run)} non-unicorns")
+    elif args.only_1_v_1:
+        one_v_one = [e for e in entries if e["M"] == 1 and e["N"] == 1]
+        to_run = one_v_one[: args.n]
+        output_csv = os.path.join(os.path.dirname(__file__), f"new_vs_old_1v1{suffix}")
+        print(f"Will re-run {len(to_run)} 1v1 cases (out of {len(one_v_one)} total)")
     else:
         to_run = unicorns[: args.n]
         remaining = args.n - len(to_run)
@@ -206,6 +233,19 @@ def main():
             )
         return
 
+    def corner_columns(m, n, seed):
+        """For 1v1 cases, return dict of corner coords with 9-digit precision."""
+        M, N = chf.generate_random_rectangles(m, n, seed=seed)
+        # M[0] = [(tr_x, tr_y), (bl_x, bl_y)]
+        bl_M, tr_M = M[0][1], M[0][0]
+        bl_N, tr_N = N[0][1], N[0][0]
+        return {
+            "a_bl_M_x": f"{bl_M[0]:.9f}", "a_bl_M_y": f"{bl_M[1]:.9f}",
+            "b_tr_M_x": f"{tr_M[0]:.9f}", "b_tr_M_y": f"{tr_M[1]:.9f}",
+            "c_bl_N_x": f"{bl_N[0]:.9f}", "c_bl_N_y": f"{bl_N[1]:.9f}",
+            "d_tr_N_x": f"{tr_N[0]:.9f}", "d_tr_N_y": f"{tr_N[1]:.9f}",
+        }
+
     # Step 3: Run DEBUG.py for each selected case
     rows = []
     for i, entry in enumerate(to_run):
@@ -217,24 +257,25 @@ def main():
             flush=True,
         )
 
-        new_result = run_debug(m, n, seed)
+        new_result = run_debug(m, n, seed, save_figures=args.save_figures)
 
         if new_result is None:
             print("FAILED")
-            rows.append(
-                {
-                    "M": m,
-                    "N": n,
-                    "seed": seed,
-                    "was_unicorn": entry["unicorn"],
-                    "is_unicorn": "",
-                    "old_exact": entry["old_exact"],
-                    "new_exact": "",
-                    "new_same_as_old": "",
-                    "grid_approx": "",
-                    "crit_pts_approx": "",
-                }
-            )
+            row = {
+                "M": m,
+                "N": n,
+                "seed": seed,
+                "was_unicorn": entry["unicorn"],
+                "is_unicorn": "",
+                "old_exact": entry["old_exact"],
+                "new_exact": "",
+                "new_same_as_old": "",
+                "grid_approx": "",
+                "crit_pts_approx": "",
+            }
+            if args.corners_to_csv:
+                row.update(corner_columns(m, n, seed))
+            rows.append(row)
             continue
 
         same = abs(new_result["exact"] - entry["old_exact"]) < TOLERANCE
@@ -243,20 +284,21 @@ def main():
             f"old={entry['old_exact']:.3f} new={new_result['exact']:.3f} {'SAME' if same else 'CHANGED'}"
         )
 
-        rows.append(
-            {
-                "M": m,
-                "N": n,
-                "seed": seed,
-                "was_unicorn": entry["unicorn"],
-                "is_unicorn": new_is_unicorn,
-                "old_exact": entry["old_exact"],
-                "new_exact": new_result["exact"],
-                "new_same_as_old": same,
-                "grid_approx": new_result["grid_approx"],
-                "crit_pts_approx": new_result["crit_approx"],
-            }
-        )
+        row = {
+            "M": m,
+            "N": n,
+            "seed": seed,
+            "was_unicorn": entry["unicorn"],
+            "is_unicorn": new_is_unicorn,
+            "old_exact": entry["old_exact"],
+            "new_exact": new_result["exact"],
+            "new_same_as_old": same,
+            "grid_approx": new_result["grid_approx"],
+            "crit_pts_approx": new_result["crit_approx"],
+        }
+        if args.corners_to_csv:
+            row.update(corner_columns(m, n, seed))
+        rows.append(row)
 
     # Step 4: Write CSV
     fieldnames = [
@@ -271,6 +313,13 @@ def main():
         "grid_approx",
         "crit_pts_approx",
     ]
+    if args.corners_to_csv:
+        fieldnames += [
+            "a_bl_M_x", "a_bl_M_y",
+            "b_tr_M_x", "b_tr_M_y",
+            "c_bl_N_x", "c_bl_N_y",
+            "d_tr_N_x", "d_tr_N_y",
+        ]
     with open(output_csv, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
