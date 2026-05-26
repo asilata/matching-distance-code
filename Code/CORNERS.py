@@ -29,9 +29,10 @@ def export_corners_from_random_rectangle():
 if __name__ == '__main__':
 
     print("beep")
-    rects_in_M = 1
-    rects_in_N = 1
-    seed = 0
+    rects_in_M = int(sys.argv[1])
+    rects_in_N = int(sys.argv[2])
+    seed = int(sys.argv[3])
+
     rnd.seed(seed)
 
     M = [export_corners_from_random_rectangle() for _ in range(rects_in_M)]
