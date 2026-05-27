@@ -20,6 +20,35 @@ pip install -r requirements.txt
 
 cluster usage: run `python3 ./Code/cluster_prune_or_not.py`. You can edit `Code/settings.py` to override normal settings, like terminal output, figure output, and system requirements (at your own risk).
 
+## 1v1 instructions
+
+0. `git pull`
+1. From matching-distance-code, activate virtual env, ie `source match_dist_venv/bin/activate` or whatever you have called it
+2. from Code/,
+
+run one with figure if you're curious (you can change the seed to whichever you want to inspect):
+
+```
+python3 DEBUG_1v1.py --start-seed 37 --count 1 --name demo --figures
+
+```
+
+batch run a bunch:
+
+```
+python3 DEBUG_1v1.py --start-seed 0 --count 2500 --name barbara
+```
+
+```
+python3 DEBUG_1v1.py --start-seed 10000 --count 2500 --name robyn
+```
+
+```
+python3 DEBUG_1v1.py --start-seed 20000 --count 2500 --name elizabeth
+```
+
+3. Push your data!
+
 ## unicorn hunting instructions 🦄
 
 1. If you need to reinstall anything, follow the instructions above.
