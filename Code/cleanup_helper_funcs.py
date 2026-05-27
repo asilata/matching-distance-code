@@ -876,6 +876,81 @@ def to_prune_or_not_to_prune_csv(M, N):
     )
 
 
+def save_result_figure(M, N, best_line, max_dist_critpts, max_grids_lines, exact_dist, title, out_path):
+    """Draw M and N rectangles (with corners), the best line, and the three
+    matching-distance values, then save to out_path. Closes the figure so it is
+    safe to call in a loop."""
+    from matplotlib import patches
+    import matplotlib.lines as mlines
+
+    fig, ax = plt.subplots()
+
+    # M rectangles (red) with corner points and coordinates
+    for rect in M:
+        tr, bl = rect
+        tl = (bl[0], tr[1])
+        br = (tr[0], bl[1])
+        ax.add_patch(patches.Rectangle(bl, tr[0] - bl[0], tr[1] - bl[1],
+                                       linewidth=1, edgecolor="r", facecolor="red", alpha=0.3))
+        for corner in [bl, br, tl, tr]:
+            ax.plot(corner[0], corner[1], "r.", markersize=5)
+            ax.annotate(f"({corner[0]:.1f}, {corner[1]:.1f})", corner,
+                        textcoords="offset points", xytext=(4, 4), fontsize=5, color="darkred")
+
+    # N rectangles (blue) with corner points and coordinates
+    for rect in N:
+        tr, bl = rect
+        tl = (bl[0], tr[1])
+        br = (tr[0], bl[1])
+        ax.add_patch(patches.Rectangle(bl, tr[0] - bl[0], tr[1] - bl[1],
+                                       linewidth=1, edgecolor="b", facecolor="blue", alpha=0.3))
+        for corner in [bl, br, tl, tr]:
+            ax.plot(corner[0], corner[1], "b.", markersize=5)
+            ax.annotate(f"({corner[0]:.1f}, {corner[1]:.1f})", corner,
+                        textcoords="offset points", xytext=(4, -8), fontsize=5, color="darkblue")
+
+    # Best line: L(s) = (m1, m2)*s + (b1, b2)
+    m1, m2 = best_line.m
+    b1, b2 = best_line.b
+    t_min, t_max = -5, 25
+    ax.plot([m1 * t + b1 for t in [t_min, t_max]],
+            [m2 * t + b2 for t in [t_min, t_max]], "k-", linewidth=1.5, label="Best line")
+    t_mid = (t_min + t_max) / 2 * 0.4
+    slope = m2 / m1
+    y_int = b2 - m2 * b1 / m1
+    line_eq = f'$y = {slope:.2f}x {"+" if y_int >= 0 else "-"} {abs(y_int):.2f}$'
+    ax.annotate(line_eq, (m1 * t_mid + b1, m2 * t_mid + b2),
+                textcoords="offset points", xytext=(8, -12), fontsize=6,
+                color="black", fontstyle="italic")
+
+    # Distance annotation box
+    text = (
+        f"Approx (crit pts): {max_dist_critpts:.3f}\n"
+        f"Approx (grid): {max_grids_lines:.3f}\n"
+        f"Exact: {exact_dist:.3f}"
+    )
+    ax.text(0.98, 0.02, text, transform=ax.transAxes, fontsize=8,
+            verticalalignment="bottom", horizontalalignment="right",
+            bbox=dict(boxstyle="round", facecolor="white", alpha=0.4))
+
+    all_x = [rect[1][0] for rect in M + N] + [rect[0][0] for rect in M + N]
+    all_y = [rect[1][1] for rect in M + N] + [rect[0][1] for rect in M + N]
+    margin = 2
+    ax.set_xlim(min(all_x) - margin, max(all_x) + margin)
+    ax.set_ylim(min(all_y) - margin, max(all_y) + margin)
+    ax.set_aspect("equal")
+    ax.set_title(title)
+
+    legend_M = mlines.Line2D([], [], color="red", marker="D", ls="", label="M")
+    legend_N = mlines.Line2D([], [], color="blue", marker="D", ls="", label="N")
+    legend_line = mlines.Line2D([], [], color="black", ls="-", label="Best line")
+    leg = ax.legend(handles=[legend_M, legend_N, legend_line], fontsize=7)
+    leg.get_frame().set_alpha(0.4)
+
+    fig.savefig(out_path, format="png", dpi=250)
+    plt.close(fig)
+
+
 # Random rectangles
 def plot_rectangles(M, N, img_path):
     from matplotlib import patches
