@@ -195,100 +195,57 @@ def check_omega_x_above(u, v, w, x, omega):
 
 ###############################
 #### 2 vs 2 PAIRED  ####
-def check_pts_2v2_paired(
-    x, w, u, v
-):  ### corresponds the the function CheckPts2 in the paper
-    """Implement later"""
-    if x.coords[0] == w.coords[0]:
-        m1 = np.inf
-    else:
-        m1 = (w.coords[1] - x.coords[1]) / (
-            w.coords[0] - x.coords[0]
-        )  ## slope of the line through x and w
+def point_in_region(p, s, e, upper_left):
+    """Membership test for the regions Q and R of Proposition 4.4 in the paper.
 
-    if u.coords[0] == v.coords[0]:
-        m2 = np.inf
-    else:
-        m2 = (u.coords[1] - v.coords[1]) / (
-            u.coords[0] - v.coords[0]
-        )  ## slope of the line through u and v
+    For a closed segment from s to e,
+        Q(s, e) = { p : p1 <= a1 and p2 >= a2 for some a on the segment }   (upper-left of the segment)
+        R(s, e) = { p : p1 >= b1 and p2 <= b2 for some b on the segment }   (lower-right of the segment)
+    Returns  p in Q(s, e)  if upper_left is True, and  p in R(s, e)  otherwise.
 
-    # R has a triangle cut out of it
+    Writing a(t) = s + t (e - s) with t in [0, 1], each of the two coordinate
+    inequalities is linear in t, i.e. of the form c0 + c1 t >= 0, so p lies in the
+    region iff the two half-lines they define meet [0, 1].  The comparison is done
+    by cross-multiplication (no division), so integer-valued coordinates are exact.
+    """
+    sign = (1, -1) if upper_left else (-1, 1)
+    c0 = [sign[k] * (s[k] - p[k]) for k in (0, 1)]  # constraint k:  c0[k] + c1[k] * t >= 0
+    c1 = [sign[k] * (e[k] - s[k]) for k in (0, 1)]
 
-    # sort the topmost of x and w and the leftmost of x and w
-    lm = x.coords  ## TODO check if this is correct
-    if w.coords[0] < lm[0]:
-        lm = w.coords
-    tm = x.coords
-    if w.coords[1] > tm[1]:
-        tm = w.coords
+    lows = [(0, 1)]  # bounds t >= num/den, stored as (num, den) with den > 0
+    highs = [(1, 1)]  # bounds t <= num/den, stored as (num, den) with den > 0
+    for k in (0, 1):
+        if c1[k] > 0:
+            lows.append((-c0[k], c1[k]))
+        elif c1[k] < 0:
+            highs.append((c0[k], -c1[k]))
+        elif c0[k] < 0:
+            return False  # constraint does not depend on t and is violated
 
-    corner_R = (lm[0], tm[1])  ## corner of the quandrant R
+    # feasible iff every lower bound is <= every upper bound
+    return all(ln * hd <= hn * ld for (ln, ld) in lows for (hn, hd) in highs)
 
-    # sort the bottommost of u and v and the rightmost of u and v
-    rm = u.coords
-    if v.coords[0] > rm[0]:  ## TODO check if this is correct
-        rm = v.coords
-    bm = u.coords
-    if v.coords[1] < bm[1]:
-        bm = v.coords
-    corner_Q = (rm[0], bm[1])  ## corner of the quandrant Q
+def check_pts_2v2_paired(x, w, u, v):
+    """CheckPts2 (Algorithm 4 in the paper).
 
-    if check_is_in_bottom_right_quadrant(u.coords, tm, lm) or check_is_in_bottom_right_quadrant(v.coords, tm, lm):
-        # check if u or v are in the quandrant containing R
-        if m1 > 0:
-            if in_convex_hull(np.array([x.coords, w.coords, corner_R]), u.coords) or in_convex_hull(
-                np.array([x.coords, w.coords, corner_R]), v.coords
-            ):
-                # check if u or v are in the triangle cut out of R
-                return True
-            else:
-                return False
+    x, w are the pair that pushes up onto the line (they lie strictly to its right),
+    u, v are the pair that pushes right onto the line (they lie strictly to its left).
+    By Proposition 4.4 a line with positive slope separating the pairs as required
+    exists iff none of  x in Q, w in Q, u in R, v in R  holds, where Q is built on the
+    segment uv and R on the segment xw.
 
-        else:  # R is a quandrant
-            return False
-
-    elif check_is_in_top_left_quadrant(x.coords, bm, rm) or check_is_in_top_left_quadrant(
-        w.coords, bm, rm
+    Returns True if the configuration is possible and False if it must be discarded.
+    The order of the points within each pair does not matter.
+    """
+    if point_in_region(x.coords, u.coords, v.coords, upper_left=True) or point_in_region(
+        w.coords, u.coords, v.coords, upper_left=True
     ):
-        # check if x or w are in the quandrant containing Q
-
-        if m2 > 0:
-            if in_convex_hull(np.array([u.coords, v.coords, corner_Q]), x.coords) or in_convex_hull(
-                np.array([u.coords, v.coords, corner_Q]), w.coords
-            ):
-                # check if x or w are in the triangle cut out of Q
-                return True
-            else:
-                return False
-
-        else:
-            return False
-    else:
-        return True
-
-        # check if u or v are in the quandrant containing R
-        # if yes,check if u or v is in the triangle cut out of R --> return True
-        # if not in the tirangle but in quadrant return False
-        # if not in the quandrant return False
-
-        # side note: we can check if u or v are in the triangle cut out of R by checking if they are in the convex hull of the other two points and the corner of the quandrant
-
-    # else: #R is a quandrant
-    # check if u or v are in the quandrant R
-    # if yes return False
-    # if no return True
-
-    # if m2 >0: #Q has a triangle cut out of it
-    # check if x or w are in the quandrant containing Q
-    # if yes, check if x or w is in the triangle cut out of Q --> return True
-    # if not in the tirangle but in quadrant return False
-    # if not in the quandrant return False
-
-    # else: #Q is a quandrant
-    # check if x or w are in the quandrant Q
-    # if yes return False
-    # if no return True
+        return False
+    if point_in_region(u.coords, x.coords, w.coords, upper_left=False) or point_in_region(
+        v.coords, x.coords, w.coords, upper_left=False
+    ):
+        return False
+    return True
 
 def algo_2v2_paired(CritPts, prune):
     critptscoords = []
