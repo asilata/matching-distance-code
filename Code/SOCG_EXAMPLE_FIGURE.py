@@ -35,7 +35,7 @@ LABEL_M, LABEL_N = "critical values from M", "critical values from N"
 RED, BLACK, ORANGE = "red", "black", "orange"
 
 rc("font", **{"family": "serif", "serif": ["Times"]})
-rc("text", usetex=True)
+rc("text", usetex=settings.use_tex)
 
 
 def draw_crit_vals(ax, crits_no_lub):

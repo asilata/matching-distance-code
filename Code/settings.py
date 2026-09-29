@@ -1,4 +1,9 @@
-# Global switches read by the library and the scripts.
+"""Global switches read by the library and the scripts."""
+import shutil
+
+# Figures use LaTeX for text when a TeX installation is available; otherwise matplotlib's
+# own mathtext renders the same labels.
+use_tex = shutil.which("latex") is not None and shutil.which("dvipng") is not None
 
 print_output = True            # print progress and results
 save_figure = True             # scripts save figures

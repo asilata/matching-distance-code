@@ -4,9 +4,11 @@ import matplotlib.patches as mpatches
 
 from matplotlib import rc
 
+import settings
+
 # rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 rc("font", **{"family": "serif", "serif": ["Times"]})
-rc("text", usetex=True)
+rc("text", usetex=settings.use_tex)
 
 
 def plot_both_c_o(crits_no_lub, omegapts, title, dpi, alg):
