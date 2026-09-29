@@ -1,2 +1,0 @@
-Running M=1 N=4 seed=3
-slurmstepd: error: *** JOB 11586379 ON nid002746 CANCELLED AT 2025-08-06T20:08:54 DUE TO TIME LIMIT ***

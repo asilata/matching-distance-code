@@ -1,2 +1,0 @@
-M,N,seed,config_type,exact,approx_grid,approx_crit_pts,is_unicorn,exact_time,approx_time,a_bl_M_x,a_bl_M_y,b_tr_M_x,b_tr_M_y,c_bl_N_x,c_bl_N_y,d_tr_N_x,d_tr_N_y
-1,1,37,disjoint_sidebyside,2.144658,2.144658,2.144658,False,0.165,0.078,7.920279330,1.617850250,10.244249007,9.010025426,1.127289483,4.328789740,5.416605955,10.574293371

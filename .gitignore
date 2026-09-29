@@ -1,9 +1,19 @@
+# editor and OS files
 .DS_Store
-venv
-.vscode
-__pycache__
+.vscode/
+.claude/
+.ipynb_checkpoints/
+~$*
+
+# python
+__pycache__/
+venv/
+.venv/
+*.pyc
+
+# large binaries and generated output
+*.psd
+output/
+
+# local working folder, never published
 Code/final_cleanup/
-Code/.DS_Store
-.Rhistory
-/Code/.DS_Store
-Code/.DS_Store

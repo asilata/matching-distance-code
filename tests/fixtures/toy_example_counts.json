@@ -1,0 +1,54 @@
+{
+ "critical_values": 9,
+ "lower_bound_D": 3.0,
+ "exact_distance": 3.0,
+ "section4": {
+  "alg3": {
+   "raw": 916,
+   "distinct_points": 142
+  },
+  "alg5": {
+   "raw": 133,
+   "distinct_slopes": 31
+  },
+  "alg7": {
+   "raw": 203,
+   "distinct_points": 93,
+   "distinct_slopes": 11
+  },
+  "lines_evaluated": 17445
+ },
+ "section4_5": {
+  "alg3": {
+   "raw": 348,
+   "distinct_points": 78
+  },
+  "alg5": {
+   "raw": 21,
+   "distinct_slopes": 15
+  },
+  "alg7": {
+   "raw": 99,
+   "distinct_points": 45,
+   "distinct_slopes": 9
+  },
+  "lines_evaluated": 6084
+ },
+ "none": {
+  "alg3": {
+   "raw": 5504,
+   "distinct_points": 442
+  },
+  "alg5": {
+   "raw": 133,
+   "distinct_slopes": 31
+  },
+  "alg7": {
+   "raw": 1858,
+   "distinct_points": 411,
+   "distinct_slopes": 11
+  },
+  "lines_evaluated": 184597
+ },
+ "note": "lines_evaluated values predate the deduplication fix (commit C4) and are updated there"
+}
