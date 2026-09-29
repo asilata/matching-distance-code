@@ -11,11 +11,11 @@ distance over lines through pairs of critical values and over grid lines).
 Also computes the exact matching distance and the number of lines evaluated per variant,
 and saves a figure marking which candidates Section 5 removes.
 
-Run from Code/:   python PRUNING_TOY_FIGURE.py
-Output:           ../output/socg/small_example/MN_section5_pruning.png
-Note: the exact-distance step goes through do_all_the_things, which (like every pipeline
-run) rewrites the scratch files ../output/socg/ _*.csv.
+Run from anywhere:  python Code/PRUNING_TOY_FIGURE.py
+Output:             paper_figures/MN_section5_pruning.png (tracked)
 """
+import os
+
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
@@ -29,7 +29,7 @@ import examples as ex
 from toy_example_helpers import run_algorithms, exact_distance, approximation_lower_bound
 from SOCG_EXAMPLE_FIGURE import draw_crit_vals, RED, BLACK, ORANGE, LABEL_M, LABEL_N  # same style as Figure 9
 
-OUT_PNG = "../output/socg/small_example/MN_section5_pruning.png"
+OUT_PNG = os.path.join(settings.figure_dir, "MN_section5_pruning.png")
 VARIANTS = [("no pruning", False, False), ("Section 4", True, False), ("Sections 4 + 5", True, True)]
 
 

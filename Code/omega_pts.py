@@ -9,6 +9,7 @@ from itertools import combinations
 from fractions import Fraction
 import settings
 import csv
+import os
 
 
 ###### Convex hull functions ####
@@ -324,6 +325,16 @@ def algo_2v2_paired(CritPts, prune):
 
     return Omega_pts, info_list
 
+def write_candidate_csv(name, suffix, rows):
+    """Dump a candidate table to output_dir/candidates/<name><suffix> when settings.write_candidate_csvs."""
+    if not settings.write_candidate_csvs:
+        return
+    directory = os.path.join(settings.output_dir, "candidates")
+    os.makedirs(directory, exist_ok=True)
+    with open(os.path.join(directory, name + suffix), "w", newline="") as file:
+        csv.writer(file).writerows(rows)
+
+
 def candidate_key(omega, slope):
     """Deduplication key for a candidate switch point.
 
@@ -386,10 +397,7 @@ def output_alg_2_2_paired(CritPts, name, prune):
 
     # print(is_inf)
     # print(orderedomegas)
-    # w+ option overwrites file each time (good thing)
-    with open("../output/" + name + "_2v2_paired.csv", "w+", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerows(Total_info_list)
+    write_candidate_csv(name, "_2v2_paired.csv", Total_info_list)
 
     return Pts, num_duplicates, len(Pts), is_inf, orderedomegas
 
@@ -452,10 +460,7 @@ def output_alg_3_1(CritPts, name, prune):
 
     # Dict_pts.sort()
     # new_pts= list(k for k,_ in itertools.groupby(k))
-    # w+ option overwrites file each time (good thing)
-    with open("../output/" + name + "_3v1.csv", "w+", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerows(Dict_pts)
+    write_candidate_csv(name, "_3v1.csv", Dict_pts)
 
     return Pts, num_duplicates, len(Pts) 
 
@@ -962,10 +967,7 @@ def output_alg_2_2_unpaired(CritPts, name, prune):
     # print(is_inf)
     # print(orderedomegas)
 
-    # w+ option overwrites file each time (good thing)
-    with open("../output/" + name + "_2v2_unpaired.csv", "w+", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerows(Dict_pts)
+    write_candidate_csv(name, "_2v2_unpaired.csv", Dict_pts)
 
     return Pts, num_duplicates, len(Pts), is_inf, orderedomegas
 

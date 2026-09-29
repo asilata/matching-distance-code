@@ -15,14 +15,13 @@ Output: DEBUG_1v1_OUTPUT/debug_1v1_{name}_seed{start}-{end}.csv
 import os
 import io
 import csv
-import getpass
 import argparse
 import contextlib
 
 import settings
 import cleanup_helper_funcs as chf
 
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "DEBUG_1v1_OUTPUT")
+OUTPUT_DIR = os.path.join(settings.output_dir, "batch_1v1")
 FIGS_DIR = os.path.join(OUTPUT_DIR, "figs")
 TOLERANCE = 0.0015  # a unicorn = exact differs from both approximations by more than this
 
@@ -128,7 +127,7 @@ def main():
     parser.add_argument("--start-seed", type=int, default=0, help="First seed (default: 0)")
     parser.add_argument("--count", type=int, default=100, help="Number of seeds (default: 100)")
     parser.add_argument(
-        "--name", type=str, default=getpass.getuser(),
+        "--name", type=str, default="batch",
         help="Tag for the output filename (default: your username)",
     )
     parser.add_argument(

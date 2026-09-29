@@ -151,7 +151,7 @@ def compute_switch_points(
     # print("-------------")
 
     # print("3v1:")
-    omegapts_3v1, _, _ = omega.output_alg_3_1(critpts, "socg/" + title, prune)
+    omegapts_3v1, _, _ = omega.output_alg_3_1(critpts, title, prune)
     if makegraphyesno:
         ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1")  # type: ignore
 
@@ -160,7 +160,7 @@ def compute_switch_points(
     # algo 2v2 paired = Algorithm 5 in SoCG overleaf
     # print("2v2paired:")
     omegapts_2v2_p, _, _, is_inf_2v2p, orderedomegas2v2p = omega.output_alg_2_2_paired(
-        critpts, "socg/" + title, prune
+        critpts, title, prune
     )
 
     if makegraphyesno:
@@ -172,7 +172,7 @@ def compute_switch_points(
 
     # print("2v2unpaired:")
     omegapts_2v2_unp, _, _, is_inf_2v2unp_orig, orderedomegas_2v2unp = (
-        omega.output_alg_2_2_unpaired(critpts, "socg/" + title, prune)
+        omega.output_alg_2_2_unpaired(critpts, title, prune)
     )
     if settings.print_output:
         print("______________________________________")
@@ -421,7 +421,7 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune=True):
 
     start_time_switch_pts = time.time()
     ### run all three allgoriths 3v1, 2v2 paired , 2v2 unpaired
-    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, makegraphyesno=graph, title=" ")  # type: ignore
+    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, makegraphyesno=graph, title="run")  # type: ignore
     # combine the outputs together and deal with slopes vs points
     omega_points_collection, omega_slopes_collection = combine_omegas(
         is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp

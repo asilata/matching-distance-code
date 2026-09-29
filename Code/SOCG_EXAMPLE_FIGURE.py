@@ -7,9 +7,9 @@ pruning off, as in the original figure.  Every panel draws each distinct candida
 proper points are compared as coordinates and points at infinity [0:a:b] as slopes, so
 the counts printed here are the ones to quote in the caption.
 
-Run from Code/:   python SOCG_EXAMPLE_FIGURE.py
-Output:           ../output/socg/small_example/current_code/{MN,MN3v1,MN2v2p,MN2v2unp}.png
-                  plus preview_2x2.png tiling the four panels.
+Run from anywhere:  python Code/SOCG_EXAMPLE_FIGURE.py
+Output:             paper_figures/{MN,MN3v1,MN2v2p,MN2v2unp}.png (tracked), plus
+                    output/toy_example_preview_2x2.png tiling the four panels.
 """
 import os
 
@@ -26,7 +26,7 @@ settings.save_figure = False
 import examples as ex
 from toy_example_helpers import run_algorithms
 
-OUT_DIR = "../output/socg/small_example/current_code"
+OUT_DIR = settings.figure_dir
 DPI = 300
 TITLE = "M and N"
 LABEL_POINTS = "candidate switch points"          # legend text; the SoCG version said "switch points"
@@ -131,5 +131,6 @@ if __name__ == "__main__":
     points_panel(crits_no_lub, a3["points"], "3v1", paths[1])
     points_and_slopes_panel(crits_no_lub, set(), a5["slopes"], "2v2 Paired", paths[2])
     points_and_slopes_panel(crits_no_lub, a7["points"], a7["slopes"], "2v2 Unpaired", paths[3])
-    preview(paths, os.path.join(OUT_DIR, "preview_2x2.png"))
+    os.makedirs(settings.output_dir, exist_ok=True)
+    preview(paths, os.path.join(settings.output_dir, "toy_example_preview_2x2.png"))
     print("panels written to", OUT_DIR)

@@ -69,7 +69,7 @@ def run_algorithms(critpts, prune):
 
 
 def exact_distance(critpts, crits_no_lub, M, N, prune):
-    """Exact matching distance and number of lines evaluated (rewrites ../output/socg/ _*.csv)."""
+    """Exact matching distance and number of lines evaluated by the full pipeline."""
     example = (critpts, crits_no_lub, M, N)
     with contextlib.redirect_stdout(io.StringIO()):
         dist, num_lines, _ = chf.do_all_the_things(False, False, example, list(ex.test_ex_one_rect()), prune)
