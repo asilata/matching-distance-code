@@ -137,8 +137,8 @@ def main():
     args = parser.parse_args()
 
     # Full pruning for speed; quiet, no figures.
-    settings.old_pruning = True
-    settings.new_pruning_march_2025 = True
+    settings.section4_pruning = True
+    settings.section5_pruning = True
     settings.save_figure = False
     settings.print_output = False
     settings.actually_compute_matching_distance = True

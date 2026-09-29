@@ -286,7 +286,7 @@ def algo_2v2_paired(CritPts, prune):
             eta = 2
         else:
             eta = 1
-        if settings.new_pruning_march_2025:
+        if settings.section5_pruning:
                 # print("prune 3")
                 if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
                     continue
@@ -294,7 +294,7 @@ def algo_2v2_paired(CritPts, prune):
             delta = 2
         else:
             delta = 1
-        if settings.new_pruning_march_2025:
+        if settings.section5_pruning:
                 # print("prune 4")
                 if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
                     continue
@@ -512,7 +512,7 @@ def algo_3vs1(CritPts, all_CritPts, prune):
                 eta = 2
             else:
                 eta = 1
-            if settings.new_pruning_march_2025:
+            if settings.section5_pruning:
                 # print("prune 1")
                 if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
                     continue
@@ -520,7 +520,7 @@ def algo_3vs1(CritPts, all_CritPts, prune):
                 delta = 2
             else:
                 delta = 1
-            if settings.new_pruning_march_2025:
+            if settings.section5_pruning:
                 # print("prune 2")
                 if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
                     continue
@@ -805,7 +805,7 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                 eta = 2
             else:
                 eta = 1
-            if settings.new_pruning_march_2025:
+            if settings.section5_pruning:
                 # print("prune 5")
                 if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D: # type: ignore
                     continue
@@ -813,7 +813,7 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                 delta = 2
             else:
                 delta = 1
-            if settings.new_pruning_march_2025:
+            if settings.section5_pruning:
                 # print("prune 6")
                 if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
                     continue

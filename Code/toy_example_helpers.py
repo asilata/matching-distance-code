@@ -43,7 +43,7 @@ def run_algorithms(critpts, prune):
     """Raw counts and deduplicated outputs of the three algorithms.
 
     Section 5 pruning is controlled, as in the pipeline, by
-    settings.new_pruning_march_2025 and settings.lower_bound_D.
+    settings.section5_pruning and settings.lower_bound_D.
     """
     allc = all_coords_with_lub(critpts)
     res = {"alg3": {"raw": 0, "points": set()},

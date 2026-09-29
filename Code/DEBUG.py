@@ -24,8 +24,8 @@ if __name__ == "__main__":
 
     M, N = chf.generate_random_rectangles(rects_in_M, rects_in_N, seed=seed)
 
-    settings.new_pruning_march_2025 = False
-    settings.old_pruning = False
+    settings.section5_pruning = False
+    settings.section4_pruning = False
     print("\n\n!!!!!")
     print("|  NEW RUN BEGINS  |")
     # print("~~~NO PRUNING WHATSOEVER~~~")
@@ -73,8 +73,8 @@ if __name__ == "__main__":
     # )
 
     # # only OLD PRUNE now
-    # settings.old_pruning = True
-    # settings.new_pruning_march_2025 = False
+    # settings.section4_pruning = True
+    # settings.section5_pruning = False
     # print("~~~ONLY OLD PRUNING~~~")
     # print(
     #     "_____________________________________\nAPPROX\n_____________________________________"
@@ -96,8 +96,8 @@ if __name__ == "__main__":
     # )
 
     # ALL PRUNE now
-    settings.old_pruning = True
-    settings.new_pruning_march_2025 = True
+    settings.section4_pruning = True
+    settings.section5_pruning = True
     print("~~~ALL (including NEW) PRUNING~~~")
     print(
         "_____________________________________\nAPPROX\n_____________________________________"

@@ -115,8 +115,8 @@ def preview(paths, out):
 if __name__ == "__main__":
     os.makedirs(OUT_DIR, exist_ok=True)
     critpts, crits_no_lub, M, N = ex.small_socg_ex_M_N()
-    settings.old_pruning = True
-    settings.new_pruning_march_2025 = False
+    settings.section4_pruning = True
+    settings.section5_pruning = False
     res = run_algorithms(critpts, prune=True)
 
     a3, a5, a7 = res["alg3"], res["alg5"], res["alg7"]

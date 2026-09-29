@@ -679,9 +679,9 @@ def to_prune_or_not_to_prune_csv(M, N):
     # print("Rectangles in M: {} and N: {}. Total: {}.".format(len(M), len(N), len(M) + len(N)))
     # print("PRUNE POINTS")
     # prune = True
-    prune = settings.old_pruning
+    prune = settings.section4_pruning
     # if settings.print_output:
-    #     if settings.old_pruning:
+    #     if settings.section4_pruning:
     #         print("yes pruning")
     #     else:
     #         print("not pruning")

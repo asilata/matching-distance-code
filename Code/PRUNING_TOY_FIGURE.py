@@ -85,8 +85,8 @@ if __name__ == "__main__":
     results = {}
     print(f"{'variant':16s} {'Alg3 raw':>8s} {'Alg3':>6s} | {'Alg5 raw':>8s} {'Alg5':>6s} | {'Alg7 raw':>8s} {'Alg7 pts':>8s} {'Alg7 slp':>8s} | {'d_match':>7s} {'lines':>7s}")
     for name, sec4, sec5 in VARIANTS:
-        settings.old_pruning = sec4
-        settings.new_pruning_march_2025 = sec5
+        settings.section4_pruning = sec4
+        settings.section5_pruning = sec5
         settings.lower_bound_D = D
         r = run_algorithms(critpts, sec4)
         r["dist"], r["lines"] = exact_distance(critpts, crits_no_lub, M, N, sec4)

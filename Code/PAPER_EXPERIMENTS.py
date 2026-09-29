@@ -16,8 +16,8 @@ if __name__ == '__main__':
 
 
     # ALL PRUNE now
-    settings.old_pruning = True 
-    settings.new_pruning_march_2025 = True 
+    settings.section4_pruning = True 
+    settings.section5_pruning = True 
     print("~~~ALL (including NEW) PRUNING~~~")
     if settings.print_output:
         print("_____________________________________\nAPPROX\n_____________________________________")
