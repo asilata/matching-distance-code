@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import math
 import random as rnd
-import modules as mod
 import examples as ex
 import plot as ourplot
 import csv
@@ -883,43 +882,26 @@ def plot_rectangles(M, N, img_path):
 
 
 def generate_random_rectangles(num_M, num_N, seed=None):
-    # Set the random seed if provided
+    """Random rectangle modules M and N with num_M and num_N rectangles.
+
+    Corners are drawn uniformly in [0, 15]^2 (bottom-left then top-right) and a draw is
+    rejected until the rectangle is at least 1 wide and 1 high.  A given seed always
+    produces the same modules.  Each rectangle is [(tr_x, tr_y), (bl_x, bl_y)].
+    """
     if seed is not None:
         rnd.seed(seed)
 
-        def create_random_rectangle():
-            while True:
-                # Generate bottom-left corner (bl)
-                bl_x = rnd.uniform(0, 15)
-                bl_y = rnd.uniform(0, 15)
-                # Generate top-right corner (tr)
-                tr_x = rnd.uniform(0, 15)
-                tr_y = rnd.uniform(0, 15)
-                # Ensure width and height are at least 1
-                width = tr_x - bl_x
-                height = tr_y - bl_y
-                if width >= 1 and height >= 1:
-                    return [(tr_x, tr_y), (bl_x, bl_y)]
-                else:
-                    while width < 1 or height < 1:
-                        # Generate bottom-left corner (bl)
-                        bl_x = rnd.uniform(0, 15)
-                        bl_y = rnd.uniform(0, 15)
-                        # Generate top-right corner (tr)
-                        tr_x = rnd.uniform(0, 15)
-                        tr_y = rnd.uniform(0, 15)
-                        width = tr_x - bl_x
-                        height = tr_y - bl_y
-                        # if settings.print_output == True:
-                        #     print("tr (", tr_x, tr_y, ")bl ("bl_x, bl_y, ")")
-                    return [(tr_x, tr_y), (bl_x, bl_y)]
+    def create_random_rectangle():
+        while True:
+            bl_x = rnd.uniform(0, 15)
+            bl_y = rnd.uniform(0, 15)
+            tr_x = rnd.uniform(0, 15)
+            tr_y = rnd.uniform(0, 15)
+            if tr_x - bl_x >= 1 and tr_y - bl_y >= 1:
+                return [(tr_x, tr_y), (bl_x, bl_y)]
 
-    # Generate M with num_M rectangles
-    M = [create_random_rectangle() for _ in range(num_M)]  # type: ignore
-
-    # Generate N with num_N rectangles
-    N = [create_random_rectangle() for _ in range(num_N)]  # type: ignore
-
+    M = [create_random_rectangle() for _ in range(num_M)]
+    N = [create_random_rectangle() for _ in range(num_N)]
     return M, N
 
 

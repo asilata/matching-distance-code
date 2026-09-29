@@ -16,7 +16,7 @@
    "distinct_points": 93,
    "distinct_slopes": 11
   },
-  "lines_evaluated": 17445
+  "lines_evaluated": 17192
  },
  "section4_5": {
   "alg3": {
@@ -32,7 +32,7 @@
    "distinct_points": 45,
    "distinct_slopes": 9
   },
-  "lines_evaluated": 6084
+  "lines_evaluated": 6018
  },
  "none": {
   "alg3": {
@@ -48,7 +48,7 @@
    "distinct_points": 411,
    "distinct_slopes": 11
   },
-  "lines_evaluated": 184597
+  "lines_evaluated": 187218
  },
- "note": "lines_evaluated values predate the deduplication fix (commit C4) and are updated there"
+ "note": "lines_evaluated counts the lines on which the weighted bottleneck distance is evaluated after the deduplication fix that keys candidates by kind and normalised slope; before the fix they were 184597 / 17445 / 6084 because dropped slopes were missing and duplicate slopes produced duplicate lines."
 }

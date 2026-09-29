@@ -6,7 +6,7 @@ import numpy.linalg
 import scipy.spatial
 from scipy.optimize import linprog
 from itertools import combinations
-import modules as mod
+from fractions import Fraction
 import settings
 import csv
 
@@ -135,14 +135,13 @@ def check_x_pushes_right(x, u, v, w):
         return True
 
 def check_three_distinct(C):
-    # this function checks that 3 out of 4 things in a set are distinct
-    # DEBUG TODO: why is this ==4? (crashes if not)
-    # did we actually mean to only check four distinct, or is sth the wrong lenght? 
-    assert len(C) == 4, "C is not of length three"
-    if (len(C) - len(set(C))) > 1:
-        return False
-    else:
-        return True
+    """True if at least three of the four given points are distinct.
+
+    The callers enumerate quadruples with one possible repetition (the last index
+    runs from the third one), so C always has four entries.
+    """
+    assert len(C) == 4, "expected four points"
+    return (len(C) - len(set(C))) <= 1
 
 def check_four_distinct(C):
     # this function checks that all things in a set (of 4) are distinct
@@ -325,6 +324,19 @@ def algo_2v2_paired(CritPts, prune):
 
     return Omega_pts, info_list
 
+def candidate_key(omega, slope):
+    """Deduplication key for a candidate switch point.
+
+    Proper points are compared by their coordinates.  Points at infinity are compared
+    by their slope, so that homogeneous coordinates differing by a scalar, such as
+    (0, 2, 4) and (0, 1, 2), coincide, and a point at infinity can never be confused
+    with a proper point that happens to have the same coordinate tuple.
+    """
+    if slope is None:
+        return ("point", tuple(omega))
+    return ("slope", Fraction(slope).limit_denominator(10**6))
+
+
 def output_alg_2_2_paired(CritPts, name, prune):
     Pts = []
     Total_info_list = [["omega_pts", "x", "u", "v", "w", "eta", "delta", "m"]]
@@ -347,20 +359,17 @@ def output_alg_2_2_paired(CritPts, name, prune):
                             [CritPts[a], CritPts[b], CritPts[c], CritPts[d]], prune
                         )
                         Pts += pts
-                        # a first attempt to get rid of duplicates
-                        # this should be moved to the omega file
                         for p in range(len(pts)):
-                            if pts[p] not in set_of_points:
-                                set_of_points.add(pts[p])
+                            key = candidate_key(pts[p], info_list[p][-1])
+                            if key not in set_of_points:
+                                set_of_points.add(key)
                                 Total_info_list += [info_list[p]]
 
     # print("**********")
     num_duplicates = len(Pts)
     # print("Computed {} points (with duplicates)".format(num_duplicates))
 
-    # # checking a weird number discrep; uncomment later
-    Pts = list(set(Pts))
-    # print("Without duplicates {}".format(len(Pts)))
+    Pts = [row[0] for row in Total_info_list[1:]]  # one representative per distinct candidate
 
     if settings.print_output:
         print("2v2paired: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
@@ -926,20 +935,17 @@ def output_alg_2_2_unpaired(CritPts, name, prune):
                             all_critptscoords, prune
                         )
                         Pts += pts
-                        # a first attempt to get rid of duplicates
-                        # this should be moved to the omega file
                         for p in range(len(pts)):
-                            if pts[p] not in set_of_points:
-                                set_of_points.add(pts[p])
+                            key = candidate_key(pts[p], dict_pts[p][-1])
+                            if key not in set_of_points:
+                                set_of_points.add(key)
                                 Dict_pts += [dict_pts[p]]
 
     # print("**********")
     num_duplicates = len(Pts)
     # print("Computed {} points (with duplicates)".format(num_duplicates))
 
-    # # checking a weird number discrep; uncomment later
-    Pts = list(set(Pts))
-    # print("Without duplicates {}".format(len(Pts)))
+    Pts = [row[0] for row in Dict_pts[1:]]  # one representative per distinct candidate
     if settings.print_output:
         print("2v2unpaired: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 

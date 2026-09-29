@@ -66,7 +66,6 @@ def plot_c_o_with_inf(crits_no_lub, orderedomegas, is_inf, title, dpi, alg):
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
     fig.set_dpi(dpi)
     fig.set_size_inches(6, 5)
-    fig.tight_layout
     ax1.set_aspect("equal")
     ax2.set_aspect("equal")
     # ax1.set_xlim(-5, 20)
