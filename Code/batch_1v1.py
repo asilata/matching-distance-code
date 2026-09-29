@@ -1,15 +1,16 @@
 """
-Generate fresh 1:1 (M=1, N=1) matching-distance experiment outputs.
+Batch of random 1-vs-1 examples (M and N with one rectangle each).
 
-Each run computes the exact matching distance (with full pruning) plus the two
-approximations and the rectangle corners, for a block of seeds. Multiple people
-can run disjoint seed ranges and combine the resulting CSVs afterwards.
+For a block of seeds, computes the exact matching distance (all pruning), the two
+approximations, the rectangle corners and a geometric classification of the pair, and
+appends one CSV row per seed. Disjoint seed ranges can be run separately (also on
+different machines) and the CSVs concatenated.
 
-Usage:
-    python3 DEBUG_1v1.py --start-seed 0 --count 100 --name barbara
-    python3 DEBUG_1v1.py --start-seed 1000 --count 100 --name robyn
+    python Code/batch_1v1.py --start-seed 0 --count 100 --name batchA
+    python Code/batch_1v1.py --start-seed 1000 --count 100 --name batchB
 
-Output: DEBUG_1v1_OUTPUT/debug_1v1_{name}_seed{start}-{end}.csv
+Output: output/batch_1v1/batch_1v1_{name}_seed{start}-{end}.csv, resumable: rerunning
+the same command skips the seeds already in the file.
 """
 
 import os
@@ -23,11 +24,11 @@ import cleanup_helper_funcs as chf
 
 OUTPUT_DIR = os.path.join(settings.output_dir, "batch_1v1")
 FIGS_DIR = os.path.join(OUTPUT_DIR, "figs")
-TOLERANCE = 0.0015  # a unicorn = exact differs from both approximations by more than this
+TOLERANCE = 0.0015  # exact_above_both_approx: exact exceeds both approximations by more than this
 
 FIELDNAMES = [
     "M", "N", "seed", "config_type",
-    "exact", "approx_grid", "approx_crit_pts", "is_unicorn",
+    "exact", "approx_grid", "approx_crit_pts", "exact_above_both_approx",
     "exact_time", "approx_time",
     "a_bl_M_x", "a_bl_M_y",
     "b_tr_M_x", "b_tr_M_y",
@@ -67,26 +68,21 @@ def classify_config(M, N):
 def compute_row(seed, name, save_figure):
     """Run the matching distance computation for a single 1:1 seed.
 
-    Optionally saves a figure to DEBUG_1v1_OUTPUT/figs/. Returns the CSV row dict.
+    Optionally saves a figure to output/batch_1v1/figs/. Returns the CSV row dict.
     """
     M, N = chf.generate_random_rectangles(1, 1, seed=seed)
-    # Silence the unconditional prints inside compute_matching_dist.
-    # compute_distances returns:
-    #   (exact_time, approx_time, exact, crit_approx, grid_approx, best_line)
     with contextlib.redirect_stdout(io.StringIO()):
-        exact_time, approx_time, exact, crit_approx, grid_approx, best_line = chf.compute_distances(M, N)
+        exact_time, approx_time, exact, crit_approx, grid_approx, best_line, _ = chf.compute_distances(M, N)
 
     # M[0] = [(tr_x, tr_y), (bl_x, bl_y)]
     bl_M, tr_M = M[0][1], M[0][0]
     bl_N, tr_N = N[0][1], N[0][0]
     config_type = classify_config(M, N)
-    is_unicorn = (
-        abs(exact - crit_approx) > TOLERANCE and abs(exact - grid_approx) > TOLERANCE
-    )
+    above_both = exact - crit_approx > TOLERANCE and exact - grid_approx > TOLERANCE
 
     if save_figure and best_line is not None:
         os.makedirs(FIGS_DIR, exist_ok=True)
-        fig_path = os.path.join(FIGS_DIR, f"debug_1v1_{name}_seed{seed}_{config_type}.png")
+        fig_path = os.path.join(FIGS_DIR, f"batch_1v1_{name}_seed{seed}_{config_type}.png")
         title = f"M:1 N:1 seed:{seed} ({config_type})"
         chf.save_result_figure(M, N, best_line, crit_approx, grid_approx, exact, title, fig_path)
 
@@ -96,7 +92,7 @@ def compute_row(seed, name, save_figure):
         "exact": f"{exact:.6f}",
         "approx_grid": f"{grid_approx:.6f}",
         "approx_crit_pts": f"{crit_approx:.6f}",
-        "is_unicorn": is_unicorn,
+        "exact_above_both_approx": above_both,
         "exact_time": f"{exact_time:.3f}",
         "approx_time": f"{approx_time:.3f}",
         "a_bl_M_x": f"{bl_M[0]:.9f}", "a_bl_M_y": f"{bl_M[1]:.9f}",
@@ -122,21 +118,21 @@ def done_seeds(output_path):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate fresh 1:1 matching-distance experiment outputs."
+        description="Batch of random 1-vs-1 matching distance computations."
     )
     parser.add_argument("--start-seed", type=int, default=0, help="First seed (default: 0)")
     parser.add_argument("--count", type=int, default=100, help="Number of seeds (default: 100)")
     parser.add_argument(
         "--name", type=str, default="batch",
-        help="Tag for the output filename (default: your username)",
+        help="tag for the output filename (default: batch)",
     )
     parser.add_argument(
         "--figures", action="store_true",
-        help="Save a figure per seed to DEBUG_1v1_OUTPUT/figs/ (off by default; slow for large batches)",
+        help="save a figure per seed to output/batch_1v1/figs/ (off by default; slow for large batches)",
     )
     args = parser.parse_args()
 
-    # Full pruning for speed; quiet, no figures.
+    # All pruning; quiet.
     settings.section4_pruning = True
     settings.section5_pruning = True
     settings.save_figure = False
@@ -146,7 +142,7 @@ def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     end_seed = args.start_seed + args.count - 1
     output_path = os.path.join(
-        OUTPUT_DIR, f"debug_1v1_{args.name}_seed{args.start_seed}-{end_seed}.csv"
+        OUTPUT_DIR, f"batch_1v1_{args.name}_seed{args.start_seed}-{end_seed}.csv"
     )
 
     already = done_seeds(output_path)

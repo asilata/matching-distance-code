@@ -11,7 +11,7 @@ distance over lines through pairs of critical values and over grid lines).
 Also computes the exact matching distance and the number of lines evaluated per variant,
 and saves a figure marking which candidates Section 5 removes.
 
-Run from anywhere:  python Code/PRUNING_TOY_FIGURE.py
+Run from anywhere:  python Code/figure_toy_pruning.py
 Output:             paper_figures/MN_section5_pruning.png (tracked)
 """
 import os
@@ -27,14 +27,14 @@ settings.print_output = False
 settings.save_figure = False
 import examples as ex
 from toy_example_helpers import run_algorithms, exact_distance, approximation_lower_bound
-from SOCG_EXAMPLE_FIGURE import draw_crit_vals, RED, BLACK, ORANGE, LABEL_M, LABEL_N  # same style as Figure 9
+from figure_toy_example import draw_crit_vals, RED, BLACK, ORANGE, LABEL_M, LABEL_N  # same style as Figure 9
 
 OUT_PNG = os.path.join(settings.figure_dir, "MN_section5_pruning.png")
 VARIANTS = [("no pruning", False, False), ("Section 4", True, False), ("Sections 4 + 5", True, True)]
 
 
 def draw_figure(base, pruned, crits_no_lub, D, dist, path):
-    """Same colours, markers and fonts as the panels of SOCG_EXAMPLE_FIGURE.py;
+    """Same colours, markers and fonts as the panels of figure_toy_example.py;
     candidates removed by Section 5 are drawn as grey crosses."""
     GONE = "gray"
 

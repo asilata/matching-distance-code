@@ -11,7 +11,7 @@ rc("font", **{"family": "serif", "serif": ["Times"]})
 rc("text", usetex=settings.use_tex)
 
 
-def plot_both_c_o(crits_no_lub, omegapts, title, dpi, alg):
+def plot_both_c_o(crits_no_lub, omegapts, title, dpi, alg, out_path=None):
     sanitycount = 0
     fig, ax = plt.subplots()
     fig.set_dpi(dpi)
@@ -24,7 +24,6 @@ def plot_both_c_o(crits_no_lub, omegapts, title, dpi, alg):
         # so it can be an int. We might want to fix.
         ax.plot(o[0], o[1], "o", color="red", label="red", alpha=0.8, markersize=4)
         sanitycount += 1
-    print("for sanity, num omegas:", sanitycount)
 
     for c in crits_no_lub:
         if c[1] == 0:
@@ -61,10 +60,14 @@ def plot_both_c_o(crits_no_lub, omegapts, title, dpi, alg):
     orange_patch = mpatches.Patch(color="orange", label="critical values from N")
 
     plt.legend(handles=[red_patch, black_patch, orange_patch], loc="best")
-    plt.show()
+    if out_path:
+        fig.savefig(out_path, dpi=dpi, bbox_inches="tight")
+        plt.close(fig)
+    else:
+        plt.show()
 
 
-def plot_c_o_with_inf(crits_no_lub, orderedomegas, is_inf, title, dpi, alg):
+def plot_c_o_with_inf(crits_no_lub, orderedomegas, is_inf, title, dpi, alg, out_path=None):
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
     fig.set_dpi(dpi)
     fig.set_size_inches(6, 5)
@@ -110,7 +113,6 @@ def plot_c_o_with_inf(crits_no_lub, orderedomegas, is_inf, title, dpi, alg):
                 color="red",
                 label="Intersection Point",
             )
-    print("for sanity, num omegas: ", sanitycount)
     for c in crits_no_lub:
         if c[1] == 0:
             ax1.plot(
@@ -149,4 +151,8 @@ def plot_c_o_with_inf(crits_no_lub, orderedomegas, is_inf, title, dpi, alg):
         bbox_to_anchor=(0.64, 1.31),
         loc="upper left",
     )
-    plt.show()
+    if out_path:
+        fig.savefig(out_path, dpi=dpi, bbox_inches="tight")
+        plt.close(fig)
+    else:
+        plt.show()

@@ -12,6 +12,7 @@ import random as rnd
 import examples as ex
 import plot as ourplot
 import csv
+import os
 
 import omega_pts as omega
 from numpy import linalg as LA
@@ -79,68 +80,17 @@ def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
     return critpts, crits_no_lub, M, N, critval_coords
 
 
-def compute_switch_points(
-    critpts, crits_no_lub, prune, makegraphyesno=False, title="title"
-):
+def compute_switch_points(critpts, crits_no_lub, prune, figure_dir=None, title="run"):
+    """Run Algorithms 3, 5 and 7 on the critical values.
+
+    With figure_dir set, the input modules and the candidate switch points of each
+    algorithm are saved there as PNG files.
+    """
 
     ############################
     ### originally from socg_examples.ipynb
-    if makegraphyesno:
-        title = "M and N"
-        dpi = 300
-
-        ############ make the example
-        fig, ax0 = plt.subplots()
-        fig.set_dpi(dpi)
-        fig.set_size_inches(6, 5)
-        # fig.tight_layout
-
-        fig.suptitle("Input rectangle modules M and N")
-        for i in [0, 3, 6]:
-            p1, p2, p3 = (
-                crits_no_lub[0 + i][0],
-                crits_no_lub[1 + i][0],
-                crits_no_lub[2 + i][0],
-            )
-            p4 = np.array(p2) + np.array(p3) - np.array(p1)
-            x = [p1[0], p2[0], p4[0], p3[0], p1[0]]
-            y = [p1[1], p2[1], p4[1], p3[1], p1[1]]
-            ax0.plot(x, y, "k--")
-
-        for c in crits_no_lub:
-            if c[1] == 0:
-                ax0.plot(
-                    c[0][0],
-                    c[0][1],
-                    "o",
-                    color="black",
-                    label="black",
-                    markersize=4,
-                )
-            else:
-                ax0.plot(
-                    c[0][0],
-                    c[0][1],
-                    "o",
-                    color="black",
-                    markersize=4,
-                )
-                ax0.plot(
-                    c[0][0],
-                    c[0][1],
-                    "o",
-                    color="orange",
-                    label="orange",
-                    markersize=3,
-                )
-
-        black_patch = mpatches.Patch(color="black", label="critical values from M")
-        orange_patch = mpatches.Patch(color="orange", label="critical values from N")
-        ax0.legend(
-            handles=[black_patch, orange_patch],
-            loc="upper right",
-        )
-        plt.show()
+    title = "M and N"
+    dpi = 300
 
     ############# do computations
     # algo 3v1 = Algorithm 3 in SoCG overleaf
@@ -152,8 +102,9 @@ def compute_switch_points(
 
     # print("3v1:")
     omegapts_3v1, _, _ = omega.output_alg_3_1(critpts, title, prune)
-    if makegraphyesno:
-        ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1")  # type: ignore
+    if figure_dir:
+        ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1",
+                              out_path=os.path.join(figure_dir, "candidates_3v1.png"))
 
     if settings.print_output:
         print("-------------")
@@ -163,8 +114,9 @@ def compute_switch_points(
         critpts, title, prune
     )
 
-    if makegraphyesno:
-        ourplot.plot_c_o_with_inf(crits_no_lub, orderedomegas2v2p, is_inf_2v2p, title, dpi, "2v2 Paired")  # type: ignore
+    if figure_dir:
+        ourplot.plot_c_o_with_inf(crits_no_lub, orderedomegas2v2p, is_inf_2v2p, title, dpi, "2v2 Paired",
+                                  out_path=os.path.join(figure_dir, "candidates_2v2_paired.png"))
 
     # algo 2v2 unpaired = Algorithm 7 in SoCG overleaf
     if settings.print_output:
@@ -177,10 +129,9 @@ def compute_switch_points(
     if settings.print_output:
         print("______________________________________")
 
-    if makegraphyesno:
-        ourplot.plot_c_o_with_inf(
-            crits_no_lub, orderedomegas_2v2unp, is_inf_2v2unp_orig, title, dpi, "2v2 Unpaired"  # type: ignore
-        )
+    if figure_dir:
+        ourplot.plot_c_o_with_inf(crits_no_lub, orderedomegas_2v2unp, is_inf_2v2unp_orig, title, dpi, "2v2 Unpaired",
+                                  out_path=os.path.join(figure_dir, "candidates_2v2_unpaired.png"))
     return (
         critpts,
         crits_no_lub,
@@ -421,7 +372,7 @@ def exact_matching_distance(onedim_mods, graph, example, MN, prune=True):
 
     start_time_switch_pts = time.time()
     ### run all three allgoriths 3v1, 2v2 paired , 2v2 unpaired
-    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, makegraphyesno=graph, title="run")  # type: ignore
+    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, figure_dir=graph or None)  # type: ignore
     # combine the outputs together and deal with slopes vs points
     omega_points_collection, omega_slopes_collection = combine_omegas(
         is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp
@@ -670,7 +621,7 @@ def plot_weighted_bottleneck(M, N, graph, filename="weightedBottlneckDistance"):
     return max_dist_critpts, max_grids_lines
 
 
-def compute_distances(M, N):
+def compute_distances(M, N, candidate_figure_dir=None):
     # prune by default true
     # what we want:
     # prune TRUE means let algo decide if take the thing
@@ -690,7 +641,7 @@ def compute_distances(M, N):
     # set one_rect_mods -> FALSE
     # M,N = ex.test_ex_more_rects()
 
-    graph = False
+    graph = candidate_figure_dir
     one_rect_mods = False
 
     ################## PRUNE
@@ -714,7 +665,7 @@ def compute_distances(M, N):
 
     ## This is the EXACT (slow) computation
     prune_start_time = time.time()
-    prune_match_dist, _, best_line = exact_matching_distance(
+    prune_match_dist, num_lines, best_line = exact_matching_distance(
         one_rect_mods, graph, example, MN, prune
     )  ## C: added empty _ here for the the second output of exact_matching_distance
     # print("\n")
@@ -738,6 +689,7 @@ def compute_distances(M, N):
         max_dist_critpts,
         max_grids_lines,
         best_line,
+        num_lines,
     )
 
 

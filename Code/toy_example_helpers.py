@@ -1,5 +1,5 @@
 """
-Helpers shared by SOCG_EXAMPLE_FIGURE.py and PRUNING_TOY_FIGURE.py.
+Helpers shared by figure_toy_example.py and figure_toy_pruning.py.
 
 They run Algorithms 3, 5 and 7 quadruple by quadruple (mirroring the loops of
 omega_pts.output_alg_*) and deduplicate the outputs properly: proper points are

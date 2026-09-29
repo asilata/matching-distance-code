@@ -1,4 +1,4 @@
-M,N,seed,config_type,exact,approx_grid,approx_crit_pts,is_unicorn,exact_time,approx_time,a_bl_M_x,a_bl_M_y,b_tr_M_x,b_tr_M_y,c_bl_N_x,c_bl_N_y,d_tr_N_x,d_tr_N_y
+M,N,seed,config_type,exact,approx_grid,approx_crit_pts,exact_above_both_approx,exact_time,approx_time,a_bl_M_x,a_bl_M_y,b_tr_M_x,b_tr_M_y,c_bl_N_x,c_bl_N_y,d_tr_N_x,d_tr_N_y
 1,1,2032,disjoint_sidebyside,0.650217,0.650217,0.650217,FALSE,0.146,0.055,1.28461133,2.093094834,4.20791864,3.160951115,5.043416536,0.034295706,6.343851016,9.912143713
 1,1,12186,nested,3.940378,3.940378,3.330585,FALSE,0.106,0.211,3.104118576,0.129696588,10.98487428,13.162227,5.740756492,4.839293911,10.43924993,11.27343995
 1,1,20925,nested,5.351151,5.351151,5.351151,FALSE,0.059,0.116,2.644693257,3.594161795,14.36544993,14.29646435,5.572880017,6.321220294,7.874473965,12.78983523

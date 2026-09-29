@@ -1,13 +1,12 @@
 """
-Regenerate the four panels of the small-example figure (Figure 9 in the LAMA paper,
-originally made for SoCG 2024 from Notebooks/socg_examples.ipynb) with the current code.
+Regenerate the four panels of the small-example figure of the paper (Figure 9).
 
 Setting: Section 4 pruning on (CheckPts, CheckPts2, CheckOmega, CheckOmega2), Section 5
 pruning off, as in the original figure.  Every panel draws each distinct candidate once:
 proper points are compared as coordinates and points at infinity [0:a:b] as slopes, so
 the counts printed here are the ones to quote in the caption.
 
-Run from anywhere:  python Code/SOCG_EXAMPLE_FIGURE.py
+Run from anywhere:  python Code/figure_toy_example.py
 Output:             paper_figures/{MN,MN3v1,MN2v2p,MN2v2unp}.png (tracked), plus
                     output/toy_example_preview_2x2.png tiling the four panels.
 """
