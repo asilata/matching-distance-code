@@ -226,7 +226,7 @@ def combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_
 def compute_matching_dist(
     lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N
 ):
-    time_why_match_slow = time.time()
+    t0 = time.time()
     print("Computing matching dist!")
 
     lub0 = list(set(lub[0]))
@@ -236,10 +236,10 @@ def compute_matching_dist(
     pointstoiterateover = (
         closureMN + omega_points_collection
     )  ### do we need to add again the critical values here
-    sloppyslopestoiterateover = omega_slopes_collection
+    candidate_slopes = omega_slopes_collection
 
     Lines = []
-    print(f"Lines through pairs of pts: {time.time() - time_why_match_slow:.3f} sec")
+    print(f"Lines through pairs of pts: {time.time() - t0:.3f} sec")
     ## Lines through pairs of points
     all_bottle_time = 0
     for x in range(len(pointstoiterateover)):
@@ -251,21 +251,21 @@ def compute_matching_dist(
                 Lines.append(L)
 
     ## Lines through a point and with a given slope
-    print(f"Lines through pts with given slope: {time.time() - time_why_match_slow:.3f} sec")
+    print(f"Lines through pts with given slope: {time.time() - t0:.3f} sec")
     for x in range(len(closureMN)):
-        for y in range(len(sloppyslopestoiterateover)):
-            L = mod.Line(sloppyslopestoiterateover[y], closureMN[x])
+        for y in range(len(candidate_slopes)):
+            L = mod.Line(candidate_slopes[y], closureMN[x])
             if L.positive == True:
                 Lines.append(L)
 
-    print(f"Lines of slope one: {time.time() - time_why_match_slow:.3f} sec")
+    print(f"Lines of slope one: {time.time() - t0:.3f} sec")
     # Lines of slope 1 through one point
     for x in range(len(pointstoiterateover)):
         L = mod.Line((1, 1), pointstoiterateover[x])
         if L.positive == True:
             Lines.append(L)
 
-    print(f"Gudhi time: {time.time() - time_why_match_slow:.3f} sec")
+    print(f"Gudhi time: {time.time() - t0:.3f} sec")
     if settings.actually_compute_matching_distance:
         # compute match dist separately out of for loops
         all_ws = []
@@ -385,21 +385,21 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
     return
 
 
-def do_all_the_things(onedim_mods, graph, example, MN, prune=True):
+def exact_matching_distance(onedim_mods, graph, example, MN, prune=True):
     start_time = time.time()
     tr_m, bl_m, tr_n, bl_n = MN[0], MN[1], MN[2], MN[3]
     # tl_m = np.array([bl_m[0],tr_m[1]])
     # br_m = np.array([tr_m[0],bl_m[1]])
     # tl_n = np.array([bl_n[0],tr_n[1]])
     # br_n = np.array([tr_n[0],bl_n[1]])
-    graphh = False
+    graph_requested = False
     if onedim_mods and graph:
         if settings.print_output:
             print(
                 "⚠️ Warning: Currently cannot print graphs from one-dim mod option.\nContinuing without graphs.\n"
             )
         graph = False
-        graphh = True
+        graph_requested = True
 
     if onedim_mods:
         critical_vals, nolub, M, N, critval_coords = make_1dim_MN_example(
@@ -436,7 +436,7 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune=True):
 
     # print("\n")
     if onedim_mods:
-        check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graphh)
+        check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph_requested)
     end_time = time.time()
     tot_time = end_time - start_time
     if settings.print_output:
@@ -670,7 +670,7 @@ def plot_weighted_bottleneck(M, N, graph, filename="weightedBottlneckDistance"):
     return max_dist_critpts, max_grids_lines
 
 
-def to_prune_or_not_to_prune_csv(M, N):
+def compute_distances(M, N):
     # prune by default true
     # what we want:
     # prune TRUE means let algo decide if take the thing
@@ -714,9 +714,9 @@ def to_prune_or_not_to_prune_csv(M, N):
 
     ## This is the EXACT (slow) computation
     prune_start_time = time.time()
-    prune_match_dist, _, best_line = do_all_the_things(
+    prune_match_dist, _, best_line = exact_matching_distance(
         one_rect_mods, graph, example, MN, prune
-    )  ## C: added empty _ here for the the second output of do_all_the_things
+    )  ## C: added empty _ here for the the second output of exact_matching_distance
     # print("\n")
     prune_end_time = time.time()
     prune_time = prune_end_time - prune_start_time
@@ -725,7 +725,7 @@ def to_prune_or_not_to_prune_csv(M, N):
     # print("DON'T PRUNE POINTS")
     # prune = False
     # no_prune_start_time = time.time()
-    # no_prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
+    # no_prune_match_dist = exact_matching_distance(one_rect_mods, graph, example, MN, prune)
     # no_prune_end_time = time.time()
     # no_prune_time = no_prune_end_time - no_prune_start_time
 

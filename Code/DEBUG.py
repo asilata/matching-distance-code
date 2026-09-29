@@ -66,7 +66,7 @@ if __name__ == "__main__":
     #     max_dist_critpts,
     #     max_grids_lines,
     #     best_line,
-    # ) = chf.to_prune_or_not_to_prune_csv(M, N)
+    # ) = chf.compute_distances(M, N)
 
     # print(
     #     "_____________________________________\nEND\n_____________________________________"
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     #     max_dist_critpts,
     #     max_grids_lines,
     #     best_line,
-    # ) = chf.to_prune_or_not_to_prune_csv(M, N)
+    # ) = chf.compute_distances(M, N)
 
     # print(
     #     "_____________________________________\nEND\n_____________________________________"
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         max_dist_critpts,
         max_grids_lines,
         best_line,
-    ) = chf.to_prune_or_not_to_prune_csv(M, N)
+    ) = chf.compute_distances(M, N)
 
     print(
         "_____________________________________\nEND\n_____________________________________"

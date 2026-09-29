@@ -72,7 +72,7 @@ def exact_distance(critpts, crits_no_lub, M, N, prune):
     """Exact matching distance and number of lines evaluated by the full pipeline."""
     example = (critpts, crits_no_lub, M, N)
     with contextlib.redirect_stdout(io.StringIO()):
-        dist, num_lines, _ = chf.do_all_the_things(False, False, example, list(ex.test_ex_one_rect()), prune)
+        dist, num_lines, _ = chf.exact_matching_distance(False, False, example, list(ex.test_ex_one_rect()), prune)
     return dist, num_lines
 
 

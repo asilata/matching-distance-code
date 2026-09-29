@@ -71,10 +71,10 @@ def compute_row(seed, name, save_figure):
     """
     M, N = chf.generate_random_rectangles(1, 1, seed=seed)
     # Silence the unconditional prints inside compute_matching_dist.
-    # to_prune_or_not_to_prune_csv returns:
+    # compute_distances returns:
     #   (exact_time, approx_time, exact, crit_approx, grid_approx, best_line)
     with contextlib.redirect_stdout(io.StringIO()):
-        exact_time, approx_time, exact, crit_approx, grid_approx, best_line = chf.to_prune_or_not_to_prune_csv(M, N)
+        exact_time, approx_time, exact, crit_approx, grid_approx, best_line = chf.compute_distances(M, N)
 
     # M[0] = [(tr_x, tr_y), (bl_x, bl_y)]
     bl_M, tr_M = M[0][1], M[0][0]
