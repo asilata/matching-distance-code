@@ -435,7 +435,6 @@ class Line:
             self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
             #print(self.b)
         maxm = max(abs(m[0]),abs(m[1])) 
-        print(maxm)
         #print(m[0])
         #print(m[1])
         if maxm !=1:
@@ -446,38 +445,6 @@ class Line:
            
 
 ################### Extra Functions   ##################
-
-
-def translate_line(line,s):
-    ## translate a line of direction (m1,m2) in the direction s*(1,-1) 
-    ## L: (x,y) = (m1, m2)*t +(b,-b) ---> L': (x,y) = (m1, m2)*t +(b,-b)+s*(1,-1) 
-    L_tr = Line(line.m,(line.b[0]+s, line.b[1]-s) )
-    return L_tr 
-
-def rotate_line(line, center, theta):
-       
-        s =sin(theta)
-        c = cos(theta)
-        c1 = center[0]
-        c2 = center[1]
-        m1 = line.m[0]
-        m2 = line.m[1]
-        b1 = line.b[0]
-        b2 = line.b[1]
-        
-        m_rot = (c*m1-s*m2 , s*m1+c*m2) 
-        b_rot = (c*(b1-c1)-s*(b2-c2)+c1, s*(b1-c1)+ c*(b2-c2)+c2)
-        L_rot = Line(m_rot, b_rot)
-        
-        return L_rot
-
-
-def compute_bottleneck(M,N,line): 
-    dgmM = M.compute_barcode(line)
-    dgmN = N.compute_barcode(line) 
-    db= gudhi.bottleneck_distance(dgmN,dgmM) # type: ignore
-    
-    return db
 
 
 def compute_weighted_bottleneck(M,N,line): 
@@ -499,30 +466,6 @@ def line_through_2points(pt1, pt2):
     return line
 
 
-def intersect(p1, p2, p3, p4):
-    '''function finding the intersections of two line segments [p1,p2] and [p3,p4]'''
-    if p1 and p2 and p3 and p4 < np.inf:
-        x1,y1 = p1
-        x2,y2 = p2
-        x3,y3 = p3
-        x4,y4 = p4
-        denom = (y4-y3)*(x2-x1) - (x4-x3)*(y2-y1)
-        if denom == 0: # parallel
-            return None
-        ua = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / denom
-        if ua < 0 or ua > 1: # out of range
-            return None
-        ub = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / denom
-        if ub < 0 or ub > 1: # out of range
-            return None
-        x = x1 + ua * (x2-x1)
-        y = y1 + ua * (y2-y1)
-        return (x,y)
-    else: 
-        ## figure out if we need infinite segments 
-        return None
-           
-
 def are_comparable(p,q): 
     """ function to check whether two points are comparable or not 
     """
@@ -533,65 +476,6 @@ def are_comparable(p,q):
         comp = True 
     return comp
 
-#### Intersecting modules 
-
-
-def intersect_modules(M,N): 
-    """ find intersection points of two rectanlge modules"""
-    
-    return None 
-
-def find_critical_pts_old(self):
-        # #method to find intersection points of two rectangles --> gives all the critical poitns of the module
-        # #
-        # coordinates = []
-        # for r in self.rectangles:
-        #     coordinates += r.find_coordinates()
-        # hull = ConvexHull(coordinates)
-        # return hull.vertices
-        """method to find intersection points of two rectangles 
-        --> gives all the critical points of the module
-        """
-        
-        """ This finds intersection of rectangles, not only the critical points... """
-        
-        Crit_pts = []
-        for ra in self.rectangles:
-            ## corners of rectangles, add them to the list of critical points 
-            bra = ra.find_br()
-            bla = ra.find_bl()
-            tra = ra.find_tr()
-            tla = ra.find_tl()
-            Crit_pts.append(bra)
-            Crit_pts.append(bla)
-            Crit_pts.append(tra)
-            Crit_pts.append(bla)
-            ## segments
-            ta = [tla, tra]
-            ba = [bra,bla]
-            la = [bla,tla]
-            ra = [bra,tra]
-            Seg_a = [ta,ba,la,ra]
-            ## fill in all the corners 
-            for rb in self.rectangles:
-                brb = rb.find_br()
-                blb = rb.find_bl()
-                trb = rb.find_tr()
-                tlb = rb.find_tl()
-                tb = [tlb, trb]
-                bb = [brb,blb]
-                lb = [blb,tlb]
-                rb = [brb,trb]
-                Seg_b = [tb,bb,lb,rb]
-                ## find interections of all semgments
-                for p in Seg_a: 
-                    for q in Seg_b: 
-                        pt = intersect(p[0],p[1],q[0],q[1])
-                        if pt != None: 
-                            Crit_pts.append(pt)
-        return list(set(Crit_pts)) 
-
-    
 class critical_val:
     # exchange parent mod list [] for single value and just deal with repeated cvs
     def __init__(self, coords, parent_module):

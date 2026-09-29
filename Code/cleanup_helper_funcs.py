@@ -14,7 +14,6 @@ import examples as ex
 import plot as ourplot
 import csv
 
-# import bunny_smaller
 import omega_pts as omega
 from numpy import linalg as LA
 from math import cos, sin, pi, atan
@@ -415,27 +414,11 @@ def do_all_the_things(onedim_mods, graph, example, MN, prune=True):
         for i in range(len(critical_vals)):
             critval_coords.append(critical_vals[i].coords)
 
-    # 19 JAN: for quick insertion of critical values for testing figures (ref: file BUNNYFIGURE), we do the horrendous coding practice of just overwriting shit here
-    if settings.overwrite_critvals:
-        critical_vals = settings.critvals_to_overwrite
-        print("CV LEN: ", len(critical_vals))  # type: ignore
-        nolub = settings.nolub_to_overwrite
-        print("WARNING: OVERWRITING CRITICAL VALUES!")
-        # print(critical_vals)
-        critval_coords = []
-        ## forgets the parent modules
-        for i in range(len(critical_vals)):
-            critval_coords.append(critical_vals[i].coords)
-
     ## computes the least upper bound CM and CN separately
     # using the parent module information
     # pylance: disable-reportUnboundVariable
     lub = omega.closure_lub(critical_vals)  # type: ignore
     print("NUMBER OF CRITVALS: ", len(critical_vals))  # type: ignore
-
-    if settings.overwrite_critvals:
-        print("CV LEN: ", len(critical_vals))  # type: ignore
-        print("LUB LENGTH: ", len(lub))
 
     start_time_switch_pts = time.time()
     ### run all three allgoriths 3v1, 2v2 paired , 2v2 unpaired
@@ -686,123 +669,6 @@ def plot_weighted_bottleneck(M, N, graph, filename="weightedBottlneckDistance"):
     # if settings.save_figure:
     #     plt.show()
     return max_dist_critpts, max_grids_lines
-
-
-def compute_weighted_bottleneck_distances(M, N):
-    """Takes M and N as RectangleModules
-    example:
-    rect_m1 = mod.Rectangle((0,0),(7,7),1)
-    rect_m2 = mod.Rectangle((0,4),(7,11),1)
-    M = mod.RectangleModule([rect_m1,rect_m2])
-    rect_n1 = mod.Rectangle((0,0),(7,11),1)
-    rect_n2 = mod.Rectangle((0,4),(7,7),1)
-    N= mod.RectangleModule([rect_n1,rect_n2])
-    """
-
-    Crit_M = M.closure_lub()
-    Crit_N = N.closure_lub()
-    C = list(set(Crit_M + Crit_N))
-    Crit_MN = closure_lub(C)
-    # print(len(Crit_MN))
-    # Crit_MN=list(set(Crit_M+Crit_N))
-    Lines = []
-    DD = []
-    k = 0
-    Crit = []
-    for i in range(len(Crit_MN) - 1):
-        p = Crit_MN[i]
-        for j in range(i + 1, len(Crit_MN)):
-            q = Crit_MN[j]
-            line = mod.line_through_2points(Crit_MN[i], Crit_MN[j])
-            if line.positive:
-                d = mod.compute_weighted_bottleneck(M, N, line)
-                Lines.append(line)
-                Crit.append([Crit_MN[i], Crit_MN[j]])
-                DD.append(d)
-    if settings.print_output:
-        print("Lines counted {} again".format(len(Lines)))
-        print("Maximum distance for lines through critical points:")
-        print(max(DD))
-
-    ## computing bottlneck for "every" line
-
-    Theta = np.linspace(0, pi / 2, 100)[1:-1]
-    B = np.linspace(-5, 5, 100)
-    D = np.zeros((len(Theta), len(B)))
-    T = []
-    BB = []
-    Dist = []
-    for t in range(len(Theta)):
-        for n in range(len(B)):
-            s = sin(Theta[t])
-            c = cos(Theta[t])
-            maxm = max(s, c)
-            line = mod.Line((c / maxm, s / maxm), (B[n], -B[n]))
-            d = mod.compute_weighted_bottleneck(M, N, line)
-            D[t, n] = d
-            T.append(Theta[t])
-            BB.append(B[n])
-            Dist.append(d)
-    val = max(Dist)
-    idx = Dist.index(val)
-    if settings.print_output:
-        print("Maximum distance computed from grid of lines:")
-        print(max(Dist))
-        print(T[idx])
-        print(BB[idx])
-
-    s = sin(T[idx])
-    c = cos(T[idx])
-    maxm = max(s, c)
-    L_max = mod.Line((c / maxm, s / maxm), (BB[idx], -BB[idx]))
-    return T, BB, idx, L_max
-
-
-######################
-# EXPERIMENTS
-
-
-def to_prune_or_not_to_prune(M, N):
-    # prune by default true
-    # what we want:
-    # prune TRUE means let algo decide if take the thing
-    # prune FALSE means always return all the things
-    ###################
-    if settings.print_output:
-        print(
-            "Rectangles in M: {} and N: {}. Total: {}.".format(
-                len(M), len(N), len(M) + len(N)
-            )
-        )
-        print("PRUNE POINTS")
-    # prune = True
-    prune = settings.old_pruning
-
-    ######### M AND N can have MORE THAN ONE RECTANGLE
-    # set one_rect_mods -> FALSE
-    # M,N = ex.test_ex_more_rects()
-
-    graph = False
-    one_rect_mods = False
-
-    ##################
-    tr_m, bl_m, tr_n, bl_n = ex.test_ex_one_rect()
-    example = make_example(M, N)
-    MN = [tr_m, bl_m, tr_n, bl_n]
-    do_all_the_things(one_rect_mods, graph, example, MN, prune)
-    print("\n\n\n BOB \n\n\n")
-    # if settings.print_output:
-    #     print("\n")
-    #     print("DON'T PRUNE POINTS")
-    # prune = False
-    # do_all_the_things(one_rect_mods, graph, example, MN, prune)
-
-    # also do the approx matching dist
-    if settings.print_output:
-        print("\nApproximate Matching Distance:")
-    Mmod = example[2]
-    Nmod = example[3]
-    plot_weighted_bottleneck(Mmod, Nmod, False, "test_figure")
 
 
 def to_prune_or_not_to_prune_csv(M, N):
@@ -1085,76 +951,3 @@ def generate_rects_experiment_2_14():
     title = "Experiment_2.14"
 
     return M, N, title
-
-
-def append_to_csv(file_path, new_data):
-    column_name = new_data["Label"]
-    # Read the existing CSV into a list of dictionaries
-    with open(file_path, "r") as csv_file:
-        reader = csv.DictReader(csv_file)
-        rows = list(reader)
-    # if settings.print_output:
-    #     print(rows[:2])
-
-    # Add the new data to each row based on the 'Label' column
-    for row in rows:
-        key = row["Label"]  # Now we explicitly look for the 'Label' column
-        if key in new_data:
-            row[column_name] = new_data[key]
-    # if settings.print_output:
-    #     print(rows[:2])
-
-    # Write the updated rows back to the CSV
-    with open(file_path, "w", newline="") as csv_file:
-        fieldnames = reader.fieldnames + [column_name]  # type: ignore
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
-def experiment_1(M, N):
-    """Code to get the data for experiment 1
-    Return the number of lines computed by our algorithm for the matching distanc
-
-    """
-    prune = True
-
-    ######### M AND N can have MORE THAN ONE RECTANGLE
-    # set one_rect_mods -> FALSE
-    # M,N = ex.test_ex_more_rects()
-
-    graph = False
-    one_rect_mods = False
-
-    ################## PRUNE
-    tr_m, bl_m, tr_n, bl_n = ex.test_ex_one_rect()
-    example = make_example(M, N)
-    MN = [tr_m, bl_m, tr_n, bl_n]
-    prune_start_time = time.time()
-    prune_match_dist, num_lines, _ = do_all_the_things(
-        one_rect_mods, graph, example, MN, prune
-    )
-    # print("\n")
-    prune_end_time = time.time()
-    prune_time = prune_end_time - prune_start_time
-
-    ################# NO PRUNE
-    # print("DON'T PRUNE POINTS")
-    # prune = False
-    # no_prune_start_time = time.time()
-    # no_prune_match_dist = do_all_the_things(one_rect_mods, graph, example, MN, prune)
-    # no_prune_end_time = time.time()
-    # no_prune_time = no_prune_end_time - no_prune_start_time
-
-    #################### APPROX
-    # also do the approx matching dist
-    # print("\nApproximate Matching Distance:")
-    Mmod = example[2]
-    Nmod = example[3]
-    # approx_start_time = time.time()
-    # max_dist_critpts, max_grids_lines = plot_weighted_bottleneck(Mmod, Nmod, False, 'test_figure')
-    # approx_end_time = time.time()
-    # approx_time = approx_end_time - approx_start_time
-    # return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
-
-    return num_lines
