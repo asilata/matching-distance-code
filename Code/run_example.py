@@ -22,7 +22,9 @@ from experiment import PRUNING, add_module_args, load_modules, run_one
 
 
 def describe_line(line):
-    return f"direction ({line.m[0]:.3f}, {line.m[1]:.3f}) through ({line.b[0]:.3f}, {line.b[1]:.3f})"
+    # significant digits, so that a very steep or very shallow line does not print as 0 or inf
+    slope = line.m[1] / line.m[0] if line.m[0] != 0 else float("inf")
+    return f"slope {slope:.4g} through ({line.b[0]:.3f}, {line.b[1]:.3f})"
 
 
 def print_result(res):
@@ -30,7 +32,7 @@ def print_result(res):
     print(f"approximation, grid of lines                          : {res.approx_grid:.6f}")
     print(f"exact matching distance, pruning = {res.variant:<8s}           : {res.exact:.6f}")
     if res.best_line is not None:
-        print(f"  attained on the line with {describe_line(res.best_line)}")
+        print(f"  attained on the line of {describe_line(res.best_line)}")
     print(f"  lines evaluated: {res.num_lines}    time: {res.exact_time:.2f} s exact, {res.approx_time:.2f} s approximations")
 
 
