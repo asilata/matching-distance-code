@@ -34,8 +34,8 @@ def test_figure_7_runs():
 
 
 def test_figure_8_runs():
-    poisson = fcc.parse_log(fcc.FIG8_LOGS[0][1])
-    rects = fcc.parse_log(fcc.FIG8_LOGS[1][1])
+    poisson = fcc.parse_log(fcc.FIG8_PANELS[0][1])
+    rects = fcc.parse_log(fcc.FIG8_PANELS[1][1])
     assert [r["critvals"] for r in poisson] == [4, 9, 16, 23, 34]
     assert [r["critvals"] for r in rects] == list(range(6, 34, 3))
     assert poisson[-1]["3v1"] == (379412, 288967)

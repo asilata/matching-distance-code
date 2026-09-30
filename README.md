@@ -144,7 +144,8 @@ The code reproduces the values derived there.
 | 6, upper panels | `python Code/figure_toy_example.py` | `paper_figures/MN.png` (the modules), `MN3v1.png` (Algorithm 3), `MN2v2p.png` (Algorithm 5), `MN2v2unp.png` (Algorithm 7) |
 | 6, bottom row | `python Code/figure_toy_pruning.py` | `paper_figures/MN_section5_pruning.png` |
 | 7 | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_random_rects.png`, from `results/candidate_counts/rand_rects_stats.txt` |
-| 8 | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_poisson_rects.png`, from `results/candidate_counts/bunnyruns_poisson.txt` and `bunnyruns_random_rects.txt` |
+| 8, Poisson point process | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_poisson.png`, from `results/candidate_counts/bunnyruns_poisson.txt` |
+| 8, random rectangles | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_random_rects_critvals.png`, from `results/candidate_counts/bunnyruns_random_rects.txt` |
 | 9–12 | archived cluster runs; new runs with `cluster/` | `results/cluster_timings/` |
 
 The figure scripts print the counts that belong in the caption of Figure 6. Distinct

@@ -16,8 +16,10 @@ Any log in the same format can be drawn instead, such as the output of
 run_example.py --verbose.  The script also prints the ratios quoted in the text after Figure 7.
 
 Run from anywhere:  python Code/figure_candidate_counts.py
-Output:             paper_figures/candidate_counts_random_rects.png (Figure 7) and
-                    paper_figures/candidate_counts_poisson_rects.png (Figure 8), tracked
+Output:             paper_figures/candidate_counts_random_rects.png (Figure 7), and
+                    paper_figures/candidate_counts_poisson.png and
+                    candidate_counts_random_rects_critvals.png (the two panels of Figure 8),
+                    tracked
 """
 import os
 import re
@@ -36,10 +38,12 @@ import settings
 
 DATA_DIR = os.path.join(settings.REPO_ROOT, "results", "candidate_counts")
 FIG7_LOG = os.path.join(DATA_DIR, "rand_rects_stats.txt")
-FIG8_LOGS = [("Poisson point process", os.path.join(DATA_DIR, "bunnyruns_poisson.txt")),
-             ("Random rectangles", os.path.join(DATA_DIR, "bunnyruns_random_rects.txt"))]
 FIG7_PNG = os.path.join(settings.figure_dir, "candidate_counts_random_rects.png")
-FIG8_PNG = os.path.join(settings.figure_dir, "candidate_counts_poisson_rects.png")
+# (title, log, output) for each panel of Figure 8, drawn as a figure of its own
+FIG8_PANELS = [("Poisson point process", os.path.join(DATA_DIR, "bunnyruns_poisson.txt"),
+                os.path.join(settings.figure_dir, "candidate_counts_poisson.png")),
+               ("Random rectangles", os.path.join(DATA_DIR, "bunnyruns_random_rects.txt"),
+                os.path.join(settings.figure_dir, "candidate_counts_random_rects_critvals.png"))]
 DPI = 300
 
 # (key in the log, legend name, colour, marker): the colours of the published figures, which
@@ -151,34 +155,33 @@ def print_ratios(title, xs, values, x_name):
           f"  {sum(dedup) / sum(computed):>14.3f}  {sum(computed) / sum(bound):>14.3e}")
 
 
-def figure_7(log_path, out_path):
-    xs, values = series(parse_log(log_path), lambda r: r["M"] + r["N"])
+def save_figure(xs, values, title, xlabel, out_path, bands):
     fig, ax = plt.subplots(figsize=(7.5, 5))
-    draw(ax, xs, values, bands=True)
-    ax.set_title("Number of switch points – all algorithms")
-    ax.set_xlabel("Number of rectangles in M and N")
+    draw(ax, xs, values, bands)
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
     ax.legend(handles=legend_handles(), loc="lower right", fontsize=8.5, framealpha=0.95)
     fig.tight_layout()
     fig.savefig(out_path, dpi=DPI)
     plt.close(fig)
+
+
+def figure_7(log_path, out_path):
+    xs, values = series(parse_log(log_path), lambda r: r["M"] + r["N"])
+    save_figure(xs, values, "Number of switch points – all algorithms",
+                "Number of rectangles in M and N", out_path, bands=True)
     print_ratios("Figure 7 (mean over seeds)", xs, values, "rects")
 
 
-def figure_8(logs, out_path):
-    fig, axes = plt.subplots(len(logs), 1, figsize=(7.5, 4.6 * len(logs)))
-    for ax, (title, path) in zip(axes, logs):
-        xs, values = series(parse_log(path), lambda r: r["critvals"])
-        draw(ax, xs, values, bands=False)
-        ax.set_title(title)
-        ax.set_xlabel("Number of critical values")
-        ax.legend(handles=legend_handles(), loc="lower right", fontsize=8.5, framealpha=0.95)
+def figure_8(panels):
+    for title, log_path, out_path in panels:
+        xs, values = series(parse_log(log_path), lambda r: r["critvals"])
+        save_figure(xs, values, title, "Number of critical values", out_path, bands=False)
         print_ratios(f"Figure 8, {title}", xs, values, "critvals")
-    fig.tight_layout(h_pad=2.5)
-    fig.savefig(out_path, dpi=DPI)
-    plt.close(fig)
 
 
 if __name__ == "__main__":
     figure_7(FIG7_LOG, FIG7_PNG)
-    figure_8(FIG8_LOGS, FIG8_PNG)
-    print("Figures 7 and 8 written to", FIG7_PNG, "and", FIG8_PNG)
+    figure_8(FIG8_PANELS)
+    print("Figure 7 written to", FIG7_PNG)
+    print("Figure 8 written to", *(out for *_, out in FIG8_PANELS))
