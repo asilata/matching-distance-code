@@ -140,6 +140,7 @@ The code reproduces the values derived there.
 
 | Figure | Command or source | Output |
 |---|---|---|
+| 6 | `python Code/figure_toy_combined.py` | `paper_figures/combination.png`, assembled from the panels below, which it regenerates first |
 | 6, upper panels | `python Code/figure_toy_example.py` | `paper_figures/MN.png` (the modules), `MN3v1.png` (Algorithm 3), `MN2v2p.png` (Algorithm 5), `MN2v2unp.png` (Algorithm 7) |
 | 6, bottom row | `python Code/figure_toy_pruning.py` | `paper_figures/MN_section5_pruning.png` |
 | 7–8 | archived counts | `results/candidate_counts/` |
@@ -202,11 +203,11 @@ another directory.
 | `Code/examples.py` | the small example |
 | `Code/plot.py` | plots of candidate switch points |
 | `Code/settings.py` | global switches (output, pruning, lower bound D, candidate CSV dumps) |
-| `Code/figure_toy_example.py`, `figure_toy_pruning.py`, `toy_example_helpers.py` | Figure 6 |
+| `Code/figure_toy_combined.py`, `figure_toy_example.py`, `figure_toy_pruning.py`, `toy_example_helpers.py` | Figure 6 |
 | `Code/batch_1v1.py` | batch experiments |
 | `cluster/` | SLURM job script and log parser for the timing experiments |
 | `results/` | archived data behind Figures 7–12 |
-| `paper_figures/` | the panels of Figure 6 |
+| `paper_figures/` | Figure 6 and its panels |
 | `tests/` | pytest suite |
 
 ## Authors and license
