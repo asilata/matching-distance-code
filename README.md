@@ -143,7 +143,8 @@ The code reproduces the values derived there.
 | 6 | `python Code/figure_toy_combined.py` | `paper_figures/combination_rerun.png`, assembled from the panels below, which it regenerates first |
 | 6, upper panels | `python Code/figure_toy_example.py` | `paper_figures/MN.png` (the modules), `MN3v1.png` (Algorithm 3), `MN2v2p.png` (Algorithm 5), `MN2v2unp.png` (Algorithm 7) |
 | 6, bottom row | `python Code/figure_toy_pruning.py` | `paper_figures/MN_section5_pruning.png` |
-| 7–8 | archived counts | `results/candidate_counts/` |
+| 7 | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_random_rects.png`, from `results/candidate_counts/rand_rects_stats.txt` |
+| 8 | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_poisson_rects.png`, from `results/candidate_counts/bunnyruns_poisson.txt` and `bunnyruns_random_rects.txt` |
 | 9–12 | archived cluster runs; new runs with `cluster/` | `results/cluster_timings/` |
 
 The figure scripts print the counts that belong in the caption of Figure 6. Distinct
@@ -154,6 +155,12 @@ in `results/candidate_counts/`. With Section 4 pruning, Algorithm 3 computes 125
 candidate switch points (158 distinct), Algorithm 5 computes 133 slopes (31 distinct) and
 Algorithm 7 computes 622 candidates (175 distinct points and 16 distinct slopes). With
 Section 5 pruning as well, these become 478 (87), 21 (15) and 309 (99 and 12).
+
+`figure_candidate_counts.py` draws Figures 7 and 8 from the archived logs in a few seconds and
+prints the ratios quoted after Figure 7: over all 25 runs, 0.512 of the computed candidates are
+distinct, and the computed candidates are 5.52 · 10⁻² of the worst-case bound. The bound is
+C(n,4)(48 + 6 + 24) + 3 · C(n,3)(16 + 12) = (13/4) n(n − 1)(n − 2)(n + 17/13) for n critical values.
+Any log in the same format can be drawn instead, such as the output of `run_example.py --verbose`.
 
 The archived data in `results/` were computed with earlier versions of the code; see
 [results/README.md](results/README.md) for what was produced by which script.
@@ -188,8 +195,8 @@ pytest
 
 The suite takes about 20 seconds. It checks the candidate counts, lower bound, exact distance
 and number of lines of the small example; 13 random pairs from `results/random_1v1/`;
-CheckPts2 against a linear-programming feasibility test; and `run_example.py` run from
-another directory.
+CheckPts2 against a linear-programming feasibility test; `run_example.py` run from
+another directory; and the logs behind Figures 7 and 8 and the worst-case bound.
 
 ## Layout
 
@@ -204,10 +211,11 @@ another directory.
 | `Code/plot.py` | plots of candidate switch points |
 | `Code/settings.py` | global switches (output, pruning, lower bound D, candidate CSV dumps) |
 | `Code/figure_toy_combined.py`, `figure_toy_example.py`, `figure_toy_pruning.py`, `toy_example_helpers.py` | Figure 6 |
+| `Code/figure_candidate_counts.py` | Figures 7 and 8 |
 | `Code/batch_1v1.py` | batch experiments |
 | `cluster/` | SLURM job script and log parser for the timing experiments |
 | `results/` | archived data behind Figures 7–12 |
-| `paper_figures/` | Figure 6 and its panels |
+| `paper_figures/` | Figures 6–8, and the panels of Figure 6 |
 | `tests/` | pytest suite |
 
 ## Authors and license

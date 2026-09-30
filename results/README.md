@@ -19,7 +19,7 @@ running times are those of the earlier code.
 | Folder | Feeds | Produced by (at the archive tag) |
 |---|---|---|
 | `cluster_timings/` | Figures 9–12 (running times of the three pruning variants, number of lines evaluated) | `Code/GROUP_EXPERIMENT_B.py` run under SLURM on the Dardel cluster via `Code/bash_scripts/run_one*.sh`; stdout parsed with `Code/extract_numbers.py` and `Notebooks/extract_values_to_dataframe.ipynb` |
-| `candidate_counts/` | Figures 7–8 (number of candidate switch points against the number of critical values) | `Notebooks/old/socg_examples.ipynb` (2023 files) and `Code/BUNNYFIGURE.py` (2026 files) |
+| `candidate_counts/` | Figures 7–8 (number of candidate switch points against the number of rectangles or critical values), drawn by `Code/figure_candidate_counts.py` | `Notebooks/old/socg_examples.ipynb` (2023 files) and `Code/BUNNYFIGURE.py` (2026 files) |
 | `random_1v1/` | Comparison of exact and approximate distances for random pairs of single rectangles | `Code/DEBUG_1v1.py` (now `batch_1v1.py`) with full pruning |
 
 ## cluster_timings/
@@ -41,7 +41,8 @@ documents the columns in detail.
 ## candidate_counts/
 
 - `rectmoddata.txt`, `poissondata.txt`, `bunnydata.txt` (December 2023): for growing numbers of critical values, the number of candidate switch points computed by Algorithms 3, 5 and 7, with and without duplicates, for random rectangle modules, a Poisson point process and a subsampled Stanford bunny. Note: in these files the "without duplicates" counts for Algorithms 5 and 7 compare un-normalised coordinate tuples of points at infinity, so they overstate the number of distinct slopes (see the discussion of Figure 6 in the main README).
-- `bunnyruns_random_rects*.txt`, `bunnyruns_poisson*.txt` (January 2026): the same experiment rerun with the current code and all pruning enabled; `*_shortened.txt` keeps only the count lines.
+- `bunnyruns_random_rects*.txt`, `bunnyruns_poisson*.txt` (January 2026), Figure 8: the same experiment rerun with the code of January 2026 and all pruning enabled; `*_shortened.txt` keeps only the count lines. The random rectangle modules have (1, 1) up to (5, 6) rectangles; the log does not record their seed. For the Poisson point process, `BUNNYFIGURE.py` replaced the critical values of a pair of one-rectangle modules (seed 0) with a blue-noise Poisson sample of intensity 1.3, 2.5, 5.5, 9.19 and 12 (`critvals_poisson` in `Code/examples.py` at the archive tag), each point assigned to M or N by an unseeded coin flip, so this input cannot be recreated exactly. Section 5 pruning used the approximation of the one-rectangle modules as its lower bound.
+- `rand_rects_stats*.txt` (February 2026), Figure 7: random rectangle modules with (M, N) = (1, 1), (1, 2), (2, 2), (3, 2), (3, 3) rectangles and seeds 1–5 (`chf.generate_random_rectangles`, which still produces the same modules), all pruning enabled; `*_shortened.txt` keeps only the count lines.
 
 ## random_1v1/
 
