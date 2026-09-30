@@ -140,7 +140,7 @@ The code reproduces the values derived there.
 
 | Figure | Command or source | Output |
 |---|---|---|
-| 6 | `python Code/figure_toy_combined.py` | `paper_figures/combination.png`, assembled from the panels below, which it regenerates first |
+| 6 | `python Code/figure_toy_combined.py` | `paper_figures/combination_rerun.png`, assembled from the panels below, which it regenerates first |
 | 6, upper panels | `python Code/figure_toy_example.py` | `paper_figures/MN.png` (the modules), `MN3v1.png` (Algorithm 3), `MN2v2p.png` (Algorithm 5), `MN2v2unp.png` (Algorithm 7) |
 | 6, bottom row | `python Code/figure_toy_pruning.py` | `paper_figures/MN_section5_pruning.png` |
 | 7–8 | archived counts | `results/candidate_counts/` |

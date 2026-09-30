@@ -10,7 +10,7 @@ effect of Section 5 pruning), then places them in the layout of the paper:
     Section 5 pruning (full width)
 
 Run from anywhere:  python Code/figure_toy_combined.py
-Output:             paper_figures/combination.png (tracked)
+Output:             paper_figures/combination_rerun.png (tracked)
 """
 import os
 import subprocess
@@ -21,7 +21,7 @@ from PIL import Image
 import settings
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT_PNG = os.path.join(settings.figure_dir, "combination.png")
+OUT_PNG = os.path.join(settings.figure_dir, "combination_rerun.png")
 ROWS = [["MN.png", "MN3v1.png"], ["MN2v2p.png", "MN2v2unp.png"], ["MN_section5_pruning.png"]]
 MARGIN = 80       # pixels around the figure
 ROW_GAP = 90      # pixels between rows
