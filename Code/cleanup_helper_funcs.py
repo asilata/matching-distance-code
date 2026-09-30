@@ -1,8 +1,13 @@
-# pylance: reportUnboundVariable=false
+"""The matching-distance pipeline.
 
+compute_distances runs everything for two rectangle modules given as lists of rectangles:
+the two approximations (plot_weighted_bottleneck), which also give the lower bound D for
+Section 5 pruning, and the exact computation (exact_matching_distance), which runs
+Algorithms 3, 5 and 7 (compute_switch_points) and evaluates the weighted bottleneck
+distance on every candidate line (compute_matching_dist).
+"""
 import modules as mod
 
-# from scipy.stats import qmc
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -22,13 +27,12 @@ import settings
 
 
 def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
-    # calculate other coords from tr and bl
+    """Critical values and modules for M and N with one rectangle each, from their corners."""
     tl_m = np.array([bl_m[0], tr_m[1]])
     br_m = np.array([tr_m[0], bl_m[1]])
     tl_n = np.array([bl_n[0], tr_n[1]])
     br_n = np.array([tr_n[0], bl_n[1]])
 
-    #######################
     a1 = ((bl_m[0], bl_m[1]), 0)
     a2 = ((br_m[0], br_m[1]), 0)
     a3 = ((tl_m[0], tl_m[1]), 0)
@@ -37,7 +41,7 @@ def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
     b2 = ((tl_n[0], tl_n[1]), 1)
     b3 = ((br_n[0], br_n[1]), 1)
 
-    ############## make them into crit vals
+    # the same points as critical values
     c1 = mod.critical_val((bl_m[0], bl_m[1]), 0)
     c2 = mod.critical_val((br_m[0], br_m[1]), 0)
     c3 = mod.critical_val((tl_m[0], tl_m[1]), 0)
@@ -49,9 +53,7 @@ def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
     crits_no_lub = [a1, a2, a3, b1, b2, b3]
     critpts = [c1, c2, c3, d1, d2, d3]
 
-    # (self, top_left,top_right, bottom_left,
-    # bottom_right, dim = 1, parent = 1):
-
+    # Rectangle(top_left, top_right, bottom_left, bottom_right, dim, parent)
     m1 = mod.Rectangle(
         (tl_m[0], tl_m[1]),
         (tr_m[0], tr_m[1]),
@@ -72,8 +74,7 @@ def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):
     M = mod.RectangleModule([m1])
     N = mod.RectangleModule([n1])
 
-    # put the modules into the correct format (eg like in examples.py)
-    critval_coords = []  ## forgets the parent modules
+    critval_coords = []  # coordinates only, without the parent modules
     for i in range(len(critpts)):
         critval_coords.append(critpts[i].coords)
 
@@ -86,21 +87,12 @@ def compute_switch_points(critpts, crits_no_lub, prune, figure_dir=None, title="
     With figure_dir set, the input modules and the candidate switch points of each
     algorithm are saved there as PNG files.
     """
-
-    ############################
-    ### originally from socg_examples.ipynb
     title = "M and N"
     dpi = 300
 
-    ############# do computations
-    # algo 3v1 = Algorithm 3 in SoCG overleaf
-    # never has points at infinity, so we can plot all points
+    # Algorithm 3 (3-vs-1); it never produces points at infinity
     if settings.print_output:
         print("______________________________________")
-    # print("Running the three algorithms.")
-    # print("-------------")
-
-    # print("3v1:")
     omegapts_3v1, _, _ = omega.output_alg_3_1(critpts, title, prune)
     if figure_dir:
         ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1",
@@ -108,8 +100,7 @@ def compute_switch_points(critpts, crits_no_lub, prune, figure_dir=None, title="
 
     if settings.print_output:
         print("-------------")
-    # algo 2v2 paired = Algorithm 5 in SoCG overleaf
-    # print("2v2paired:")
+    # Algorithm 5 (2paired-vs-2paired); it produces only points at infinity
     omegapts_2v2_p, _, _, is_inf_2v2p, orderedomegas2v2p = omega.output_alg_2_2_paired(
         critpts, title, prune
     )
@@ -118,11 +109,10 @@ def compute_switch_points(critpts, crits_no_lub, prune, figure_dir=None, title="
         ourplot.plot_c_o_with_inf(crits_no_lub, orderedomegas2v2p, is_inf_2v2p, title, dpi, "2v2 Paired",
                                   out_path=os.path.join(figure_dir, "candidates_2v2_paired.png"))
 
-    # algo 2v2 unpaired = Algorithm 7 in SoCG overleaf
+    # Algorithm 7 (2unpaired-vs-2unpaired)
     if settings.print_output:
         print("-------------")
 
-    # print("2v2unpaired:")
     omegapts_2v2_unp, _, _, is_inf_2v2unp_orig, orderedomegas_2v2unp = (
         omega.output_alg_2_2_unpaired(critpts, title, prune)
     )
@@ -143,7 +133,7 @@ def compute_switch_points(critpts, crits_no_lub, prune, figure_dir=None, title="
 
 
 def combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp):
-
+    """Split the outputs of Algorithms 3, 5 and 7 into proper points and slope directions."""
     omega_points_collection = []
     omega_slopes_collection = []
 
@@ -158,9 +148,7 @@ def combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_
 
     orderedomegas_2v2unp_copy = orderedomegas_2v2unp.copy()
 
-    orderedomegas_2v2unp_copy.pop(0)
-
-    # print(orderedomegas_2v2unp_copy)
+    orderedomegas_2v2unp_copy.pop(0)  # header entry
 
     is_inf_2v2unp = is_inf_2v2unp[1:]
     for thing in range(len(orderedomegas_2v2unp_copy)):
@@ -169,7 +157,6 @@ def combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_
 
         else:
             omega_slopes_collection.append(orderedomegas_2v2unp_copy[thing])
-            # print(orderedomegas_2v2unp_copy[thing])
 
     return omega_points_collection, omega_slopes_collection
 
@@ -177,52 +164,55 @@ def combine_omegas(is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_
 def compute_matching_dist(
     lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N
 ):
+    """Evaluate the weighted bottleneck distance on every candidate line; return the maximum.
+
+    The lines are: every line of positive slope through two points of the closure of the
+    critical values under least upper bounds together with the proper candidate switch
+    points; every line through a point of that closure with a candidate slope; and the
+    line of slope one through each point. Returns the matching distance, the number of
+    lines evaluated and the line attaining the maximum.
+    """
     t0 = time.time()
-    print("Computing matching dist!")
+    if settings.print_output:
+        print("Computing matching dist!")
 
     lub0 = list(set(lub[0]))
     lub1 = list(set(lub[1]))
     closureMN = critval_coords + lub0 + lub1
 
-    pointstoiterateover = (
-        closureMN + omega_points_collection
-    )  ### do we need to add again the critical values here
+    pointstoiterateover = closureMN + omega_points_collection
     candidate_slopes = omega_slopes_collection
 
     Lines = []
-    print(f"Lines through pairs of pts: {time.time() - t0:.3f} sec")
-    ## Lines through pairs of points
-    all_bottle_time = 0
+    if settings.print_output:
+        print(f"Lines through pairs of pts: {time.time() - t0:.3f} sec")
     for x in range(len(pointstoiterateover)):
         for y in range(x, len(pointstoiterateover)):
-            L = mod.line_through_2points(
-                pointstoiterateover[x], pointstoiterateover[y]
-            )  ## here is the issue with none type error
+            L = mod.line_through_2points(pointstoiterateover[x], pointstoiterateover[y])
             if L.positive == True:
                 Lines.append(L)
 
-    ## Lines through a point and with a given slope
-    print(f"Lines through pts with given slope: {time.time() - t0:.3f} sec")
+    if settings.print_output:
+        print(f"Lines through pts with given slope: {time.time() - t0:.3f} sec")
     for x in range(len(closureMN)):
         for y in range(len(candidate_slopes)):
             L = mod.Line(candidate_slopes[y], closureMN[x])
             if L.positive == True:
                 Lines.append(L)
 
-    print(f"Lines of slope one: {time.time() - t0:.3f} sec")
-    # Lines of slope 1 through one point
+    if settings.print_output:
+        print(f"Lines of slope one: {time.time() - t0:.3f} sec")
     for x in range(len(pointstoiterateover)):
         L = mod.Line((1, 1), pointstoiterateover[x])
         if L.positive == True:
             Lines.append(L)
 
-    print(f"Gudhi time: {time.time() - t0:.3f} sec")
+    if settings.print_output:
+        print(f"Gudhi time: {time.time() - t0:.3f} sec")
     if settings.actually_compute_matching_distance:
-        # compute match dist separately out of for loops
         all_ws = []
         time_bottleneck = time.time()
         for L in Lines:
-            # this uses gudhi
             w = mod.compute_weighted_bottleneck(M, N, L)
             all_ws.append(w)
         time_bottleneck_end = time.time()
@@ -239,15 +229,8 @@ def compute_matching_dist(
         time_bottleneck_end = 0
         matching_dist = -1
 
-    # print("alt match dist {:.3f}".format(match_dist_2))
-
-    # all_bottle_time += (bottletime_7 - bottletime_6)
-    # print("BOTTLETIME", all_bottle_time)
-
-    # print('Matching distance is {},'.format(matching_dist))
-    # print('and is attained at the line with slope {} \nand intercept {}.'.format(Lines[idx].m, Lines[idx].b))
     if settings.print_output and settings.actually_compute_matching_distance:
-        print("Matching dist: {:.3f} with slope ({:.3f}, {:.3f}) and intercept ({:.3f}, {:.3f}).".format(matching_dist, Lines[idx].m[0], Lines[idx].m[1], Lines[idx].b[0], Lines[idx].b[1]))  # type: ignore
+        print("Matching dist: {:.3f} with slope ({:.3f}, {:.3f}) and intercept ({:.3f}, {:.3f}).".format(matching_dist, Lines[idx].m[0], Lines[idx].m[1], Lines[idx].b[0], Lines[idx].b[1]))
     if settings.compare_line_counts:
         print("Lines counted: {}".format(len(Lines)))
     if settings.print_output and settings.actually_compute_matching_distance:
@@ -261,13 +244,12 @@ def compute_matching_dist(
         and settings.actually_compute_matching_distance == False
     ):
         print("WARNING: no exact matching distance computed! ")
-    best_line = Lines[idx] if settings.actually_compute_matching_distance else None  # type: ignore
+    best_line = Lines[idx] if settings.actually_compute_matching_distance else None
     return matching_dist, len(Lines), best_line
 
 
 def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
-    # # figuring stuff out:
-    # bl tr YES
+    """Print the matching distance of two one-rectangle modules from its closed-form expression."""
     ai = bl_m
     bi = tr_m
 
@@ -287,40 +269,20 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
     if settings.print_output:
         print("Matching distance (from equation) is {}.".format(min_all))
 
-    ##########
     if graph:
         fig = plt.figure()
         ax = fig.add_subplot(111)
         plt.grid(visible=True)
-        ## rectangles
-        # a1 = rect_m1.bottom_left
         a1 = bl_m
-        # h1= rect_m1.top_right[0]- a1[0]
         h1 = tr_m[0] - a1[0]
-        # v1= rect_m1.top_right[1]- a1[1]
         v1 = tr_m[1] - a1[1]
-        # a2 = rect_m2.bottom_left
         a2 = bl_n
-        # h2= rect_m2.top_right[0]- a2[0]
         h2 = tr_n[0] - a2[0]
-        # v2= rect_m2.top_right[1]- a2[1]
         v2 = tr_n[1] - a2[1]
         from matplotlib import patches
 
-        # m
-        rect1 = patches.Rectangle(a1, h1, v1, color="blue", alpha=0.2)
-        # n
-        rect2 = patches.Rectangle(a2, h2, v2, color="green", alpha=0.2)
-
-        # ## lines
-        # x = np.linspace(-2, 10, 1000)
-
-        # b1 = L_max.b[0]
-        # b2 = L_max.b[1]
-        # m1 = L_max.m[0]
-        # m2 = L_max.m[1]
-        # plt.plot(x, m2*(x-b1)/m1 +b2, linestyle='solid') ##L _
-        # plt.plot(x,x,linestyle='dashed')
+        rect1 = patches.Rectangle(a1, h1, v1, color="blue", alpha=0.2)  # M
+        rect2 = patches.Rectangle(a2, h2, v2, color="green", alpha=0.2)  # N
 
         ax.add_patch(rect1)
         ax.add_patch(rect2)
@@ -330,24 +292,26 @@ def check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph):
         plt.xlim([min(bl_m[0], bl_n[0]) - 1, max(tr_m[0], tr_n[0]) + 1])
 
         plt.title("Modules")
-        # plt.savefig('moduleM')
         plt.show()
-    #########
     return
 
 
 def exact_matching_distance(onedim_mods, graph, example, MN, prune=True):
+    """Exact matching distance of the modules in example = make_example(M, N).
+
+    prune switches the Section 4 checks on or off; Section 5 pruning is controlled by
+    settings.section5_pruning and settings.lower_bound_D. graph, if set, is a directory
+    for the candidate plots. With onedim_mods the modules are instead built from the
+    corners MN = [tr_m, bl_m, tr_n, bl_n] of one rectangle each. Returns the matching
+    distance, the number of lines evaluated and the line attaining it.
+    """
     start_time = time.time()
     tr_m, bl_m, tr_n, bl_n = MN[0], MN[1], MN[2], MN[3]
-    # tl_m = np.array([bl_m[0],tr_m[1]])
-    # br_m = np.array([tr_m[0],bl_m[1]])
-    # tl_n = np.array([bl_n[0],tr_n[1]])
-    # br_n = np.array([tr_n[0],bl_n[1]])
     graph_requested = False
     if onedim_mods and graph:
         if settings.print_output:
             print(
-                "⚠️ Warning: Currently cannot print graphs from one-dim mod option.\nContinuing without graphs.\n"
+                "Warning: no candidate plots in the one-rectangle mode; continuing without them.\n"
             )
         graph = False
         graph_requested = True
@@ -359,21 +323,17 @@ def exact_matching_distance(onedim_mods, graph, example, MN, prune=True):
 
     if not onedim_mods:
         critical_vals, nolub, M, N = example[0], example[1], example[2], example[3]
-        critval_coords = []
-        ## forgets the parent modules
+        critval_coords = []  # coordinates only, without the parent modules
         for i in range(len(critical_vals)):
             critval_coords.append(critical_vals[i].coords)
 
-    ## computes the least upper bound CM and CN separately
-    # using the parent module information
-    # pylance: disable-reportUnboundVariable
-    lub = omega.closure_lub(critical_vals)  # type: ignore
-    print("NUMBER OF CRITVALS: ", len(critical_vals))  # type: ignore
+    # least upper bounds within C_M and within C_N
+    lub = omega.closure_lub(critical_vals)
+    if settings.print_output:
+        print("NUMBER OF CRITVALS: ", len(critical_vals))
 
     start_time_switch_pts = time.time()
-    ### run all three allgoriths 3v1, 2v2 paired , 2v2 unpaired
-    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, figure_dir=graph or None)  # type: ignore
-    # combine the outputs together and deal with slopes vs points
+    critpts, crits_no_lub, is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp = compute_switch_points(critical_vals, nolub, prune, figure_dir=graph or None)
     omega_points_collection, omega_slopes_collection = combine_omegas(
         is_inf_2v2unp_orig, omegapts_3v1, is_inf_2v2p, orderedomegas_2v2unp
     )
@@ -381,11 +341,10 @@ def exact_matching_distance(onedim_mods, graph, example, MN, prune=True):
     switch_time = end_time_switch_pts - start_time_switch_pts
 
     start_time_match_dist = time.time()
-    matching_dist, num_lines, best_line = compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N)  # type: ignore
+    matching_dist, num_lines, best_line = compute_matching_dist(lub, critval_coords, omega_points_collection, omega_slopes_collection, M, N)
     end_time_match_dist = time.time()
     match_time = end_time_match_dist - start_time_match_dist
 
-    # print("\n")
     if onedim_mods:
         check_onedim_mods(bl_m, tr_m, bl_n, tr_n, graph_requested)
     end_time = time.time()
@@ -398,73 +357,55 @@ def exact_matching_distance(onedim_mods, graph, example, MN, prune=True):
             "Total time elapsed in exact computation:", "{:.3f}".format(tot_time), "sec"
         )
 
-        # print("_____________________________________")
-
     return matching_dist, num_lines, best_line
 
 
 def make_example(M, N):
-    # this is for two modules M and N
+    """Critical values and RectangleModules for M and N given as lists of rectangles.
 
-    # input example (this is small_socg_ex_M_N):
-    # tr, bl
-    # M = [[(6.0, 6.0),(0.0, 0.0)]]
-    # N = [[(8.0, 4.0),(4.0, 2.0)],
-    #     [(2.0, 10.0),(1.0, 5.0)]]
-
-    # M gets parent index 0
-    # N gets parent index 1
+    Each rectangle is [(top right), (bottom left)], for example the modules of the
+    paper's small example (examples.small_socg_ex_rects):
+        M = [[(6.0, 6.0), (0.0, 0.0)]]
+        N = [[(8.0, 4.0), (4.0, 2.0)], [(2.0, 10.0), (1.0, 5.0)]]
+    The critical values of a rectangle are its bottom-left, bottom-right and top-left
+    corners; M is parent 0 and N parent 1. Returns (critical values, the same as
+    (coordinates, parent) pairs, module M, module N).
+    """
     crits_no_lub = []
     critpts = []
-    # (self, top_left,top_right, bottom_left, bottom_right,
-    # dim (num of rectangles), parent (M is 0, N is 1)):
 
     m_rects = []
     n_rects = []
 
     for i in range(len(M)):
-        # iterate over the rectangles
         tr = M[i][0]
         bl = M[i][1]
         tl = (bl[0], tr[1])
         br = (tr[0], bl[1])
-        # print("tr, bl, tl, br:\n", tr, bl, tl, br)
-        # tl, tr, bl, br, dim, parent
-        # print("⚠️chf.make_example: remember to check if dim always 1 here")
         m_i = mod.Rectangle(tl, tr, bl, br, 1, 0)
         m_rects.append(m_i)
 
-        # bl, br, tl, NO tr
         crits_no_lub.append((bl, 0))
         crits_no_lub.append((br, 0))
         crits_no_lub.append((tl, 0))
-        # crits_no_lub.append((tr,0))
-        # bl, br, tl, NO tr
         critpts.append(mod.critical_val(bl, 0))
         critpts.append(mod.critical_val(br, 0))
         critpts.append(mod.critical_val(tl, 0))
-        # critpts.append(mod.critical_val(tr,0))
 
     for i in range(len(N)):
         tr = N[i][0]
         bl = N[i][1]
         tl = (bl[0], tr[1])
         br = (tr[0], bl[1])
-        # print("tr, bl, tl, br:\n", tr, bl, tl, br)
-        # tl, tr, bl, br, dim, parent
         n_i = mod.Rectangle(tl, tr, bl, br, 1, 1)
         n_rects.append(n_i)
 
-        # bl, br, tl, NO tr
         crits_no_lub.append((bl, 1))
         crits_no_lub.append((br, 1))
         crits_no_lub.append((tl, 1))
-        # crits_no_lub.append((tr,1))
-        # bl, br, tl, NO tr
         critpts.append(mod.critical_val(bl, 1))
         critpts.append(mod.critical_val(br, 1))
         critpts.append(mod.critical_val(tl, 1))
-        # critpts.append(mod.critical_val(tr,1))
 
     retM = mod.RectangleModule(m_rects)
     retN = mod.RectangleModule(n_rects)
@@ -477,8 +418,9 @@ def make_example(M, N):
 
 
 def closure_lub(Points):
-    """Find the closure under least upper boud of the critical points
-    Input: list of points
+    """Add the least upper bound of every incomparable pair of Points; return the distinct points.
+
+    Points (a list of coordinate tuples) is extended in place.
     """
 
     l = len(Points)
@@ -494,23 +436,20 @@ def closure_lub(Points):
 
 
 def plot_weighted_bottleneck(M, N, graph, filename="weightedBottlneckDistance"):
-    start_time = time.time()
-    """Takes M and N as RectangleModules 
-        example: 
-        rect_m1 = mod.Rectangle((0,0),(7,7),1)
-        rect_m2 = mod.Rectangle((0,4),(7,11),1)
-        M = mod.RectangleModule([rect_m1,rect_m2])
-        rect_n1 = mod.Rectangle((0,0),(7,11),1)
-        rect_n2 = mod.Rectangle((0,4),(7,7),1)
-        N= mod.RectangleModule([rect_n1,rect_n2])
+    """The two approximations of the matching distance of the RectangleModules M and N.
+
+    Returns the maximum weighted bottleneck distance over the lines of positive slope
+    through pairs of points of the lub-closure of the critical values, and the maximum
+    over a grid of 98 angles in (0, pi/2) and 100 intercepts in [-5, 5]. Both are lower
+    bounds on the matching distance. With graph and settings.save_figure, the grid
+    values are shown as a scatter plot.
     """
+    start_time = time.time()
 
     Crit_M = M.closure_lub()
     Crit_N = N.closure_lub()
     C = list(set(Crit_M + Crit_N))
     Crit_MN = closure_lub(C)
-    # print(len(Crit_MN))
-    # Crit_MN=list(set(Crit_M+Crit_N))
     Lines = []
     DD = []
     k = 0
@@ -525,9 +464,6 @@ def plot_weighted_bottleneck(M, N, graph, filename="weightedBottlneckDistance"):
                 Lines.append(line)
                 Crit.append([Crit_MN[i], Crit_MN[j]])
                 DD.append(d)
-    # print('There are {} lines through critical points'.format(len(Lines)))
-    # print('Bottleneck distance for lines through critical points: ')
-    # print(D)
     if settings.print_output:
         print(
             "Maximum distance for lines through critical points: {:.3f}".format(max(DD))
@@ -543,10 +479,7 @@ def plot_weighted_bottleneck(M, N, graph, filename="weightedBottlneckDistance"):
             "sec",
         )
 
-    # print(max(DD))
-
-    ## computing bottlneck for "every" line
-
+    # weighted bottleneck distance on a grid of lines
     Theta = np.linspace(0, pi / 2, 100)[1:-1]
     B = np.linspace(-5, 5, 100)
     D = np.zeros((len(Theta), len(B)))
@@ -573,16 +506,13 @@ def plot_weighted_bottleneck(M, N, graph, filename="weightedBottlneckDistance"):
     end_time = time.time()
     grid_time = end_time - lines_time
     tot_time = end_time - start_time
-    # print(max(Dist))
 
     if settings.save_figure and graph:
         plt.figure(figsize=(8, 8))
         plt.scatter(T, BB, c=Dist, s=10, cmap="summer")
-        plt.scatter(T[idx], BB[idx], marker="x", color="red")  # type: ignore
-        # print(T[idx])
-        # print(BB[idx])
+        plt.scatter(T[idx], BB[idx], marker="x", color="red")
 
-        ## plot markers for the lines through critical points
+        # mark the lines through critical points
         b_crit = []
         theta_crit = []
         for j in range(len(Lines)):
@@ -593,65 +523,46 @@ def plot_weighted_bottleneck(M, N, graph, filename="weightedBottlneckDistance"):
             theta_crit.append(theta)
 
         for j in range(len(Lines)):
-            plt.scatter(theta_crit[j], b_crit[j], marker="x", color="grey")  # type: ignore
-            # plt.text(theta_crit[j], b_crit[j], str(Crit[j]))
+            plt.scatter(theta_crit[j], b_crit[j], marker="x", color="grey")
         val = max(DD)
         idx = DD.index(val)
-        plt.scatter(theta_crit[idx], b_crit[idx], marker="x", color="black")  # type: ignore
-        ## plot titles
+        plt.scatter(theta_crit[idx], b_crit[idx], marker="x", color="black")
         plt.xlabel("theta")
         plt.ylabel("b")
         plt.title("Weighted bottleneck distance as a function of theta and b")
         plt.colorbar(label="Weighted distance", orientation="horizontal")
         plt.clim(0, max(Dist))
         plt.show()
-        # plt.show()
-        # plt.savefig(filename)
 
     if settings.print_output:
         print("Time elapsed (theta b grid):", "{:.3f}".format(grid_time), "sec")
-        # print("____________________")
-        # print("END")
-        # print("____________________")
 
-    # if settings.compare_line_counts:
-    #     print("hi, this is where line counts go")
-    # if settings.save_figure:
-    #     plt.show()
     return max_dist_critpts, max_grids_lines
 
 
 def compute_distances(M, N, candidate_figure_dir=None):
-    # prune by default true
-    # what we want:
-    # prune TRUE means let algo decide if take the thing
-    # prune FALSE means always return all the things
-    ###################
-    # print("Rectangles in M: {} and N: {}. Total: {}.".format(len(M), len(N), len(M) + len(N)))
-    # print("PRUNE POINTS")
-    # prune = True
-    prune = settings.section4_pruning
-    # if settings.print_output:
-    #     if settings.section4_pruning:
-    #         print("yes pruning")
-    #     else:
-    #         print("not pruning")
+    """Approximate and exact matching distance of M and N, given as lists of rectangles.
 
-    ######### M AND N can have MORE THAN ONE RECTANGLE
-    # set one_rect_mods -> FALSE
-    # M,N = ex.test_ex_more_rects()
+    Section 4 and Section 5 pruning follow settings.section4_pruning and
+    settings.section5_pruning; the larger approximation is stored in
+    settings.lower_bound_D before the exact computation, which uses it as D.
+    With candidate_figure_dir set, the candidate switch points are plotted there.
+
+    Returns (exact time, approximation time, exact distance, approximation from lines
+    through critical values, approximation from the grid, line attaining the exact
+    distance, number of lines evaluated).
+    """
+    prune = settings.section4_pruning
 
     graph = candidate_figure_dir
     one_rect_mods = False
 
-    ################## PRUNE
+    # MN is only used by the one-rectangle closed form, which is off here
     tr_m, bl_m, tr_n, bl_n = ex.test_ex_one_rect()
     example = make_example(M, N)
     MN = [tr_m, bl_m, tr_n, bl_n]
 
-    #################### APPROX
-    # also do the approx matching dist
-    # print("\nApproximate Matching Distance:")
+    # the approximations come first: their maximum is the lower bound D of Section 5
     Mmod = example[2]
     Nmod = example[3]
     approx_start_time = time.time()
@@ -661,26 +572,14 @@ def compute_distances(M, N, candidate_figure_dir=None):
     settings.lower_bound_D = max(max_dist_critpts, max_grids_lines)
     approx_end_time = time.time()
     approx_time = approx_end_time - approx_start_time
-    # return prune_time, no_prune_time, approx_time, prune_match_dist, no_prune_match_dist, max_dist_critpts, max_grids_lines
 
-    ## This is the EXACT (slow) computation
+    # the exact computation
     prune_start_time = time.time()
     prune_match_dist, num_lines, best_line = exact_matching_distance(
         one_rect_mods, graph, example, MN, prune
-    )  ## C: added empty _ here for the the second output of exact_matching_distance
-    # print("\n")
+    )
     prune_end_time = time.time()
     prune_time = prune_end_time - prune_start_time
-
-    ################# NO PRUNE
-    # print("DON'T PRUNE POINTS")
-    # prune = False
-    # no_prune_start_time = time.time()
-    # no_prune_match_dist = exact_matching_distance(one_rect_mods, graph, example, MN, prune)
-    # no_prune_end_time = time.time()
-    # no_prune_time = no_prune_end_time - no_prune_start_time
-
-    # note: if it matters, APPROX used to be down here. Moved up 21 March 2025 for NEW PRUNE thingy
 
     return (
         prune_time,
@@ -768,17 +667,13 @@ def save_result_figure(M, N, best_line, max_dist_critpts, max_grids_lines, exact
     plt.close(fig)
 
 
-# Random rectangles
 def plot_rectangles(M, N, img_path):
+    """Save a picture of the rectangles of M (red) and N (blue), given as lists, to img_path."""
     from matplotlib import patches
 
-    # Get rectangles from the example function
-    # M, N = ex.test_ex_more_rects()
-
-    # Create a new figure and axis
     fig, ax = plt.subplots()
 
-    # Plot rectangles in M (colored red)
+    # M in red
     for rect in M:
         tr, bl = rect
         width = tr[0] - bl[0]
@@ -795,7 +690,7 @@ def plot_rectangles(M, N, img_path):
             )
         )
 
-    # Plot rectangles in N (colored blue)
+    # N in blue
     for rect in N:
         tr, bl = rect
         width = tr[0] - bl[0]
@@ -812,25 +707,20 @@ def plot_rectangles(M, N, img_path):
             )
         )
 
-    # Set the limits of the plot
     ax.set_xlim(-1, 20)
     ax.set_ylim(-1, 20)
     ax.set_title(settings.figure_title)
 
-    # Set the aspect of the plot to be equal
     ax.set_aspect("equal")
 
     import matplotlib.lines as mlines
 
-    eight = mlines.Line2D([], [], color="red", marker="D", ls="", label="M")
-    nine = mlines.Line2D([], [], color="blue", marker="D", ls="", label="N")
-    # etc etc
-    ax.legend(handles=[eight, nine])
+    legend_M = mlines.Line2D([], [], color="red", marker="D", ls="", label="M")
+    legend_N = mlines.Line2D([], [], color="blue", marker="D", ls="", label="N")
+    ax.legend(handles=[legend_M, legend_N])
 
     fig.savefig(img_path, format="png", dpi=250)
-
-    # Show the plot
-    # plt.show()
+    plt.close(fig)
 
 
 def generate_random_rectangles(num_M, num_N, seed=None):
@@ -858,8 +748,7 @@ def generate_random_rectangles(num_M, num_N, seed=None):
 
 
 def generate_rects_experiment_2_12():
-    # M = [[(tr_x, tr_y), (bl_x, bl_y)],...]
-    # N = --"--- same
+    """The modules of Example 2.12 in the paper, as lists of [(top right), (bottom left)]."""
     M = [[(100000000, 7), (2, 2)]]
     N = [[(100000000, 10), (2, 2)]]
     title = "Experiment_2.12"
@@ -868,8 +757,7 @@ def generate_rects_experiment_2_12():
 
 
 def generate_rects_experiment_2_13():
-    # M = [[(tr_x, tr_y), (bl_x, bl_y)],...]
-    # N = --"--- same
+    """The modules of Example 2.13 in the paper, as lists of [(top right), (bottom left)]."""
     M = [[(7, 7), (0, 0)], [(7, 11), (0, 4)]]
     N = [[(7, 11), (0, 0)], [(7, 7), (0, 4)]]
     title = "Experiment_2.13"
@@ -878,8 +766,7 @@ def generate_rects_experiment_2_13():
 
 
 def generate_rects_experiment_2_14():
-    # M = [[(tr_x, tr_y), (bl_x, bl_y)],...]
-    # N = --"--- same
+    """The modules of Example 2.14 in the paper, as lists of [(top right), (bottom left)]."""
     M = [[(7, 8), (0, 0)], [(7, 11), (0, 4)]]
     N = [[(7, 11), (0, 0)], [(7, 8), (0, 4)]]
     title = "Experiment_2.14"

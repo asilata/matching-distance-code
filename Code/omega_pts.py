@@ -15,10 +15,11 @@ import os
 ###### Convex hull functions ####
 
 def in_convex_hull(points, x):
-    """Checks if x is in the convex hull of points
-    points = array of pts in R^2
+    """True if x lies in the convex hull of points (an array of points in R^2).
+
+    Decided as a linear-programming feasibility problem: x is a convex combination
+    of the points.
     """
-    ## Maybe we need to double check the linear programming part
     n_points = len(points)
     c = np.zeros(n_points)
     A = np.r_[points.T, np.ones((1, n_points))]
@@ -63,9 +64,9 @@ def sort_top_and_left(u, v, w):
     return top_most, left_most
 
 def check_is_in_top_left_quadrant(x, p, q):
-    """ "assume p is the bottommost pt of u,v,w
-    assume q is the rightmost of u,v,w
-    return True if x is in the top left quadrant
+    """True if x lies in the closed upper-left quadrant with corner (q1, p2).
+
+    p is the bottommost and q the rightmost of u, v, w.
     """
 
     if x[0] <= q[0] and p[1] <= x[1]:
@@ -73,18 +74,14 @@ def check_is_in_top_left_quadrant(x, p, q):
     else:
         return False
 
-def check_x_pushes_up(
-    x, u, v, w
-):  ## Check-point-A and Check-point-B like in the overleaf
-    """Check if the points x,u,v,w are admissible for:
-        - x pushing up (i.e. x is below the line)
-        - u,v,w pushing right
-    returns True if they are an admissible quadruple
-    and False if they are not admissible or would create superfluous omegapoints
+def check_x_pushes_up(x, u, v, w):
+    """CheckPts (Algorithm 1 in the paper) with Position = Below.
+
+    x pushes up (it lies strictly below the line) and u, v, w push right.
+    Returns True if the quadruple is admissible, and False if it is not or would only
+    produce superfluous candidate switch points.
     """
-    p, q = sort_bottom_and_right(
-        u, v, w
-    )  ## p is the bottommost pt, q is the rightmost pt
+    p, q = sort_bottom_and_right(u, v, w)  # p is the bottommost point, q the rightmost
     a = (q[0], p[1])
 
     if check_is_in_top_left_quadrant(x, p, q):
@@ -101,30 +98,26 @@ def check_x_pushes_up(
         return True
 
 def check_is_in_bottom_right_quadrant(x, p, q):
-    """ "assume p is the topmost pt of u,v,w
-    assume q is the leftmost of u,v,w
-    return True if x is in the bottom right quadrant(including the boundary)
+    """True if x lies in the closed lower-right quadrant with corner (q1, p2).
+
+    p is the topmost and q the leftmost of u, v, w.
     """
-    ## C: looks fine to me
     if q[0] <= x[0] and x[1] <= p[1]:
         return True
     else:
         return False
 
 def check_x_pushes_right(x, u, v, w):
-    """Check if the points x,u,v,w are admissible for:
-        - x pushing right
-        - u,v,w pushing up
-    returns True if they are an admissible quadruple
-    and False if they are not admissible or would create superfluous omegapoints
+    """CheckPts (Algorithm 1 in the paper) with Position = Above.
+
+    x pushes right (it lies strictly above the line) and u, v, w push up.
+    Returns True if the quadruple is admissible, and False if it is not or would only
+    produce superfluous candidate switch points.
     """
-    ## C: looks fine to me
-    p, q = sort_top_and_left(u, v, w)
+    p, q = sort_top_and_left(u, v, w)  # p is the topmost point, q the leftmost
     a = (q[0], p[1])
 
-    ## First check if x is in the upper left quadrant:
     if check_is_in_bottom_right_quadrant(x, p, q):
-        ## Check if x is in convex hull
         if in_convex_hull(np.array([u, v, w]), x):
             return False
 
@@ -136,16 +129,12 @@ def check_x_pushes_right(x, u, v, w):
         return True
 
 def check_three_distinct(C):
-    """True if at least three of the four given points are distinct.
-
-    The callers enumerate quadruples with one possible repetition (the last index
-    runs from the third one), so C always has four entries.
-    """
+    """True if at least three of the four given points are distinct."""
     assert len(C) == 4, "expected four points"
     return (len(C) - len(set(C))) <= 1
 
 def check_four_distinct(C):
-    # this function checks that all things in a set (of 4) are distinct
+    """True if the four given points are pairwise distinct."""
     assert len(C) == 4, "C is not of length four "
     if (len(C) - len(set(C))) > 0:
         return False
@@ -153,48 +142,44 @@ def check_four_distinct(C):
         return True
 
 def check_that_c_is_distinct(c, C):
-    """this function checks that c, assumed to be in C, is not repeated in C"""
+    """True if no other element of C has the same coordinates as c (c is assumed to be in C)."""
     C_new = C.copy()
     C_new.remove(c)
     val = True
-    for (
-        d
-    ) in (
-        C_new
-    ):  ## can we do without a for loop here? (for further optimization if we ever want to do that )
+    for d in C_new:
         if c.coords == d.coords:
             val = False
 
     return val
 
 def check_omega_x_below(u, v, w, x, omega):
-    """Here we assume we are in the case where x pushes up and u,v,w push right, i.e. x is below a line separating u,v,w from x
-    We check if the omegapoint is valid
+    """CheckOmega (Algorithm 2 in the paper) with Position = Below.
+
+    x pushes up and u, v, w push right. omega is rejected if omega2 <= x2, and
+    otherwise accepted iff CheckPts accepts omega against u, v, w.
     """
-    ## check below vs x push up
-    """ Function to be implemented later to check if the computed omegapoint is valid"""
-    if omega[1] <= x.coords[1]:  ### We reject omega if it is below x , Double check
+    if omega[1] <= x.coords[1]:
         return False
-    # elif check_x_push_up(u.coords,v.coords, w.coords, omega): ## UUuugh shouldn't this be:  check_x_push_up(omega, u.coords,v.coords, w.coords): ??
     elif check_x_pushes_up(omega, u.coords, v.coords, w.coords):
         return True
     else:
         return False
 
 def check_omega_x_above(u, v, w, x, omega):
-    """Function to be implemented later to check if the computed omegapoint is valid"""
-    if (
-        omega[0] <= x.coords[0]
-    ):  ### We reject omega if it is to the left of x, DOUBLE CHECK
+    """CheckOmega (Algorithm 2 in the paper) with Position = Above.
+
+    x pushes right and u, v, w push up. omega is rejected if omega1 <= x1, and
+    otherwise accepted iff CheckPts accepts omega against u, v, w.
+    """
+    if omega[0] <= x.coords[0]:
         return False
-    # elif check_x_push_right(u.coords, v.coords, w.coords,omega):## UUuugh shouldn't this be:  check_x_push_right(omega, u.coords,v.coords, w.coords): ??
     elif check_x_pushes_right(omega, u.coords, v.coords, w.coords):
         return True
     else:
         return False
 
 ###############################
-#### 2 vs 2 PAIRED  ####
+#### 2 vs 2 paired: Algorithms 4 and 5
 def point_in_region(p, s, e, upper_left):
     """Membership test for the regions Q and R of Proposition 4.4 in the paper.
 
@@ -248,6 +233,12 @@ def check_pts_2v2_paired(x, w, u, v):
     return True
 
 def algo_2v2_paired(CritPts, prune):
+    """Algorithm 5 (2paired-vs-2paired) on four distinct critical values.
+
+    Returns the points at infinity (0, a, b) that pass CheckPts2 (skipped when prune is
+    False) and Proposition 4.5, and one info row per point: omega, x, u, v, w, eta,
+    delta and the slope m.
+    """
     critptscoords = []
     for x in CritPts:
         critptscoords.append(x.coords)
@@ -256,10 +247,8 @@ def algo_2v2_paired(CritPts, prune):
         critptscoords
     ), "There is more than one repeated point in the list"
 
-    Omega_pts = []  ## will contain just the valid omega points that were computed
-    info_list = (
-        []
-    )  ## contains the omega points and the additional info from which critical pts it came from
+    Omega_pts = []
+    info_list = []
     for c, d in combinations(CritPts, 2):
         x = c
         w = d
@@ -271,7 +260,7 @@ def algo_2v2_paired(CritPts, prune):
             continue
 
         CritPts_no_x_w = CritPts.copy()
-        CritPts_no_x_w.remove(w)  # .remove(x) ## can we do this in one line?
+        CritPts_no_x_w.remove(w)
         CritPts_no_x_w.remove(x)
         u = CritPts_no_x_w[0]
         v = CritPts_no_x_w[1]
@@ -286,28 +275,23 @@ def algo_2v2_paired(CritPts, prune):
             eta = 2
         else:
             eta = 1
-        if settings.section5_pruning:
-                # print("prune 3")
-                if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
-                    continue
+        if settings.section5_pruning:  # Corollary 5.2
+            if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
+                continue
         if u.parent_module == v.parent_module:
             delta = 2
         else:
             delta = 1
-        if settings.section5_pruning:
-                # print("prune 4")
-                if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
-                    continue
-        # prune is true by default, which would make the if check
-        # always true. But by "prune true," we actually mean 
-        # "let through fewer things."
-        # so here we check not prune instead.
+        if settings.section5_pruning:  # Corollary 5.2
+            if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
+                continue
+        # prune=False switches off the Section 4 checks, so every quadruple passes
         if check_pts_2v2_paired(x, w, u, v) or not prune:
             omega = (
                 0,
                 delta * (w.coords[0] - x.coords[0]),
                 eta * (u.coords[1] - v.coords[1]),
-            )  ## How tf are we going to deal with projective coordinates here?
+            )  # the point at infinity [0 : a : b], stored as the triple (0, a, b)
             if u.coords[1] == v.coords[1]:
                 m = np.inf
             else:
@@ -349,6 +333,12 @@ def candidate_key(omega, slope):
 
 
 def output_alg_2_2_paired(CritPts, name, prune):
+    """Run Algorithm 5 on every quadruple of distinct critical values.
+
+    Returns the distinct candidates, the number computed with duplicates, the number
+    of distinct candidates, and two parallel lists (slope and candidate per distinct
+    candidate, each starting with a header entry).
+    """
     Pts = []
     Total_info_list = [["omega_pts", "x", "u", "v", "w", "eta", "delta", "m"]]
     set_of_points = set({})
@@ -376,36 +366,31 @@ def output_alg_2_2_paired(CritPts, name, prune):
                                 set_of_points.add(key)
                                 Total_info_list += [info_list[p]]
 
-    # print("**********")
     num_duplicates = len(Pts)
-    # print("Computed {} points (with duplicates)".format(num_duplicates))
-
     Pts = [row[0] for row in Total_info_list[1:]]  # one representative per distinct candidate
 
     if settings.print_output:
         print("2v2paired: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 
-    # Dict_pts.sort()
-    # new_pts= list(k for k,_ in itertools.groupby(k))
     is_inf = []
     orderedomegas = []
     for t in range(len(Total_info_list)):
-        # m slopes
-        is_inf.append(Total_info_list[t][-1])
-        # omega points in the same order, just to make sure
-        orderedomegas.append(Total_info_list[t][0])
+        is_inf.append(Total_info_list[t][-1])  # the slope of the point at infinity
+        orderedomegas.append(Total_info_list[t][0])  # the candidate, in the same order
 
-    # print(is_inf)
-    # print(orderedomegas)
     write_candidate_csv(name, "_2v2_paired.csv", Total_info_list)
 
     return Pts, num_duplicates, len(Pts), is_inf, orderedomegas
 
 ###############################
-#####  3 vs 1 
-# corresponds to Algorithm 3 in the paper as of July 13, 2023
+#### 3 vs 1: Algorithms 1 to 3
 
 def output_alg_3_1(CritPts, name, prune):
+    """Run Algorithm 3 on every quadruple of critical values with at least three distinct.
+
+    Returns the distinct candidates, the number computed with duplicates and the
+    number of distinct candidates.
+    """
     Pts = []
     Dict_pts = [["omega_pts", "x", "u", "v", "w", "eta", "delta"]]
     set_of_points = set({})
@@ -415,13 +400,11 @@ def output_alg_3_1(CritPts, name, prune):
     for x in CritPts:
         all_critptscoords.append(x.coords)
 
-    closure = closure_lub(CritPts) ## WHy do we  only compute the closure in 3v1 and not in 2v2??? 
+    closure = closure_lub(CritPts)
     for key in closure.keys():
-        all_critptscoords += closure[
-            key
-        ]  ## add the closure under lub to the list of all critical points
+        all_critptscoords += closure[key]  # add the least upper bounds of same-module pairs
 
-    all_critptscoords = list(set(all_critptscoords))  ## remove duplicates
+    all_critptscoords = list(set(all_critptscoords))
 
     for a in range(length):
         for b in range(a + 1, length):
@@ -440,36 +423,28 @@ def output_alg_3_1(CritPts, name, prune):
                             all_critptscoords, prune
                         )
                         Pts += pts
-                        # a first attempt to get rid of duplicates
-                        # this should be moved to the omega file
-                        for p in range(len(pts)):
+                        for p in range(len(pts)):  # keep one info row per distinct candidate
                             if pts[p] not in set_of_points:
                                 set_of_points.add(pts[p])
                                 Dict_pts += [dict_pts[p]]
 
-    # print("**********")
     num_duplicates = len(Pts)
-    # print("Computed {} points (with duplicates)".format(num_duplicates))
-
-    # # checking a weird number discrep; uncomment later
     Pts = list(set(Pts))
-    # print("Without duplicates {}".format(len(Pts)))
     if settings.print_output:
         print("EXACT\n_____________________________________")
         print("3v1: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 
-    # Dict_pts.sort()
-    # new_pts= list(k for k,_ in itertools.groupby(k))
     write_candidate_csv(name, "_3v1.csv", Dict_pts)
 
-    return Pts, num_duplicates, len(Pts) 
+    return Pts, num_duplicates, len(Pts)
 
 def algo_3vs1(CritPts, all_CritPts, prune):
-    """discards the omega points that are not valid"""
-    ## input: 4 critical points from C_M and C_N
+    """Algorithm 3 (3-vs-1) on four critical values, at least three of them distinct.
 
-    # don't we already do this in the if statement that contains this function?
-    ## Check that we have at least three distinct points, otherwise stop
+    Returns the candidate switch points that pass CheckPts and CheckOmega and are not
+    in all_CritPts (both checks skipped when prune is False), and one info row per
+    candidate: omega, x, u, v, w, eta, delta.
+    """
     critptscoords = []
     for x in CritPts:
         critptscoords.append(x.coords)
@@ -482,13 +457,10 @@ def algo_3vs1(CritPts, all_CritPts, prune):
     dict_omega_pts = []
 
     for c in CritPts:
-        # Trying to find x (of the points x,w,u,v in the paper)
-        if check_that_c_is_distinct(
-            c, CritPts
-        ):  ## want a critical point x that is distinct from u,v,w
+        if check_that_c_is_distinct(c, CritPts):  # x must differ from u, v, w
             x = c
         else:
-            continue  ### Skips the rest of the loop if c appears multiple times in C
+            continue
 
         CritPts_no_x = CritPts.copy()
         CritPts_no_x.remove(x)
@@ -496,9 +468,7 @@ def algo_3vs1(CritPts, all_CritPts, prune):
         for d in CritPts_no_x:
             w = d
             CritPts_no_x_no_w = CritPts_no_x.copy()
-            CritPts_no_x_no_w.remove(
-                w
-            )  ## lol (with a french accent), list with two elements only
+            CritPts_no_x_no_w.remove(w)  # the two remaining points become u and v
 
             if CritPts_no_x_no_w[0].coords == CritPts_no_x_no_w[1].coords:
                 continue
@@ -506,50 +476,42 @@ def algo_3vs1(CritPts, all_CritPts, prune):
             u = CritPts_no_x_no_w[0]
             v = CritPts_no_x_no_w[1]
 
-            ## Assign the value of the denominator eta and delta according to the parent module
-            ## of the pairs (x,w) and (u,v)
+            # eta and delta are 2 for a pair from one module and 1 for a pair across modules
             if x.parent_module == w.parent_module:
                 eta = 2
             else:
                 eta = 1
-            if settings.section5_pruning:
-                # print("prune 1")
+            if settings.section5_pruning:  # Corollary 5.2
                 if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
                     continue
             if u.parent_module == v.parent_module:
                 delta = 2
             else:
                 delta = 1
-            if settings.section5_pruning:
-                # print("prune 2")
+            if settings.section5_pruning:  # Corollary 5.2
                 if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
                     continue
-            ## Is indentation correct? yes same as paper
+            # x pushes up, u, v, w push right (lines 31-54 of Algorithm 3)
             if check_x_pushes_up(x.coords, u.coords, v.coords, w.coords) or not prune:
-                # adding this to include claudia's comment about matching having null cost
-                if u.coords[1] != v.coords[1]:
+                if u.coords[1] != v.coords[1]:  # otherwise the matching of u and v has null cost
 
-                    if (
-                        u.coords[1] < v.coords[1]
-                    ):  ## at some point there was confusion about <= or <; changed to < on 13 july to match current paper. maybe shouldn't have?
+                    if u.coords[1] < v.coords[1]:  # ensure pL(u) > pL(v)
                         temp_u = u
                         u = v
                         v = temp_u
-                    if (
-                        w.coords[0] >= x.coords[0] and w.coords[1] >= x.coords[1]
-                    ):  ## should this be strict inequality? , also check the coordinates 0 and 1
+                    if w.coords[0] >= x.coords[0] and w.coords[1] >= x.coords[1]:  # l.u.b.(x, w) = w: Equation (4)
                         omega = (
                             x.coords[0],
                             (eta / delta) * (v.coords[1] - u.coords[1]) + w.coords[1],
                         )
 
-                    elif w.coords[0] <= x.coords[0] and w.coords[1] <= x.coords[1]:
+                    elif w.coords[0] <= x.coords[0] and w.coords[1] <= x.coords[1]:  # l.u.b.(x, w) = x: Equation (5)
                         omega = (
                             x.coords[0],
                             (eta / delta) * (u.coords[1] - v.coords[1]) + w.coords[1],
                         )
 
-                    else:
+                    else:  # Equations (5) and (4)
                         omega = (
                             x.coords[0],
                             (eta / delta) * (u.coords[1] - v.coords[1]) + w.coords[1],
@@ -563,47 +525,39 @@ def algo_3vs1(CritPts, all_CritPts, prune):
                             check_omega_x_below(u, v, w, x, omega1)
                             and omega1 not in all_CritPts
                         ) or (not prune):
-                            Omega_pts.append(omega1)  ## append
-                            ##  add omega pts to dictionary
+                            Omega_pts.append(omega1)
                             dict_omega_pts.append(
                                 [omega1, x.coords, u.coords, v.coords, w.coords, eta, delta]
                             )
 
-                        # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
 
                     if (check_omega_x_below(u, v, w, x, omega) and omega not in all_CritPts) or (not prune):
-                        Omega_pts.append(omega)  ## in any case we append omegaa
-                        # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
+                        Omega_pts.append(omega)
                         dict_omega_pts.append(
                             [omega, x.coords, u.coords, v.coords, w.coords, eta, delta]
                         )
 
-            ### Is indentation correct? yes, same as above
+            # x pushes right, u, v, w push up (lines 55-76 of Algorithm 3)
             if check_x_pushes_right(x.coords, u.coords, v.coords, w.coords) or not prune:
-                # adding because of claudia's null cost comment
-                if u.coords[0] != v.coords[0]:
+                if u.coords[0] != v.coords[0]:  # otherwise the matching of u and v has null cost
 
-                    if (
-                        u.coords[0] < v.coords[0]
-                    ):  ## confusion about <= or <, but updated 13 july to match paper
+                    if u.coords[0] < v.coords[0]:  # ensure pL(u) > pL(v)
                         temp_u = u
                         u = v
                         v = temp_u
-                    if (
-                        w.coords[0] >= x.coords[0] and w.coords[1] >= x.coords[1]
-                    ):  ## check < vs <= and coordinates 0,1
+                    if w.coords[0] >= x.coords[0] and w.coords[1] >= x.coords[1]:  # l.u.b.(w, x) = w: Equation (6)
                         omega = (
                             (eta / delta) * (v.coords[0] - u.coords[0]) + w.coords[0],
                             x.coords[1],
                         )
 
-                    elif w.coords[0] <= x.coords[0] and w.coords[1] <= x.coords[1]:
+                    elif w.coords[0] <= x.coords[0] and w.coords[1] <= x.coords[1]:  # l.u.b.(w, x) = x: Equation (7)
                         omega = (
                             (eta / delta) * (u.coords[0] - v.coords[0]) + w.coords[0],
                             x.coords[1],
                         )
 
-                    else:
+                    else:  # Equations (6) and (7)
                         omega = (
                             (eta / delta) * (v.coords[0] - u.coords[0]) + w.coords[0],
                             x.coords[1],
@@ -616,37 +570,32 @@ def algo_3vs1(CritPts, all_CritPts, prune):
                         if (
                             check_omega_x_above(u, v, w, x, omega1)
                             and omega1 not in all_CritPts
-                        ) or not prune:  # not check_in_list(omega1, critptscoords):
+                        ) or not prune:
                             Omega_pts.append(omega1)
-                            ## dict for debuging
-                            # dict_omega_pts.append({ "omega_pts": omega1 , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
                             dict_omega_pts.append(
                                 [omega1, x.coords, u.coords, v.coords, w.coords, eta, delta]
                             )
 
                     if (
                         check_omega_x_above(u, v, w, x, omega) and omega not in all_CritPts
-                    ) or not prune:  # and not check_in_list(omega, critptscoords):
+                    ) or not prune:
                         Omega_pts.append(omega)
-                        # dict_omega_pts.append({ "omega_pts": omega , "x" : x.coords, "u":u.coords, "v": v.coords, "w": w.coords, "eta" :eta, "delta":delta })
                         dict_omega_pts.append(
                             [omega, x.coords, u.coords, v.coords, w.coords, eta, delta]
                         )
 
-    """with open('test.csv', 'a', newline='') as file:  #### find a way to write everything in file
-        writer = csv.DictWriter(file, fieldnames = fields,dialect='excel')
-        writer.writeheader() 
-        writer.writerows(dict_omega_pts)"""
-    # dict_omega_pts = list(set(dict_omega_pts))
-
     return Omega_pts, dict_omega_pts
 
 ###############################
-####  2 vs 2 UNpaired
+#### 2 vs 2 unpaired: Algorithms 6 and 7
 
 def check_omega_3(omega, u, v, w, x):
-    Q = {}  ## dictionary of quadrants
-    m = {}  ## dictionary of slopes
+    """CheckOmega2 (Algorithm 6 in the paper).
+
+    True if omega satisfies the conditions of Proposition 4.6 and is not spurious.
+    """
+    Q = {}  # quadrant of each point relative to omega
+    m = {}  # slope of the line through omega and the point
 
     for p in [u, v, w, x]:
         if p[0] > omega[0] and p[1] > omega[1]:
@@ -670,14 +619,12 @@ def check_omega_3(omega, u, v, w, x):
         S = []
 
         for p in [v, x]:
-            if (
-                Q[p] == 4
-            ):  ### THIS is ugly maybe we can do this in a shorter way by checking if Q[p] in [1,3]
+            if Q[p] == 4:
                 continue
             else:
                 P.append(p)
 
-        for p in [u, w]:  ## same here
+        for p in [u, w]:
             if Q[p] == 2:
                 continue
             else:
@@ -687,7 +634,7 @@ def check_omega_3(omega, u, v, w, x):
             r_p = 1
             for q in [val for val in P if val != p]:
                 if Q[p] == 1:
-                    if Q[q] == 3:  ## can this be on the line above?
+                    if Q[q] == 3:
                         if m[p] >= m[q]:
                             r_p = 0
                     elif Q[q] == 1:
@@ -717,9 +664,8 @@ def check_omega_3(omega, u, v, w, x):
                         elif Q[q] == 3:
                             if m[p] <= m[q]:
                                 r_p = 0
-                ###### THis is as far as we got checking the pseudo code, continue from here
 
-            if r_p == 1:  ## for some p
+            if r_p == 1:
                 return True
 
         for s in S:
@@ -728,13 +674,13 @@ def check_omega_3(omega, u, v, w, x):
                 if Q[s] == 1:
                     if Q[t] == 3:
                         if m[s] <= m[t]:
-                            r_s = 0  ## check line 94 in pseudo code
+                            r_s = 0
                     elif Q[t] == 1:
                         if m[s] > m[t]:
                             r_s = 0
                 elif Q[s] == 3:
                     if Q[t] == 1:
-                        if m[s] >= m[t]:  ## Check line 103
+                        if m[s] >= m[t]:
                             r_s = 0
                     elif Q[t] == 3:
                         if m[s] < m[t]:
@@ -757,15 +703,19 @@ def check_omega_3(omega, u, v, w, x):
                             if m[s] >= m[t]:
                                 r_s = 0
 
-            if r_s == 1:  ## check indentation
+            if r_s == 1:
                 return True
 
         return False
 
 def algo_2v2_unpaired(CritPts, all_CritPts, prune):
-    # x paired with w
-    # u paired with v
-    # x,v on one side of line, u,w on the other side
+    """Algorithm 7 (2unpaired-vs-2unpaired) on four critical values, at least three distinct.
+
+    x is paired with w and u with v; x, v push up and u, w push right. Returns the
+    candidates (proper points and points at infinity, the latter as pairs (a, b)) and one
+    info row per candidate: omega, x, u, v, w, eta, delta and the slope m, which is None
+    for a proper point.
+    """
 
     critptscoords = []
     for x in CritPts:
@@ -775,10 +725,8 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
         critptscoords
     ), "There is more than one repeated point in the list"
 
-    Omega_pts = []  ## will contain just the valid omega points that were computed
-    info_list = (
-        []
-    )  ## contains the omega points and the additional info from which critical pts it came from
+    Omega_pts = []
+    info_list = []
     for c, d in combinations(CritPts, 2):
         x = c
         v = d
@@ -791,9 +739,8 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
             else:
                 w = f
         CritPtsno_x_v_w = CritPts_no_x_v.copy()
-        CritPtsno_x_v_w.remove(w) # type: ignore
-        # setting eta and delta to any value to get rid of type errors 
-        # when checking inequality/equality (literal vs unbounded if unset)
+        CritPtsno_x_v_w.remove(w)
+        # both are reassigned below before use
         eta = 1
         delta = 1
         for g in CritPtsno_x_v_w:
@@ -801,59 +748,57 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                 continue
             else:
                 u = g
-            if x.parent_module == w.parent_module: # type: ignore
+            if x.parent_module == w.parent_module:
                 eta = 2
             else:
                 eta = 1
-            if settings.section5_pruning:
-                # print("prune 5")
-                if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D: # type: ignore
+            if settings.section5_pruning:  # Corollary 5.2
+                if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
                     continue
             if u.parent_module == v.parent_module:
                 delta = 2
             else:
                 delta = 1
-            if settings.section5_pruning:
-                # print("prune 6")
+            if settings.section5_pruning:  # Corollary 5.2
                 if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
                     continue
-            if check_pts_2v2_paired(x, v, w, u) or not prune: # type: ignore
+            if check_pts_2v2_paired(x, v, w, u) or not prune:
                 if (
-                    (lub(u, v) == u.coords and lub(x, w) == w.coords) # type: ignore
-                    or (lub(u, v) == v.coords and lub(x, w) == x.coords) # type: ignore
-                    or lub(u, v) not in [u.coords, v.coords] # type: ignore
-                    or lub(x, w) not in [x.coords, w.coords] # type: ignore
+                    (lub(u, v) == u.coords and lub(x, w) == w.coords)
+                    or (lub(u, v) == v.coords and lub(x, w) == x.coords)
+                    or lub(u, v) not in [u.coords, v.coords]
+                    or lub(x, w) not in [x.coords, w.coords]
                 ):
-                    # this is the new thing that robyn just added
+                    # Equation (10) if delta == eta, Equation (12) otherwise
                     if (
                         (delta == eta)
                         and (v.coords[0] != x.coords[0])
-                        and (u.coords[1] != w.coords[1]) # type: ignore
+                        and (u.coords[1] != w.coords[1])
                     ):
                         omega = (
                             v.coords[0] - x.coords[0],
-                            u.coords[1] - w.coords[1], # type: ignore
-                        )  ## line 29 pseudo code . check this!!!
-                        m = (u.coords[1] - w.coords[1]) / (v.coords[0] - x.coords[0]) # type: ignore
-                        # added here (on tuesday) that m > 0
+                            u.coords[1] - w.coords[1],
+                        )  # the point at infinity [0 : v1 - x1 : u2 - w2]
+                        m = (u.coords[1] - w.coords[1]) / (v.coords[0] - x.coords[0])
+                        # Proposition 4.5 test, line 36 of Algorithm 7
                         if (
                             max(
-                                x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0] # type: ignore
+                                x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0]
                             )
                             < min(
-                                u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0] # type: ignore
+                                u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0]
                             )
                             and m > 0
                         ):
                             Omega_pts.append(omega)
-                            ## append the slope
+                            # the info row records the slope
                             info_list.append(
                                 [
                                     omega,
                                     x.coords,
-                                    u.coords, # type: ignore
+                                    u.coords,
                                     v.coords,
-                                    w.coords, # type: ignore
+                                    w.coords,
                                     eta,
                                     delta,
                                     m,
@@ -863,10 +808,10 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                     elif delta != eta:
                         omega = (
                             (eta * v.coords[0] - delta * x.coords[0]) / (eta - delta),
-                            (eta * u.coords[1] - delta * w.coords[1]) / (eta - delta), # type: ignore
+                            (eta * u.coords[1] - delta * w.coords[1]) / (eta - delta),
                         )
                         if (
-                            check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) # type: ignore
+                            check_omega_3(omega, u.coords, v.coords, w.coords, x.coords)
                             and omega not in all_CritPts
                         ) or not prune:
                             Omega_pts.append(omega)
@@ -874,38 +819,45 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
                                 [
                                     omega,
                                     x.coords,
-                                    u.coords, # type: ignore
+                                    u.coords,
                                     v.coords,
-                                    w.coords, # type: ignore
+                                    w.coords,
                                     eta,
                                     delta,
                                     None,
                                 ]
                             )
 
+            # Equation (13)
             if (
-                (lub(u, v) == u.coords and lub(x, w) == x.coords) # type: ignore
-                or (lub(u, v) == v.coords and lub(x, w) == w.coords) # type: ignore
-                or lub(u, v) not in [u.coords, v.coords] # type: ignore
-                or lub(x, w) not in [x.coords, w.coords] # type: ignore
+                (lub(u, v) == u.coords and lub(x, w) == x.coords)
+                or (lub(u, v) == v.coords and lub(x, w) == w.coords)
+                or lub(u, v) not in [u.coords, v.coords]
+                or lub(x, w) not in [x.coords, w.coords]
             ):
                 omega = (
                     (eta * v.coords[0] + delta * x.coords[0]) / (eta + delta),
-                    (eta * u.coords[1] + delta * w.coords[1]) / (eta + delta), # type: ignore
+                    (eta * u.coords[1] + delta * w.coords[1]) / (eta + delta),
                 )
 
                 if (
-                    check_omega_3(omega, u.coords, v.coords, w.coords, x.coords) # type: ignore
+                    check_omega_3(omega, u.coords, v.coords, w.coords, x.coords)
                     and omega not in all_CritPts
-                ) or not prune:  ## corresponds to CheckOmega2 in the pseudo code
+                ) or not prune:  # CheckOmega2, line 49 of Algorithm 7
                     Omega_pts.append(omega)
                     info_list.append(
-                        [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None] # type: ignore
+                        [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None]
                     )
 
     return Omega_pts, info_list
 
 def output_alg_2_2_unpaired(CritPts, name, prune):
+    """Run Algorithm 7 on every quadruple of critical values with at least three distinct.
+
+    Returns the distinct candidates, the number computed with duplicates, the number
+    of distinct candidates, and two parallel lists (slope or None, and candidate, per
+    distinct candidate, each starting with a header entry).
+    """
     Pts = []
     Dict_pts = [["omega_pts", "x", "u", "v", "w", "eta", "delta", "m"]]
     set_of_points = set({})
@@ -917,11 +869,9 @@ def output_alg_2_2_unpaired(CritPts, name, prune):
 
     closure = closure_lub(CritPts)
     for key in closure.keys():
-        all_critptscoords += closure[
-            key
-        ]  ## add the closure under lub to the list of all critical points
+        all_critptscoords += closure[key]  # add the least upper bounds of same-module pairs
 
-    all_critptscoords = list(set(all_critptscoords))  ## remove duplicates
+    all_critptscoords = list(set(all_critptscoords))
 
     for a in range(length):
         for b in range(a + 1, length):
@@ -946,60 +896,35 @@ def output_alg_2_2_unpaired(CritPts, name, prune):
                                 set_of_points.add(key)
                                 Dict_pts += [dict_pts[p]]
 
-    # print("**********")
     num_duplicates = len(Pts)
-    # print("Computed {} points (with duplicates)".format(num_duplicates))
-
     Pts = [row[0] for row in Dict_pts[1:]]  # one representative per distinct candidate
     if settings.print_output:
         print("2v2unpaired: Computed {} pts; {} deduplicated".format(num_duplicates, len(Pts)))
 
-    # Dict_pts.sort()
-    # new_pts= list(k for k,_ in itertools.groupby(k))
     is_inf = []
     orderedomegas = []
     for t in range(len(Dict_pts)):
-        # m slopes
-        is_inf.append(Dict_pts[t][-1])
-        # omega points in the same order, just to make sure
-        orderedomegas.append(Dict_pts[t][0])
-
-    # print(is_inf)
-    # print(orderedomegas)
+        is_inf.append(Dict_pts[t][-1])  # the slope for a point at infinity, None otherwise
+        orderedomegas.append(Dict_pts[t][0])  # the candidate, in the same order
 
     write_candidate_csv(name, "_2v2_unpaired.csv", Dict_pts)
 
     return Pts, num_duplicates, len(Pts), is_inf, orderedomegas
 
-######################################
-
-### least upper bound function
+###############################
+#### Least upper bounds
 
 def lub(point1, point2):
-    """
-    Finds the least upper bound of two points.
-
-    Parameters:
-    - point1: Tuple representing the first point.
-    - point2: Tuple representing the second point.
-
-    Returns:
-    Tuple representing the least upper bound of the two points.
-    """
+    """Least upper bound (componentwise maximum) of two critical values, as a coordinate tuple."""
     return (
         max(point1.coords[0], point2.coords[0]),
         max(point1.coords[1], point2.coords[1]),
     )
 
 def closure_lub(CritPts):
-    """
-    Computes the closure of the least upper bound of a set of points.
+    """Least upper bounds of all pairs of distinct critical values from the same module.
 
-    Parameters:
-    - CritPts: List of critical points.
-
-    Returns:
-    List of critical points.
+    Returns a dict mapping each parent module to the list of these least upper bounds.
     """
     closure = {}
     for point1 in CritPts:
@@ -1010,4 +935,4 @@ def closure_lub(CritPts):
                 else:
                     closure[point1.parent_module].append(lub(point1, point2))
 
-    return closure 
+    return closure

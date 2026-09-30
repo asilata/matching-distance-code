@@ -6,24 +6,18 @@ from matplotlib import rc
 
 import settings
 
-# rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 rc("font", **{"family": "serif", "serif": ["Times"]})
 rc("text", usetex=settings.use_tex)
 
 
 def plot_both_c_o(crits_no_lub, omegapts, title, dpi, alg, out_path=None):
-    sanitycount = 0
+    """Plot proper candidate switch points (red) with the critical values of M (black) and N (orange)."""
     fig, ax = plt.subplots()
     fig.set_dpi(dpi)
     fig.set_size_inches(6, 5)
     ax.set_aspect("equal")
-    # ax.set_xlim(-5, 35)
-    # ax.set_ylim(-5, 20)
     for o in omegapts:
-        # apparently sometimes at the end of omegapts we spit out the number of points too,
-        # so it can be an int. We might want to fix.
         ax.plot(o[0], o[1], "o", color="red", label="red", alpha=0.8, markersize=4)
-        sanitycount += 1
 
     for c in crits_no_lub:
         if c[1] == 0:
@@ -55,7 +49,7 @@ def plot_both_c_o(crits_no_lub, omegapts, title, dpi, alg, out_path=None):
 
     plt.title(alg + " Algorithm for " + title)
 
-    red_patch = mpatches.Patch(color="red", label="switch points")
+    red_patch = mpatches.Patch(color="red", label="candidate switch points")
     black_patch = mpatches.Patch(color="black", label="critical values from M")
     orange_patch = mpatches.Patch(color="orange", label="critical values from N")
 
@@ -68,45 +62,36 @@ def plot_both_c_o(crits_no_lub, omegapts, title, dpi, alg, out_path=None):
 
 
 def plot_c_o_with_inf(crits_no_lub, orderedomegas, is_inf, title, dpi, alg, out_path=None):
+    """Plot proper candidates (left) and points at infinity as directions on the unit quarter circle (right).
+
+    orderedomegas and is_inf are parallel lists that start with a header entry; is_inf
+    holds the slope of a point at infinity and None for a proper point.
+    """
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
     fig.set_dpi(dpi)
     fig.set_size_inches(6, 5)
     ax1.set_aspect("equal")
     ax2.set_aspect("equal")
-    # ax1.set_xlim(-5, 20)
-    # ax1.set_ylim(-5, 10)
-    sanitycount = -1  # because the first one is a string
 
-    ## draw quarter circle
+    # quarter circle
     theta = np.linspace(0, np.pi / 2, 100)
     radius = 1
     x = radius * np.cos(theta)
     y = radius * np.sin(theta)
     ax2.plot(x, y, "--", color="black")
 
-    for o in orderedomegas:
-        sanitycount += 1
-        # the first entry is a string
-        if orderedomegas.index(o) == 0:
-            continue
-        # apparently sometimes at the end of omegapts we spit out the number of points too,
-        # so it can be an int. We might want to fix.
-        if is_inf[orderedomegas.index(o)] == None:
+    for o, slope in zip(orderedomegas[1:], is_inf[1:]):  # skip the header entries
+        if slope is None:
             ax1.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0, markersize=4)
         else:
-            # print("infty point:", is_inf[orderedomegas.index(o)])
-            # ax2.plot(o[0], o[1], "o", color="red", label="red", alpha=1.0)
-            slope = is_inf[orderedomegas.index(o)]
-            # maybe draw intersection
-            # Calculate the coordinates of the intersection point
+            # where the direction of slope meets the quarter circle
             x_intersection = radius / np.sqrt(1 + slope**2)
             y_intersection = slope * x_intersection
 
-            # Plot the line through (0,0) with slope m
+            # the segment from the origin to the quarter circle
             x_line = np.linspace(0, x_intersection, 100)
             y_line = slope * x_line
             ax2.plot(x_line, y_line, color="red", label=f"Line with slope {slope}")
-            # Plot the intersection point
             ax2.scatter(
                 x_intersection,
                 y_intersection,
@@ -143,7 +128,7 @@ def plot_c_o_with_inf(crits_no_lub, orderedomegas, is_inf, title, dpi, alg, out_
 
     fig.suptitle(alg + " Algorithm for " + title)
 
-    red_patch = mpatches.Patch(color="red", label="switch points or slopes")
+    red_patch = mpatches.Patch(color="red", label="candidate switch points or slopes")
     black_patch = mpatches.Patch(color="black", label="critical values from M")
     orange_patch = mpatches.Patch(color="orange", label="critical values from N")
     ax1.legend(

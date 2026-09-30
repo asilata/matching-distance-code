@@ -1,41 +1,38 @@
+"""Rectangle-decomposable 2-parameter persistence modules and lines of positive slope.
+
+Rectangle and RectangleModule describe the modules, Line a line of positive slope,
+critical_val a critical value together with the module it comes from, and
+compute_weighted_bottleneck the weighted bottleneck distance between the barcodes of two
+modules restricted to a line.
+"""
 import gudhi
-from math import cos, sin, pi
 import numpy as np
 
-"""TODO: 
-    - implement algorithm to find all equivalence classes of a given module --> not curently possible :( 
-    - function to plot easily a module and some lines though the parameter space
-    - include "infinite rectangles", ie, open at the top and/or to the right 
-    - check that the functions work also with infinite rectanlges
-"""
 
-# Class for single rectangles.  
 class Rectangle:
     def __init__(self, top_left,top_right, bottom_left, bottom_right, dim = 1, parent = 1):
-        """bottom_left and top_right are (x,y) coordinate tuples, 
-        dim = a non-negative integer representing the dimension of this rectangle."""
+        """Corners are (x, y) tuples; a top or right coordinate may be np.inf.
+
+        dim is the multiplicity of the rectangle and parent the module it belongs to
+        (0 for M, 1 for N).
+        """
         self.bottom_left = bottom_left
         self.top_right = top_right
         self.top_left = top_left
-        self.bottom_right = bottom_right 
+        self.bottom_right = bottom_right
         self.dim = dim
         self.parent = parent
         if self.top_right[0] < np.inf and self.top_right[1]< np.inf :
             self.type = 'finite'
-        elif self.top_left[1] == np.inf and self.top_right[0]< np.inf: 
+        elif self.top_left[1] == np.inf and self.top_right[0]< np.inf:
             self.type = 'top infinite'
         elif self.top_right[0] == np.inf and self.top_left[1] < np.inf:
             self.type = 'right infinite'
         else:
             self.type = 'infinite quadrant'
-  
-        #add error message when format is not good
 
     def __repr__(self):
-        # IN PROGRESS
-        # f strings are easy way to turn things into strings
         return f'(dim is {self.find_dim()}. Parent mod is {self.find_parent()}. \n Coords: \n {self.top_left} __________ {self.top_right} \n           |          | \n           |__________| \n {self.bottom_left}            {self.bottom_right} \n )'
-        # usage: print(rect), where rect is a Rectangle
 
     def __eq__(self, other):
         """Check equality of rectangles. Overrides the default."""
@@ -44,14 +41,6 @@ class Rectangle:
         if self.top_right != other.find_tr():
             return False
         if self.dim != other.find_dim():
-            return False
-        return True
-
-    def eq_upto_dim(self, other):
-        """Check equality of rectangles up to dimension."""
-        if self.bottom_left != other.find_bl():
-            return False
-        if self.top_right != other.find_tr():
             return False
         return True
 
@@ -67,29 +56,20 @@ class Rectangle:
         """Returns the top right corner."""
         return self.top_right
 
-    def find_br(self):                
+    def find_br(self):
         """Returns the bottom right corner."""
         return self.bottom_right
-
-    def find_coordinates(self):
-        """returns the coordinates of the rectangle in the same order that we input them in the rectangle.. """
-        return [self.find_tl(),self.find_tr(), self.find_bl(), self.find_br()]
 
     def find_dim(self):
         """Returns the dimension."""
         return self.dim
 
-    def update_dim(self, d):
-        """Sets dimension to d."""
-        self.dim = d
-
     def find_parent(self):
-        # returns parent module
+        """Returns the parent module."""
         return self.parent
-    
+
     def find_intersection(self, line):
-        """Find the intersection of the given line with self, in the appropriate notation."""
-        #### what about intersection at a corner...????
+        """Intersection points of the line with the boundary of the rectangle, and their parameters t."""
         b = line.b[0]
         m1 = line.m[0]
         m2 = line.m[1]
@@ -179,8 +159,7 @@ class Rectangle:
                     params.append(t_rs)
 
         if self.type == 'right infinite':
-                ## intersection with bottom side:
-                 ## intersection with bottom side:
+            ## intersection with bottom side:
             bl = self.bottom_left[1]
             t_bs = (bl+b)/m2
             pt_bs = (m1*t_bs +b, bl)
@@ -198,8 +177,7 @@ class Rectangle:
             t_ls = (bl-b)/m1
             pt_ls = (bl, m2*t_ls-b)
 
-            #print(pt_bs)
-            if self.bottom_left[0] - EPS <= pt_bs[0]: #<= self.find_br()[0]:
+            if self.bottom_left[0] - EPS <= pt_bs[0]:
                 inter.append(pt_bs)
                 params.append(t_bs)
 
@@ -208,7 +186,7 @@ class Rectangle:
                     inter.append(pt_ls)
                     params.append(t_ls)
 
-            if self.find_tl()[0] - EPS <= pt_ts[0]: # <= self.top_right[0]:
+            if self.find_tl()[0] - EPS <= pt_ts[0]:
                 inter.append(pt_ts)
                 params.append(t_ts)
 
@@ -244,96 +222,66 @@ class Rectangle:
                     params.append(t_ls)
 
         return inter, params
-     
 
-    def print_info(self):
-        print("bottom left:", self.bottom_left)
-        print("top right:", self.top_right)
-        # print("rectangle type:". self.type)
-        print("dimension:", self.dim)
-        print("parent mod:", self.parent, "\n")
-        
-         
+
 #################################################################
-# Class for rectangle modules (i.e. direct sums of rectangles).
 
-#### Change so that it also includes infinite rectangles 
 class RectangleModule:
+    """A direct sum of rectangles."""
+
     def __init__(self, rect_list):
         self.rectangles = rect_list
-         ## add a method to check if  the same rectangle is there several times and change multiplicity
-
-    def add_rectangle(self, rect):
-        """Add the given rectangle to the list of rectangles"""
-        self.rectangles.append(rect)
-        return None
-
-    def trim(self):
-        """Trims the list of rectangles to remove duplicates, updating dimensions as necessary."""
-        myrects = []
-        for r in self.rectangles:
-            print('first rect', r)
-            for s in myrects:
-                print(s)
-                if r.eq_upto_dim(s):
-                    s.update_dim(s.find_dim() + r.find_dim()) ## shouldnt this be r.update_dim(s.find_dim() + r.find_dim())? 
-                    break
-                myrects = myrects + [r]
-        self.rectangles = myrects
-        
 
     def find_dim(self, point):
         """Find the dimension at the given point"""
         d = 0
-        for rect in self.rectangles: 
+        for rect in self.rectangles:
             if rect.bottom_left[0] <= point[0] <= rect.top_right[0] and rect.bottom_left[1] <= point[1] <= rect.top_right[1]:
                 d+=rect.dim
         return d
-    
+
 
     def find_intersection(self, line):
-        """Find the intersection of the given line with self, in the appropriate notation."""
-        ## finding intersections with all rectangles 
+        """Intersections of the line with each rectangle, as lists (see Rectangle.find_intersection)."""
         inter = []
         params= []
-        for rect in self.rectangles: 
+        for rect in self.rectangles:
             pts, t = rect.find_intersection(line)
             inter.append(pts)
             params.append(t)
-      
+
         return inter, params
-    
- 
-    
+
+
+
     def find_critical_pts(self):
 
-        """Find the critical values of the entire module given all of its rectangles
-           Only finite values  
-        """
+        """The finite corners of all rectangles."""
         Crit_pts = []
         for r in self.rectangles:
             ## add bottom left (always finite)
             Crit_pts.append(r.find_bl())
-            
+
             ## add top left value if finite
             tl = r.find_tl()
             if tl[1] < np.inf:
                 Crit_pts.append(tl)
-            
-            # add top right value if finite      
+
+            # add top right value if finite
             tr = r.find_tr()
             if tr[0]<np.inf and tr[1]< np.inf:
                 Crit_pts.append(tr)
-                
+
             ## add bottom right if finite
             br = r.find_br()
             if br[0] < np.inf:
                 Crit_pts.append(br)
-            
+
         return list(set(Crit_pts))
 
-       
+
     def compute_barcode(self, line):
+        """Barcode of the module restricted to the line, in the line parameter t."""
         Int, params = self.find_intersection(line)
         dgm = []
         for rect, i in zip(self.rectangles, range(len(self.rectangles))):
@@ -346,17 +294,14 @@ class RectangleModule:
                 for d in range(dim):
                     dgm.append([params[i][0],np.inf])
         return dgm
-    
-    def closure_lub(self): 
-        """ Find the closure under least upper boud of the critical points"""
-        ## Todo: check that it works properly on an example
-        ## Not the most efficient way to code this function 
-    
+
+    def closure_lub(self):
+        """The critical values together with the least upper bound of every incomparable pair."""
         C_bar = self.find_critical_pts()
         l = len(C_bar)
-        for i in range(l): 
+        for i in range(l):
             p = C_bar[i]
-            for j in range(i+1, l): 
+            for j in range(i+1, l):
                 q = C_bar[j]
                 if not are_comparable(p,q):
                     lub = (max(p[0],q[0]), max(p[1],q[1]))
@@ -364,134 +309,84 @@ class RectangleModule:
 
         return list(set(C_bar))
 
-    def count_rectangles(self):
-        i = 0
-        for x in self.rectangles:
-            i += 1
-        return i
 
-    def print_mod_info(self):
-        print("total rectangles:", self.count_rectangles(), ". \n")
-        for rectangles in self.rectangles:
-            rectangles.print_info()
-
-            
-        
-
-    
 ################################
-# Class for lines in the appropriate notation.
-""" !!!Attention!!! this gives an error when the slope of the line is negative in direction (1,-1)
-      ---> Change the way to normalize the line 
-""" 
-            
+
 class Line:
-    ## sufficient for b to be just one real number b2 = -b1, for m as well as 0<m<=1 (m,1) or (1,m) .
+    """A line L(t) = m t + b in the plane.
+
+    The direction m = (m1, m2) is scaled so that max(|m1|, |m2|) = 1, and b is moved
+    along the line to the point with b1 = -b2 (the anti-diagonal). positive is False
+    when the line does not have positive slope.
+    """
+
     def __init__(self,m,b):
-        """ Format for 
-        m = (m1,m2) direction of the line 
-        b=(b1,b2)
-        We want max(m1,m2) = 1 and positive slope
-        and b1=-b2
-        """
         self.positive = True
         self.b = b
-        self.m = m 
-        maxm = max(abs(m[0]),abs(m[1])) 
+        self.m = m
+        maxm = max(abs(m[0]),abs(m[1]))
         if maxm == 0:
             self.positive = False
-    
+
         elif maxm !=1:
             self.m = (m[0]/maxm,m[1]/maxm)
-        m = self.m    
+        m = self.m
         if b[0]!= -b[1] and m[0]!=-m[1]:
             self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
 
         if self.m[0] <=0 or self.m[1] <=0:
             self.positive = False
 
-    
-    def translate(self,s):
-    ## translate a line of direction (m1,m2) in the direction s*(1,-1) 
-    ## L: (x,y) = (m1, m2)*t +(b,-b) ---> L': (x,y) = (m1, m2)*t +(b,-b)+s*(1,-1)     
-        self.b = (self.b[0]+s, self.b[1]-s)
-        return None
-    
-    def rotate(self, center, theta): 
-        ## implement rotation
-        s =sin(theta)
-        c = cos(theta)
-        c1 = center[0]
-        c2 = center[1]
-        m1 = self.m[0]
-        m2 = self.m[1]
-        b1 = self.b[0]
-        b2 = self.b[1]
-        
-        m = (c*m1-s*m2 , s*m1+c*m2) 
-        b = (c*(b1-c1)-s*(b2-c2)+c1, s*(b1-c1)+ c*(b2-c2)+c2)
-        
-        if b[0]!= -b[1]: 
-            self.b =(-m[0] *(b[0]+b[1])/(m[0]+m[1]) +b[0],m[0]*(b[0]+b[1])/(m[0]+m[1]) -b[0])
-            #print(self.b)
-        maxm = max(abs(m[0]),abs(m[1])) 
-        #print(m[0])
-        #print(m[1])
-        if maxm !=1:
-            self.m = (m[0]/maxm,m[1]/maxm)
-       
-        return None
 
-           
+################################
 
-################### Extra Functions   ##################
-
-
-def compute_weighted_bottleneck(M,N,line): 
+def compute_weighted_bottleneck(M,N,line):
+    """Weighted bottleneck distance of M and N along the line: min(m1, m2) times the bottleneck distance."""
     dgmM = M.compute_barcode(line)
-    dgmN = N.compute_barcode(line) 
-    db= gudhi.bottleneck_distance(dgmN,dgmM) # type: ignore
-    w = min(line.m) 
-    
+    dgmN = N.compute_barcode(line)
+    db= gudhi.bottleneck_distance(dgmN,dgmM)
+    w = min(line.m)
+
     return w*db
 
 def line_through_2points(pt1, pt2):
+    """The Line through two points, directed from the one with the smaller first coordinate."""
     if pt1[0]<=pt2[0]:
         direction = (pt2[0]-pt1[0], pt2[1]-pt1[1])
-        line = Line(direction,pt1) 
-    else: 
+        line = Line(direction,pt1)
+    else:
         direction = (pt1[0]-pt2[0], pt1[1]-pt2[1])
         line = Line(direction,pt2)
-    
+
     return line
 
 
-def are_comparable(p,q): 
-    """ function to check whether two points are comparable or not 
-    """
-    comp = False 
-    if p[0] <= q[0] and p[1] <= q[1]: 
-        comp = True 
-    if p[0] >= q[0] and p[1] >= q[1]: 
-        comp = True 
+def are_comparable(p,q):
+    """True if p <= q or q <= p componentwise."""
+    comp = False
+    if p[0] <= q[0] and p[1] <= q[1]:
+        comp = True
+    if p[0] >= q[0] and p[1] >= q[1]:
+        comp = True
     return comp
 
 class critical_val:
-    # exchange parent mod list [] for single value and just deal with repeated cvs
+    """A critical value: coordinates and the module it comes from (0 for M, 1 for N).
+
+    A point that is a critical value of both modules is represented by two objects.
+    Equality is identity, so a repeated point in a quadruple is the same object twice.
+    """
+
     def __init__(self, coords, parent_module):
         self.parent_module = parent_module
-        self.coords = coords  
-        # parent module is an integer
+        self.coords = coords
+
     def __repr__(self):
         return f'(parent module of {self.find_coords()} is {self.find_parent_mod()})'
-        # usage: print(val), where val is a critical val
 
     def find_parent_mod(self):
-        # returns parent module
         return self.parent_module
 
     def find_coords(self):
         return self.coords
-
-        return None
 
