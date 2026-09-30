@@ -128,6 +128,24 @@ def check_x_pushes_right(x, u, v, w):
     else:
         return True
 
+def quadruples(CritPts, repetition):
+    """The configurations of four critical values that Algorithms 3, 5 and 7 are run on.
+
+    Every set of four critical values and, if repetition is True, every set of three with
+    one of its points taken twice: the C(n, 4) + 3 C(n, 3) configurations counted in
+    Section 6 of the paper. A repeated point is the same object twice. Configurations
+    whose coordinates coincide in other ways are left to check_three_distinct and
+    check_four_distinct.
+    """
+    n = len(CritPts)
+    for q in combinations(range(n), 4):
+        yield [CritPts[i] for i in q]
+    if repetition:
+        for t in combinations(range(n), 3):
+            for r in t:
+                yield [CritPts[i] for i in sorted(t + (r,))]
+
+
 def check_three_distinct(C):
     """True if at least three of the four given points are distinct."""
     assert len(C) == 4, "expected four points"
@@ -333,7 +351,7 @@ def candidate_key(omega, slope):
 
 
 def output_alg_2_2_paired(CritPts, name, prune):
-    """Run Algorithm 5 on every quadruple of distinct critical values.
+    """Run Algorithm 5 on every set of four distinct critical values.
 
     Returns the distinct candidates, the number computed with duplicates, the number
     of distinct candidates, and two parallel lists (slope and candidate per distinct
@@ -342,29 +360,16 @@ def output_alg_2_2_paired(CritPts, name, prune):
     Pts = []
     Total_info_list = [["omega_pts", "x", "u", "v", "w", "eta", "delta", "m"]]
     set_of_points = set({})
-    length = len(CritPts)
 
-    for a in range(length):
-        for b in range(a + 1, length):
-            for c in range(b + 1, length):
-                for d in range(c, length):
-                    if check_four_distinct(
-                        [
-                            CritPts[a].coords,
-                            CritPts[b].coords,
-                            CritPts[c].coords,
-                            CritPts[d].coords,
-                        ]
-                    ):
-                        pts, info_list = algo_2v2_paired(
-                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]], prune
-                        )
-                        Pts += pts
-                        for p in range(len(pts)):
-                            key = candidate_key(pts[p], info_list[p][-1])
-                            if key not in set_of_points:
-                                set_of_points.add(key)
-                                Total_info_list += [info_list[p]]
+    for quad in quadruples(CritPts, repetition=False):
+        if check_four_distinct([c.coords for c in quad]):
+            pts, info_list = algo_2v2_paired(quad, prune)
+            Pts += pts
+            for p in range(len(pts)):
+                key = candidate_key(pts[p], info_list[p][-1])
+                if key not in set_of_points:
+                    set_of_points.add(key)
+                    Total_info_list += [info_list[p]]
 
     num_duplicates = len(Pts)
     Pts = [row[0] for row in Total_info_list[1:]]  # one representative per distinct candidate
@@ -386,7 +391,7 @@ def output_alg_2_2_paired(CritPts, name, prune):
 #### 3 vs 1: Algorithms 1 to 3
 
 def output_alg_3_1(CritPts, name, prune):
-    """Run Algorithm 3 on every quadruple of critical values with at least three distinct.
+    """Run Algorithm 3 on every configuration of quadruples(CritPts, repetition=True).
 
     Returns the distinct candidates, the number computed with duplicates and the
     number of distinct candidates.
@@ -394,7 +399,6 @@ def output_alg_3_1(CritPts, name, prune):
     Pts = []
     Dict_pts = [["omega_pts", "x", "u", "v", "w", "eta", "delta"]]
     set_of_points = set({})
-    length = len(CritPts)
 
     all_critptscoords = []
     for x in CritPts:
@@ -406,27 +410,14 @@ def output_alg_3_1(CritPts, name, prune):
 
     all_critptscoords = list(set(all_critptscoords))
 
-    for a in range(length):
-        for b in range(a + 1, length):
-            for c in range(b + 1, length):
-                for d in range(c, length):
-                    if check_three_distinct(
-                        [
-                            CritPts[a].coords,
-                            CritPts[b].coords,
-                            CritPts[c].coords,
-                            CritPts[d].coords,
-                        ]
-                    ):
-                        pts, dict_pts = algo_3vs1(
-                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]],
-                            all_critptscoords, prune
-                        )
-                        Pts += pts
-                        for p in range(len(pts)):  # keep one info row per distinct candidate
-                            if pts[p] not in set_of_points:
-                                set_of_points.add(pts[p])
-                                Dict_pts += [dict_pts[p]]
+    for quad in quadruples(CritPts, repetition=True):
+        if check_three_distinct([c.coords for c in quad]):
+            pts, dict_pts = algo_3vs1(quad, all_critptscoords, prune)
+            Pts += pts
+            for p in range(len(pts)):  # keep one info row per distinct candidate
+                if pts[p] not in set_of_points:
+                    set_of_points.add(pts[p])
+                    Dict_pts += [dict_pts[p]]
 
     num_duplicates = len(Pts)
     Pts = list(set(Pts))
@@ -734,125 +725,120 @@ def algo_2v2_unpaired(CritPts, all_CritPts, prune):
         CritPts_no_x_v.remove(v)
         CritPts_no_x_v.remove(x)
         for f in CritPts_no_x_v:
-            if f == x:
+            if f.coords == x.coords:  # w must differ from x
                 continue
-            else:
-                w = f
-        CritPtsno_x_v_w = CritPts_no_x_v.copy()
-        CritPtsno_x_v_w.remove(w)
-        # both are reassigned below before use
-        eta = 1
-        delta = 1
-        for g in CritPtsno_x_v_w:
-            if g == v:
-                continue
-            else:
+            w = f
+            CritPtsno_x_v_w = CritPts_no_x_v.copy()
+            CritPtsno_x_v_w.remove(w)
+            for g in CritPtsno_x_v_w:
+                if g.coords == v.coords:  # u must differ from v
+                    continue
                 u = g
-            if x.parent_module == w.parent_module:
-                eta = 2
-            else:
-                eta = 1
-            if settings.section5_pruning:  # Corollary 5.2
-                if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
-                    continue
-            if u.parent_module == v.parent_module:
-                delta = 2
-            else:
-                delta = 1
-            if settings.section5_pruning:  # Corollary 5.2
-                if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
-                    continue
-            if check_pts_2v2_paired(x, v, w, u) or not prune:
-                if (
-                    (lub(u, v) == u.coords and lub(x, w) == w.coords)
-                    or (lub(u, v) == v.coords and lub(x, w) == x.coords)
-                    or lub(u, v) not in [u.coords, v.coords]
-                    or lub(x, w) not in [x.coords, w.coords]
-                ):
-                    # Equation (10) if delta == eta, Equation (12) otherwise
+                if x.parent_module == w.parent_module:
+                    eta = 2
+                else:
+                    eta = 1
+                if settings.section5_pruning:  # Corollary 5.2
+                    if max(abs(x.coords[0] - w.coords[0]), abs(x.coords[1] - w.coords[1]))/eta < settings.lower_bound_D:
+                        continue
+                if u.parent_module == v.parent_module:
+                    delta = 2
+                else:
+                    delta = 1
+                if settings.section5_pruning:  # Corollary 5.2
+                    if max(abs(u.coords[0] - v.coords[0]), abs(u.coords[1] - v.coords[1]))/delta < settings.lower_bound_D:
+                        continue
+                if check_pts_2v2_paired(x, v, w, u) or not prune:  # CheckPts2, line 31 of Algorithm 7
                     if (
-                        (delta == eta)
-                        and (v.coords[0] != x.coords[0])
-                        and (u.coords[1] != w.coords[1])
+                        (lub(u, v) == u.coords and lub(x, w) == w.coords)
+                        or (lub(u, v) == v.coords and lub(x, w) == x.coords)
+                        or lub(u, v) not in [u.coords, v.coords]
+                        or lub(x, w) not in [x.coords, w.coords]
+                    ):
+                        # Equation (10) if delta == eta, Equation (12) otherwise
+                        if (
+                            (delta == eta)
+                            and (v.coords[0] != x.coords[0])
+                            and (u.coords[1] != w.coords[1])
+                        ):
+                            omega = (
+                                v.coords[0] - x.coords[0],
+                                u.coords[1] - w.coords[1],
+                            )  # the point at infinity [0 : v1 - x1 : u2 - w2]
+                            m = (u.coords[1] - w.coords[1]) / (v.coords[0] - x.coords[0])
+                            # Proposition 4.5 test, line 36 of Algorithm 7
+                            if (
+                                max(
+                                    x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0]
+                                )
+                                < min(
+                                    u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0]
+                                )
+                                and m > 0
+                            ):
+                                Omega_pts.append(omega)
+                                # the info row records the slope
+                                info_list.append(
+                                    [
+                                        omega,
+                                        x.coords,
+                                        u.coords,
+                                        v.coords,
+                                        w.coords,
+                                        eta,
+                                        delta,
+                                        m,
+                                    ]
+                                )
+
+                        elif delta != eta:
+                            omega = (
+                                (eta * v.coords[0] - delta * x.coords[0]) / (eta - delta),
+                                (eta * u.coords[1] - delta * w.coords[1]) / (eta - delta),
+                            )
+                            if (
+                                check_omega_3(omega, u.coords, v.coords, w.coords, x.coords)
+                                and omega not in all_CritPts
+                            ) or not prune:
+                                Omega_pts.append(omega)
+                                info_list.append(
+                                    [
+                                        omega,
+                                        x.coords,
+                                        u.coords,
+                                        v.coords,
+                                        w.coords,
+                                        eta,
+                                        delta,
+                                        None,
+                                    ]
+                                )
+
+                    # Equation (13)
+                    if (
+                        (lub(u, v) == u.coords and lub(x, w) == x.coords)
+                        or (lub(u, v) == v.coords and lub(x, w) == w.coords)
+                        or lub(u, v) not in [u.coords, v.coords]
+                        or lub(x, w) not in [x.coords, w.coords]
                     ):
                         omega = (
-                            v.coords[0] - x.coords[0],
-                            u.coords[1] - w.coords[1],
-                        )  # the point at infinity [0 : v1 - x1 : u2 - w2]
-                        m = (u.coords[1] - w.coords[1]) / (v.coords[0] - x.coords[0])
-                        # Proposition 4.5 test, line 36 of Algorithm 7
-                        if (
-                            max(
-                                x.coords[1] - m * x.coords[0], v.coords[1] - m * v.coords[0]
-                            )
-                            < min(
-                                u.coords[1] - m * u.coords[0], w.coords[1] - m * w.coords[0]
-                            )
-                            and m > 0
-                        ):
-                            Omega_pts.append(omega)
-                            # the info row records the slope
-                            info_list.append(
-                                [
-                                    omega,
-                                    x.coords,
-                                    u.coords,
-                                    v.coords,
-                                    w.coords,
-                                    eta,
-                                    delta,
-                                    m,
-                                ]
-                            )
-
-                    elif delta != eta:
-                        omega = (
-                            (eta * v.coords[0] - delta * x.coords[0]) / (eta - delta),
-                            (eta * u.coords[1] - delta * w.coords[1]) / (eta - delta),
+                            (eta * v.coords[0] + delta * x.coords[0]) / (eta + delta),
+                            (eta * u.coords[1] + delta * w.coords[1]) / (eta + delta),
                         )
+
                         if (
                             check_omega_3(omega, u.coords, v.coords, w.coords, x.coords)
                             and omega not in all_CritPts
-                        ) or not prune:
+                        ) or not prune:  # CheckOmega2, line 49 of Algorithm 7
                             Omega_pts.append(omega)
                             info_list.append(
-                                [
-                                    omega,
-                                    x.coords,
-                                    u.coords,
-                                    v.coords,
-                                    w.coords,
-                                    eta,
-                                    delta,
-                                    None,
-                                ]
+                                [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None]
                             )
-
-            # Equation (13)
-            if (
-                (lub(u, v) == u.coords and lub(x, w) == x.coords)
-                or (lub(u, v) == v.coords and lub(x, w) == w.coords)
-                or lub(u, v) not in [u.coords, v.coords]
-                or lub(x, w) not in [x.coords, w.coords]
-            ):
-                omega = (
-                    (eta * v.coords[0] + delta * x.coords[0]) / (eta + delta),
-                    (eta * u.coords[1] + delta * w.coords[1]) / (eta + delta),
-                )
-
-                if (
-                    check_omega_3(omega, u.coords, v.coords, w.coords, x.coords)
-                    and omega not in all_CritPts
-                ) or not prune:  # CheckOmega2, line 49 of Algorithm 7
-                    Omega_pts.append(omega)
-                    info_list.append(
-                        [omega, x.coords, u.coords, v.coords, w.coords, eta, delta, None]
-                    )
 
     return Omega_pts, info_list
 
 def output_alg_2_2_unpaired(CritPts, name, prune):
-    """Run Algorithm 7 on every quadruple of critical values with at least three distinct.
+    """Run Algorithm 7 on every configuration of quadruples(CritPts, repetition=True).
 
     Returns the distinct candidates, the number computed with duplicates, the number
     of distinct candidates, and two parallel lists (slope or None, and candidate, per
@@ -861,7 +847,6 @@ def output_alg_2_2_unpaired(CritPts, name, prune):
     Pts = []
     Dict_pts = [["omega_pts", "x", "u", "v", "w", "eta", "delta", "m"]]
     set_of_points = set({})
-    length = len(CritPts)
 
     all_critptscoords = []
     for x in CritPts:
@@ -873,28 +858,15 @@ def output_alg_2_2_unpaired(CritPts, name, prune):
 
     all_critptscoords = list(set(all_critptscoords))
 
-    for a in range(length):
-        for b in range(a + 1, length):
-            for c in range(b + 1, length):
-                for d in range(c, length):
-                    if check_three_distinct(
-                        [
-                            CritPts[a].coords,
-                            CritPts[b].coords,
-                            CritPts[c].coords,
-                            CritPts[d].coords,
-                        ]
-                    ):
-                        pts, dict_pts = algo_2v2_unpaired(
-                            [CritPts[a], CritPts[b], CritPts[c], CritPts[d]],
-                            all_critptscoords, prune
-                        )
-                        Pts += pts
-                        for p in range(len(pts)):
-                            key = candidate_key(pts[p], dict_pts[p][-1])
-                            if key not in set_of_points:
-                                set_of_points.add(key)
-                                Dict_pts += [dict_pts[p]]
+    for quad in quadruples(CritPts, repetition=True):
+        if check_three_distinct([c.coords for c in quad]):
+            pts, dict_pts = algo_2v2_unpaired(quad, all_critptscoords, prune)
+            Pts += pts
+            for p in range(len(pts)):
+                key = candidate_key(pts[p], dict_pts[p][-1])
+                if key not in set_of_points:
+                    set_of_points.add(key)
+                    Dict_pts += [dict_pts[p]]
 
     num_duplicates = len(Pts)
     Pts = [row[0] for row in Dict_pts[1:]]  # one representative per distinct candidate

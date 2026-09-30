@@ -4,51 +4,51 @@
  "exact_distance": 3.0,
  "section4": {
   "alg3": {
-   "raw": 916,
-   "distinct_points": 142
+   "raw": 1250,
+   "distinct_points": 158
   },
   "alg5": {
    "raw": 133,
    "distinct_slopes": 31
   },
   "alg7": {
-   "raw": 203,
-   "distinct_points": 93,
-   "distinct_slopes": 11
+   "raw": 622,
+   "distinct_points": 175,
+   "distinct_slopes": 16
   },
-  "lines_evaluated": 17192
+  "lines_evaluated": 31961
  },
  "section4_5": {
   "alg3": {
-   "raw": 348,
-   "distinct_points": 78
+   "raw": 478,
+   "distinct_points": 87
   },
   "alg5": {
    "raw": 21,
    "distinct_slopes": 15
   },
   "alg7": {
-   "raw": 99,
-   "distinct_points": 45,
-   "distinct_slopes": 9
+   "raw": 309,
+   "distinct_points": 99,
+   "distinct_slopes": 12
   },
-  "lines_evaluated": 6018
+  "lines_evaluated": 12022
  },
  "none": {
   "alg3": {
-   "raw": 5504,
-   "distinct_points": 442
+   "raw": 7436,
+   "distinct_points": 450
   },
   "alg5": {
    "raw": 133,
    "distinct_slopes": 31
   },
   "alg7": {
-   "raw": 1858,
-   "distinct_points": 411,
-   "distinct_slopes": 11
+   "raw": 4975,
+   "distinct_points": 572,
+   "distinct_slopes": 16
   },
-  "lines_evaluated": 187218
+  "lines_evaluated": 264636
  },
- "note": "lines_evaluated counts the lines on which the weighted bottleneck distance is evaluated after the deduplication fix that keys candidates by kind and normalised slope; before the fix they were 184597 / 17445 / 6084 because dropped slopes were missing and duplicate slopes produced duplicate lines."
+ "note": "Counts with the enumeration of Section 6 (every set of four critical values and every set of three with one point doubled) and Algorithm 7 as in the paper. Before that fix the code doubled only the last point of each triple and tried half of Algorithm 7's labelings: Section 4 counts were 916/142, 133/31, 203/93+11, and the line counts depended on the order of the critical values."
 }

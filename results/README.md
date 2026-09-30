@@ -6,6 +6,16 @@ was removed from the repository when it was prepared for publication and is pres
 git tag `pre-cleanup-2026-09-29` (branch `archive/pre-cleanup-2026-09`). The SoCG 2024
 snapshot is the tag `SoCG_Version`.
 
+**Code version.** All of these results were computed with earlier versions of the code, which
+ran the algorithms on fewer configurations than the paper describes: of the sets of four
+critical values with one point repeated, only those repeating the last point in list order, and
+in Algorithm 7 only one of the two choices of w. The current code follows the paper (Section 6
+and Algorithm 7). This adds candidate switch points and lines to evaluate (on the paper's small
+example 12,022 instead of 5,904 lines with all pruning) but changed the exact distance in none
+of 238 test cases, including all 179 pairs in `random_1v1/` whose exact distance exceeds both
+approximations. So the distances here stand, while the candidate counts, line counts and
+running times are those of the earlier code.
+
 | Folder | Feeds | Produced by (at the archive tag) |
 |---|---|---|
 | `cluster_timings/` | Figures 12–15 (running times of the three pruning variants, number of lines evaluated) | `Code/GROUP_EXPERIMENT_B.py` run under SLURM on the Dardel cluster via `Code/bash_scripts/run_one*.sh`; stdout parsed with `Code/extract_numbers.py` and `Notebooks/extract_values_to_dataframe.ipynb` |

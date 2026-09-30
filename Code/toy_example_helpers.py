@@ -1,11 +1,9 @@
 """
 Helpers shared by figure_toy_example.py and figure_toy_pruning.py.
 
-They run Algorithms 3, 5 and 7 quadruple by quadruple (mirroring the loops of
-omega_pts.output_alg_*) and deduplicate the outputs properly: proper points are
-compared as coordinates, points at infinity [0:a:b] as the slope b/a.  Proper points
-and points at infinity are kept in separate sets, so a point at infinity can never be
-swallowed by a proper point with the same tuple (which happens in output_alg_2_2_unpaired).
+They run Algorithms 3, 5 and 7 on the same configurations as omega_pts.output_alg_* and
+keep the distinct outputs apart by kind: proper points compared as coordinates, points at
+infinity [0:a:b] as the slope b/a.
 """
 import io
 import contextlib
@@ -30,13 +28,11 @@ def all_coords_with_lub(critpts):
 
 
 def quadruples(critpts, distinct_fn):
-    n = len(critpts)
-    for a in range(n):
-        for b in range(a + 1, n):
-            for c in range(b + 1, n):
-                for d in range(c, n):
-                    if distinct_fn([critpts[i].coords for i in (a, b, c, d)]):
-                        yield [critpts[a], critpts[b], critpts[c], critpts[d]]
+    """The configurations the pipeline runs the algorithms on (omega_pts.quadruples)."""
+    repetition = distinct_fn is omega.check_three_distinct
+    for q in omega.quadruples(critpts, repetition):
+        if distinct_fn([c.coords for c in q]):
+            yield q
 
 
 def run_algorithms(critpts, prune):
