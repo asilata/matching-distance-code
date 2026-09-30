@@ -1,5 +1,5 @@
 """
-Regenerate the four panels of the small-example figure of the paper (Figure 9).
+Regenerate the four panels of the small-example figure of the paper (Figure 6).
 
 Setting: Section 4 pruning on (CheckPts, CheckPts2, CheckOmega, CheckOmega2), Section 5
 pruning off, as in the original figure.  Every panel draws each distinct candidate once:

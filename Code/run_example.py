@@ -3,7 +3,7 @@ Compute the matching distance between two rectangle-decomposable persistence mod
 
     python Code/run_example.py --M 2 --N 1 --seed 13             random modules
     python Code/run_example.py --toy                              the paper's small example
-    python Code/run_example.py --example 2.13                     Examples 2.12-2.14 of the paper
+    python Code/run_example.py --example 2.13                     Examples 2.12-2.14 of arXiv:2210.12868
     python Code/run_example.py --M 2 --N 2 --seed 3 --pruning compare
 
 Prints the two approximations and the exact matching distance.  --pruning chooses which

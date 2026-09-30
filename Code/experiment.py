@@ -3,7 +3,7 @@ Shared scaffolding for the command-line scripts.
 
 Pruning variants, running one pair of modules through the pipeline, and building
 modules from command-line arguments (random modules, the paper's small example, or
-the paper's Examples 2.12-2.14).
+Examples 2.12-2.14 of Bapat et al., arXiv:2210.12868).
 """
 import contextlib
 import io
@@ -24,7 +24,7 @@ PRUNING = {
 }
 
 # Headers printed before each variant in verbose mode.  cluster/parse_logs.py splits the
-# logs on them, so they are kept exactly as in the runs behind Figures 12-15 of the paper.
+# logs on them, so they are kept exactly as in the runs behind Figures 9-12 of the paper.
 LOG_HEADERS = {
     "none": "~~~NO PRUNING WHATSOEVER~~~",
     "section4": "~~~ONLY OLD PRUNING~~~",
@@ -80,8 +80,8 @@ def add_module_args(parser):
     group.add_argument("--M", type=int, help="number of rectangles in the random module M")
     group.add_argument("--N", type=int, help="number of rectangles in the random module N")
     group.add_argument("--seed", type=int, help="seed of the random modules")
-    group.add_argument("--toy", action="store_true", help="the small example of the paper (Figure 9)")
-    group.add_argument("--example", choices=sorted(EXAMPLES), help="Examples 2.12-2.14 of the paper")
+    group.add_argument("--toy", action="store_true", help="the small example of the paper (Figure 6)")
+    group.add_argument("--example", choices=sorted(EXAMPLES), help="Examples 2.12-2.14 of Bapat et al., arXiv:2210.12868")
 
 
 def load_modules(args):
@@ -91,7 +91,7 @@ def load_modules(args):
         return M, N, "toy", "the small example of the paper"
     if args.example:
         M, N, _ = EXAMPLES[args.example]()
-        return M, N, "example_" + args.example.replace(".", "_"), f"Example {args.example} of the paper"
+        return M, N, "example_" + args.example.replace(".", "_"), f"Example {args.example} of Bapat et al., arXiv:2210.12868"
     if args.M is None or args.N is None or args.seed is None:
         raise SystemExit("give --M, --N and --seed, or --toy, or --example")
     M, N = chf.generate_random_rectangles(args.M, args.N, seed=args.seed)

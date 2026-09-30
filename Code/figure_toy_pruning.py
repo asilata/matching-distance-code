@@ -1,8 +1,8 @@
 """
-Effect of Section 5 pruning (Corollary 5.2) on the small SoCG example (Figure 9 of the LAMA paper).
+Effect of Section 5 pruning (Corollary 5.2) on the small SoCG example (Figure 6, bottom row).
 
 Runs Algorithms 3, 5 and 7 on the 9 critical values of the toy modules M and N under
-three variants -- no pruning, Section 4 pruning only (the setting of Figure 9), and
+three variants -- no pruning, Section 4 pruning only (the upper panels of Figure 6), and
 Sections 4 + 5 -- and reports properly deduplicated counts: finite points are compared
 as coordinates and points at infinity [0:a:b] as slopes b/a.  The lower bound D for
 Corollary 5.2 is the approximation used by the pipeline (max weighted bottleneck
@@ -27,7 +27,7 @@ settings.print_output = False
 settings.save_figure = False
 import examples as ex
 from toy_example_helpers import run_algorithms, exact_distance, approximation_lower_bound
-from figure_toy_example import draw_crit_vals, RED, BLACK, ORANGE, LABEL_M, LABEL_N  # same style as Figure 9
+from figure_toy_example import draw_crit_vals, RED, BLACK, ORANGE, LABEL_M, LABEL_N  # same style as Figure 6
 
 OUT_PNG = os.path.join(settings.figure_dir, "MN_section5_pruning.png")
 VARIANTS = [("no pruning", False, False), ("Section 4", True, False), ("Sections 4 + 5", True, True)]

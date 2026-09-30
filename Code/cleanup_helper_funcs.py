@@ -748,7 +748,7 @@ def generate_random_rectangles(num_M, num_N, seed=None):
 
 
 def generate_rects_experiment_2_12():
-    """The modules of Example 2.12 in the paper, as lists of [(top right), (bottom left)]."""
+    """The modules of Example 2.12 of Bapat et al. (arXiv:2210.12868), as lists of [(top right), (bottom left)]."""
     M = [[(100000000, 7), (2, 2)]]
     N = [[(100000000, 10), (2, 2)]]
     title = "Experiment_2.12"
@@ -757,7 +757,7 @@ def generate_rects_experiment_2_12():
 
 
 def generate_rects_experiment_2_13():
-    """The modules of Example 2.13 in the paper, as lists of [(top right), (bottom left)]."""
+    """The modules of Example 2.13 of Bapat et al. (arXiv:2210.12868), as lists of [(top right), (bottom left)]."""
     M = [[(7, 7), (0, 0)], [(7, 11), (0, 4)]]
     N = [[(7, 11), (0, 0)], [(7, 7), (0, 4)]]
     title = "Experiment_2.13"
@@ -766,7 +766,7 @@ def generate_rects_experiment_2_13():
 
 
 def generate_rects_experiment_2_14():
-    """The modules of Example 2.14 in the paper, as lists of [(top right), (bottom left)]."""
+    """The modules of Example 2.14 of Bapat et al. (arXiv:2210.12868), as lists of [(top right), (bottom left)]."""
     M = [[(7, 8), (0, 0)], [(7, 11), (0, 4)]]
     N = [[(7, 11), (0, 0)], [(7, 8), (0, 4)]]
     title = "Experiment_2.14"

@@ -21,7 +21,7 @@ def test_ex_one_rect():
 
 
 def small_socg_ex_rects():
-    """The small example of the paper (Figure 9) in list form: M has one rectangle, N has two."""
+    """The small example of the paper (Figure 6) in list form: M has one rectangle, N has two."""
     M = [[(6.0, 6.0), (0.0, 0.0)]]
     N = [[(8.0, 4.0), (4.0, 2.0)], [(2.0, 10.0), (1.0, 5.0)]]
     return M, N

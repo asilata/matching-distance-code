@@ -1,6 +1,6 @@
 # Cluster runs
 
-Figures 12–15 of the paper (running time of the three pruning variants and the number of
+Figures 9–12 of the paper (running time of the three pruning variants and the number of
 lines evaluated) come from batches of `run_example.py --pruning compare` jobs on a SLURM
 cluster, one job per (M, N, seed), with the verbose log of each job parsed into a CSV.
 

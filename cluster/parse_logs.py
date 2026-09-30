@@ -1,6 +1,6 @@
 """
 Parse the logs of `run_example.py --pruning compare --verbose` into one CSV row per
-(M, N, seed, pruning variant), with the columns used for Figures 12-15 of the paper.
+(M, N, seed, pruning variant), with the columns used for Figures 9-12 of the paper.
 
     python cluster/parse_logs.py LOG_DIR -o timings.csv
 

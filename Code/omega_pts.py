@@ -583,7 +583,7 @@ def algo_3vs1(CritPts, all_CritPts, prune):
 def check_omega_3(omega, u, v, w, x):
     """CheckOmega2 (Algorithm 6 in the paper).
 
-    True if omega satisfies the conditions of Proposition 4.6 and is not spurious.
+    True if omega satisfies the conditions of Proposition 4.6 and is not superfluous.
     """
     Q = {}  # quadrant of each point relative to omega
     m = {}  # slope of the line through omega and the point

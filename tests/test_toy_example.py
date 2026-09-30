@@ -1,4 +1,4 @@
-"""The small example of the paper (Figure 9): candidate counts, lower bound and distance."""
+"""The small example of the paper (Figure 6): candidate counts, lower bound and distance."""
 import json
 import os
 import random
