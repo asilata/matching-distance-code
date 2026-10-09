@@ -3,16 +3,18 @@ Draw Figures 7 and 8 of the paper: the number of candidate switch points compute
 Algorithms 3, 5 and 7, with and without duplicates, against the size of the input, together
 with the worst-case bound of Section 6.
 
-The counts are read from the logs in results/candidate_counts/, which were computed with an
-earlier version of the code (see results/README.md):
+The counts are read from the logs in results/candidate_counts/ that count_candidates.py
+writes with the current code:
 
-    Figure 7   rand_rects_stats.txt         random rectangle modules, (M, N) = (1, 1), (1, 2),
-                                            (2, 2), (3, 2), (3, 3) with seeds 1-5; mean and
-                                            standard error of the mean over the seeds
-    Figure 8   bunnyruns_poisson.txt        critical values from a Poisson point process
-               bunnyruns_random_rects.txt   random rectangle modules, (1, 1) up to (5, 6)
+    Figure 7   counts_fig7_random_rects.txt   random rectangle modules, (M, N) = (1, 1), (1, 2),
+                                              (2, 2), (3, 2), (3, 3) with seeds 1-5; mean and
+                                              standard error of the mean over the seeds
+    Figure 8   counts_fig8_poisson.txt        critical values from a Poisson point process
+               counts_fig8_random_rects.txt   random rectangle modules, (1, 1) up to (5, 6), seed 11
 
-Any log in the same format can be drawn instead, such as the output of
+The logs the submitted figures were drawn from, computed with an earlier version of the code,
+are kept beside them (rand_rects_stats.txt, bunnyruns_poisson.txt, bunnyruns_random_rects.txt;
+see results/README.md).  Any log in the same format can be drawn instead, such as the output of
 run_example.py --verbose.  The script also prints the ratios quoted in the text after Figure 7.
 
 Run from anywhere:  python Code/figure_candidate_counts.py
@@ -37,12 +39,12 @@ from matplotlib.ticker import MaxNLocator
 import settings
 
 DATA_DIR = os.path.join(settings.REPO_ROOT, "results", "candidate_counts")
-FIG7_LOG = os.path.join(DATA_DIR, "rand_rects_stats.txt")
+FIG7_LOG = os.path.join(DATA_DIR, "counts_fig7_random_rects.txt")
 FIG7_PNG = os.path.join(settings.figure_dir, "candidate_counts_random_rects.png")
 # (title, log, output) for each panel of Figure 8, drawn as a figure of its own
-FIG8_PANELS = [("Poisson point process", os.path.join(DATA_DIR, "bunnyruns_poisson.txt"),
+FIG8_PANELS = [("Poisson point process", os.path.join(DATA_DIR, "counts_fig8_poisson.txt"),
                 os.path.join(settings.figure_dir, "candidate_counts_poisson.png")),
-               ("Random rectangles", os.path.join(DATA_DIR, "bunnyruns_random_rects.txt"),
+               ("Random rectangles", os.path.join(DATA_DIR, "counts_fig8_random_rects.txt"),
                 os.path.join(settings.figure_dir, "candidate_counts_random_rects_critvals.png"))]
 DPI = 300
 

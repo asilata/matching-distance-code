@@ -1,0 +1,249 @@
+Seed:  1
+Rects in M:  1
+Rects in N:  1
+D:  3.033147
+NUMBER OF CRITVALS:  6
+3v1: Computed 137 pts; 35 deduplicated
+2v2paired: Computed 11 pts; 10 deduplicated
+2v2unpaired: Computed 64 pts; 31 deduplicated
+Time:  0.2 sec
+
+Seed:  2
+Rects in M:  1
+Rects in N:  1
+D:  2.192568
+NUMBER OF CRITVALS:  6
+3v1: Computed 167 pts; 54 deduplicated
+2v2paired: Computed 12 pts; 11 deduplicated
+2v2unpaired: Computed 73 pts; 43 deduplicated
+Time:  0.3 sec
+
+Seed:  3
+Rects in M:  1
+Rects in N:  1
+D:  1.769494
+NUMBER OF CRITVALS:  6
+3v1: Computed 202 pts; 72 deduplicated
+2v2paired: Computed 10 pts; 10 deduplicated
+2v2unpaired: Computed 101 pts; 58 deduplicated
+Time:  0.2 sec
+
+Seed:  4
+Rects in M:  1
+Rects in N:  1
+D:  2.991460
+NUMBER OF CRITVALS:  6
+3v1: Computed 214 pts; 74 deduplicated
+2v2paired: Computed 13 pts; 13 deduplicated
+2v2unpaired: Computed 94 pts; 52 deduplicated
+Time:  0.2 sec
+
+Seed:  5
+Rects in M:  1
+Rects in N:  1
+D:  1.292189
+NUMBER OF CRITVALS:  6
+3v1: Computed 90 pts; 30 deduplicated
+2v2paired: Computed 10 pts; 9 deduplicated
+2v2unpaired: Computed 28 pts; 20 deduplicated
+Time:  0.2 sec
+
+Seed:  1
+Rects in M:  1
+Rects in N:  2
+D:  3.033147
+NUMBER OF CRITVALS:  9
+3v1: Computed 776 pts; 270 deduplicated
+2v2paired: Computed 73 pts; 58 deduplicated
+2v2unpaired: Computed 390 pts; 214 deduplicated
+Time:  1.1 sec
+
+Seed:  2
+Rects in M:  1
+Rects in N:  2
+D:  2.192568
+NUMBER OF CRITVALS:  9
+3v1: Computed 469 pts; 170 deduplicated
+2v2paired: Computed 51 pts; 40 deduplicated
+2v2unpaired: Computed 183 pts; 112 deduplicated
+Time:  1.1 sec
+
+Seed:  3
+Rects in M:  1
+Rects in N:  2
+D:  3.049788
+NUMBER OF CRITVALS:  9
+3v1: Computed 881 pts; 408 deduplicated
+2v2paired: Computed 36 pts; 35 deduplicated
+2v2unpaired: Computed 496 pts; 331 deduplicated
+Time:  1.3 sec
+
+Seed:  4
+Rects in M:  1
+Rects in N:  2
+D:  2.991460
+NUMBER OF CRITVALS:  9
+3v1: Computed 1036 pts; 362 deduplicated
+2v2paired: Computed 79 pts; 63 deduplicated
+2v2unpaired: Computed 477 pts; 214 deduplicated
+Time:  1.5 sec
+
+Seed:  5
+Rects in M:  1
+Rects in N:  2
+D:  1.997761
+NUMBER OF CRITVALS:  9
+3v1: Computed 653 pts; 235 deduplicated
+2v2paired: Computed 81 pts; 53 deduplicated
+2v2unpaired: Computed 293 pts; 148 deduplicated
+Time:  1.5 sec
+
+Seed:  1
+Rects in M:  2
+Rects in N:  2
+D:  3.033147
+NUMBER OF CRITVALS:  12
+3v1: Computed 3230 pts; 1212 deduplicated
+2v2paired: Computed 292 pts; 217 deduplicated
+2v2unpaired: Computed 1500 pts; 839 deduplicated
+Time:  4.5 sec
+
+Seed:  2
+Rects in M:  2
+Rects in N:  2
+D:  2.192568
+NUMBER OF CRITVALS:  12
+3v1: Computed 3566 pts; 962 deduplicated
+2v2paired: Computed 364 pts; 214 deduplicated
+2v2unpaired: Computed 1667 pts; 616 deduplicated
+Time:  5.5 sec
+
+Seed:  3
+Rects in M:  2
+Rects in N:  2
+D:  3.049788
+NUMBER OF CRITVALS:  12
+3v1: Computed 2659 pts; 1219 deduplicated
+2v2paired: Computed 143 pts; 113 deduplicated
+2v2unpaired: Computed 1432 pts; 908 deduplicated
+Time:  3.9 sec
+
+Seed:  4
+Rects in M:  2
+Rects in N:  2
+D:  1.707546
+NUMBER OF CRITVALS:  12
+3v1: Computed 4248 pts; 1566 deduplicated
+2v2paired: Computed 358 pts; 235 deduplicated
+2v2unpaired: Computed 2028 pts; 965 deduplicated
+Time:  5.9 sec
+
+Seed:  5
+Rects in M:  2
+Rects in N:  2
+D:  4.926949
+NUMBER OF CRITVALS:  12
+3v1: Computed 2211 pts; 867 deduplicated
+2v2paired: Computed 222 pts; 158 deduplicated
+2v2unpaired: Computed 1080 pts; 577 deduplicated
+Time:  3.4 sec
+
+Seed:  1
+Rects in M:  3
+Rects in N:  2
+D:  3.033147
+NUMBER OF CRITVALS:  15
+3v1: Computed 6549 pts; 2544 deduplicated
+2v2paired: Computed 629 pts; 477 deduplicated
+2v2unpaired: Computed 3009 pts; 1715 deduplicated
+Time:  9.2 sec
+
+Seed:  2
+Rects in M:  3
+Rects in N:  2
+D:  2.192568
+NUMBER OF CRITVALS:  15
+3v1: Computed 7382 pts; 2113 deduplicated
+2v2paired: Computed 925 pts; 514 deduplicated
+2v2unpaired: Computed 3247 pts; 1296 deduplicated
+Time:  11.5 sec
+
+Seed:  3
+Rects in M:  3
+Rects in N:  2
+D:  4.267388
+NUMBER OF CRITVALS:  15
+3v1: Computed 3094 pts; 1576 deduplicated
+2v2paired: Computed 192 pts; 162 deduplicated
+2v2unpaired: Computed 1645 pts; 1085 deduplicated
+Time:  5.1 sec
+
+Seed:  4
+Rects in M:  3
+Rects in N:  2
+D:  1.707546
+NUMBER OF CRITVALS:  15
+3v1: Computed 10401 pts; 3787 deduplicated
+2v2paired: Computed 1067 pts; 660 deduplicated
+2v2unpaired: Computed 4684 pts; 2237 deduplicated
+Time:  15.9 sec
+
+Seed:  5
+Rects in M:  3
+Rects in N:  2
+D:  4.926949
+NUMBER OF CRITVALS:  15
+3v1: Computed 3686 pts; 1685 deduplicated
+2v2paired: Computed 395 pts; 283 deduplicated
+2v2unpaired: Computed 1851 pts; 1144 deduplicated
+Time:  5.9 sec
+
+Seed:  1
+Rects in M:  3
+Rects in N:  3
+D:  3.033147
+NUMBER OF CRITVALS:  18
+3v1: Computed 15065 pts; 6021 deduplicated
+2v2paired: Computed 1546 pts; 1093 deduplicated
+2v2unpaired: Computed 6762 pts; 3995 deduplicated
+Time:  19.0 sec
+
+Seed:  2
+Rects in M:  3
+Rects in N:  3
+D:  2.192568
+NUMBER OF CRITVALS:  18
+3v1: Computed 18057 pts; 5531 deduplicated
+2v2paired: Computed 2332 pts; 1302 deduplicated
+2v2unpaired: Computed 7613 pts; 3277 deduplicated
+Time:  22.6 sec
+
+Seed:  3
+Rects in M:  3
+Rects in N:  3
+D:  4.267388
+NUMBER OF CRITVALS:  18
+3v1: Computed 6254 pts; 3119 deduplicated
+2v2paired: Computed 389 pts; 313 deduplicated
+2v2unpaired: Computed 3200 pts; 1996 deduplicated
+Time:  7.4 sec
+
+Seed:  4
+Rects in M:  3
+Rects in N:  3
+D:  2.451377
+NUMBER OF CRITVALS:  18
+3v1: Computed 19420 pts; 7459 deduplicated
+2v2paired: Computed 1872 pts; 1161 deduplicated
+2v2unpaired: Computed 8804 pts; 4467 deduplicated
+Time:  21.2 sec
+
+Seed:  5
+Rects in M:  3
+Rects in N:  3
+D:  4.926949
+NUMBER OF CRITVALS:  18
+3v1: Computed 8075 pts; 3713 deduplicated
+2v2paired: Computed 865 pts; 593 deduplicated
+2v2unpaired: Computed 3979 pts; 2470 deduplicated
+Time:  9.9 sec
