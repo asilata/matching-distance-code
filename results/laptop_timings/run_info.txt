@@ -1,0 +1,2 @@
+started 2026-10-01 01:50  set core  code 0f61fa0  Apple M2 Pro  workers 5  memory cap 22.0 GB  python 3.9.6 gudhi 3.8.0  jobs 409
+started 2026-10-09 13:50  set core  code 0f61fa0  Apple M2 Pro  workers 5  memory cap 22.0 GB  python 3.9.6 gudhi 3.8.0  jobs 414

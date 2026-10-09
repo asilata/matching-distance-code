@@ -1,0 +1,36 @@
+M: 2 rectangle(s), N: 2 rectangle(s)  (random modules, seed 10)
+~~~ALL (including NEW) PRUNING~~~
+Rects in M:  2
+Rects in N:  2
+Maximum distance for lines through critical points: 2.121
+Lines counted crit pts: 358
+Time to get approx. from crit pts:  0.014 sec
+Maximum distance computed for grid of lines: 2.100
+Number of grid points: 9800
+Time elapsed (theta b grid): 0.225 sec
+NUMBER OF CRITVALS:  12
+______________________________________
+EXACT
+_____________________________________
+3v1: Computed 4259 pts; 1603 deduplicated
+-------------
+2v2paired: Computed 422 pts; 322 deduplicated
+-------------
+2v2unpaired: Computed 1884 pts; 1083 deduplicated
+______________________________________
+Computing matching dist!
+Lines through pairs of pts: 0.000 sec
+Lines through pts with given slope: 5.624 sec
+Lines of slope one: 5.642 sec
+Gudhi time: 5.645 sec
+Matching dist: 2.121 with slope (1.000, 0.993) and intercept (1.417, -1.417).
+Lines counted: 1973204
+Time to compute bottleneck dists: 69.457 sec
+Time to compute switch pts: 3.849 sec
+Time to compute match dist: 75.287 sec
+Total time elapsed in exact computation: 79.136 sec
+approximation, lines through pairs of critical values : 2.120747
+approximation, grid of lines                          : 2.100499
+exact matching distance, pruning = all                : 2.120747
+  attained on the line of slope 0.9931 through (1.417, -1.417)
+  lines evaluated: 1973204    time: 79.14 s exact, 0.24 s approximations

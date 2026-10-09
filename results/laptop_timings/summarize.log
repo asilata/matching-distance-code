@@ -1,0 +1,62 @@
+Local rerun: 414 finished jobs.  Cluster: 702 rows (Figures 9-12).
+
+Finished jobs by variant and total number of rectangles (cluster runs in brackets)
+  none      2:  20 ( 20)  3:  40 ( 40)  4:   0 ( 60)  5:   0 ( 80)  6:   0 ( 34)
+  section4  2:  20 ( 20)  3:  40 ( 40)  4:  60 ( 60)  5:   0 ( 80)  6:   0 ( 34)
+  all       2:  20 ( 20)  3:  40 ( 40)  4:  60 ( 60)  5:  80 ( 80)  6:  34 ( 34)
+
+Checks
+  exact distance equal across pruning variants: 120 configurations with more than one variant, largest difference 0
+  exact distance >= both approximations (to the 3 decimals logged): 414 of 414
+  lines evaluated equal to the count-only rerun (expected_lines.csv): 410 of 410; 4 jobs not in that rerun
+  time: none > section4 > all in 60 of 60 configurations with all three; section4 > all in 120 of 120
+  the larger approximation already equals the exact distance (3 decimals) in 411 of 414 jobs
+  D = max(crit, grid), all pruning: {'equal': 211, 'grid larger': 16, 'crit larger': 7}
+
+Figure 9: median total time of the exact computation (s); laptop / cluster = median over configurations of the ratio
+  variant   rects    n    laptop   cluster  laptop/cluster  lines laptop/cluster
+  none          2   20       0.8       1.6            0.50                  0.69
+  none          3   40      25.3      64.9            0.40                  0.54
+  section4      2   20       0.3       0.6            0.57                  0.91
+  section4      3   40       4.9      10.5            0.48                  0.68
+  section4      4   60      64.9     137.4            0.45                  0.59
+  all           2   20       0.2       0.5            0.48                  0.71
+  all           3   40       2.8       6.5            0.42                  0.59
+  all           4   60      27.1      70.5            0.38                  0.51
+  all           5   80     175.5     497.7            0.35                  0.46
+  all           6   34     836.1    2280.0            0.33                  0.43
+
+Figure 10: switch-point time as % of the total time, median (laptop / cluster)
+  none      2: 42.6 / 42.0   3:  7.5 /  6.6
+  section4  2: 79.9 / 82.3   3: 29.7 / 30.9   4:  7.7 /  8.5
+  all       2: 82.2 / 85.3   3: 35.4 / 33.7   4:  9.8 /  9.9   5:  3.6 /  3.2   6:  1.7 /  1.5
+
+Figure 11, all pruning only: time of each approximation as % of the switch-point time, median (max)
+  rects    n     crit, laptop    crit, cluster     grid, laptop  crit+grid, laptop
+      2   20    0.00 (  2.90)    0.00 (  1.78)   55.32 (254.29)     55.32 (255.24)
+      3   40    0.28 (  1.15)    0.15 (  0.55)   17.07 ( 62.55)     17.35 ( 63.18)
+      4   60    0.32 (  1.43)    0.15 (  0.51)    7.35 ( 34.13)      7.84 ( 35.51)
+      5   80    0.45 (  3.43)    0.20 (  1.04)    4.62 ( 21.30)      5.14 ( 24.73)
+      6   34    0.54 (  3.31)    0.37 (  1.38)    2.68 (  9.55)      3.22 ( 12.72)
+
+Figure 12, all pruning: lines evaluated / lines through pairs of critical values
+  2 rectangles: mean      168  SD      49  (n=20)
+  3 rectangles: mean      972  SD     368  (n=40)
+  4 rectangles: mean     3189  SD    1283  (n=60)
+  5 rectangles: mean     7534  SD    3846  (n=80)
+  6 rectangles: mean    15287  SD    8134  (n=34)
+  1+5 (either order): mean    12417  (n=14)
+  2+4 (either order): mean    15930  (n=14)
+  3+3 (either order): mean    20484  (n=6)
+
+Memory and overhead
+  none      2 rects: peak memory up to  0.10 GB; wall time - exact time, median  0.6 s
+  none      3 rects: peak memory up to  0.73 GB,  417 bytes per line; wall time - exact time, median  0.7 s
+  section4  2 rects: peak memory up to  0.09 GB; wall time - exact time, median  0.6 s
+  section4  3 rects: peak memory up to  0.22 GB; wall time - exact time, median  0.6 s
+  section4  4 rects: peak memory up to  1.68 GB,  437 bytes per line; wall time - exact time, median  0.7 s
+  all       2 rects: peak memory up to  0.08 GB; wall time - exact time, median  0.6 s
+  all       3 rects: peak memory up to  0.18 GB; wall time - exact time, median  0.6 s
+  all       4 rects: peak memory up to  1.09 GB,  418 bytes per line; wall time - exact time, median  0.7 s
+  all       5 rects: peak memory up to  4.55 GB,  458 bytes per line; wall time - exact time, median  0.8 s
+  all       6 rects: peak memory up to 16.95 GB,  456 bytes per line; wall time - exact time, median  0.9 s
