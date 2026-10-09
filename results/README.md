@@ -36,6 +36,7 @@ documents the columns in detail.
 - `dardel_experiment_results.csv`: 600 rows, the main run.
 - `all_experiment_results.csv`: 240 rows, an earlier subset.
 - `dardel_experiment_results_six.csv`, `six_results_3_Nov.csv`: runs with six rectangles in total, the largest cases (tens of thousands of seconds without pruning).
+- `dardel_experiment_results_six_seed2.csv`: seed 2 of the five six-rectangle splits (15 rows), copied from the coauthors' sheet `dardel_experiment_results` in October 2026; the other files lack them. With these the cluster runs number 234 per pruning variant, as in the paper.
 - `dardel_experiment_results.xlsx`: the workbook the figures were plotted from; its other sheets hold the ratio and timing plots.
 
 ## candidate_counts/
