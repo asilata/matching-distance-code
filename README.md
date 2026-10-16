@@ -120,3 +120,7 @@ To check that everything works, run `pytest` (about 20 seconds).
 The code was written by Robyn Brooks, Celia Hacker, Claudia Landi, Barbara I. Mahler and
 Elizabeth R. Stephenson. It is released under the
 MIT license; see [LICENSE](LICENSE).
+
+## AI Disclosure
+
+The authors made use of AI to debug and clean up the code.
