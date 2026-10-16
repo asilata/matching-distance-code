@@ -6,8 +6,8 @@ rectangle-decomposable 2-parameter persistence modules, from the paper
 > Robyn Brooks, Celia Hacker, Claudia Landi, Barbara I. Mahler, Elizabeth R. Stephenson.
 > *Switch points of bi-persistence matching distance.* Submitted, 2026.
 
-Figure, section, algorithm and equation numbers in this repository refer to the manuscript
-version of 30 September 2026. The paper builds on the theory in Bapat et al.,
+Figure, section, algorithm and equation numbers in this repository refer to the revised
+manuscript of 16 October 2026. The paper builds on the theory in Bapat et al.,
 *Computing the Matching Distance of 2-Parameter Persistence Modules from Critical Values*,
 [arXiv:2210.12868](https://arxiv.org/abs/2210.12868).
 
@@ -121,8 +121,9 @@ modules and a few seeds each:
 Without pruning, the computation takes about ten times as long. For example, `--M 2 --N 2 --seed 3`
 takes 733 s with no pruning, 184 s with Section 4 pruning and 70 s with both. For six
 rectangles in total, the archived cluster runs in `results/cluster_timings/` took 8–14 hours
-without pruning and about an hour with all pruning. Those runs used the earlier code, which
-evaluated fewer lines.
+without pruning and about an hour with all pruning. Those runs used an earlier version of the
+code, which evaluated about twice as many lines; `results/laptop_timings/` has them rerun with
+the current code.
 
 ## Examples from Bapat et al.
 
@@ -143,10 +144,12 @@ The code reproduces the values derived there.
 | 6 | `python Code/figure_toy_combined.py` | `paper_figures/combination_rerun.png`, assembled from the panels below, which it regenerates first |
 | 6, upper panels | `python Code/figure_toy_example.py` | `paper_figures/MN.png` (the modules), `MN3v1.png` (Algorithm 3), `MN2v2p.png` (Algorithm 5), `MN2v2unp.png` (Algorithm 7) |
 | 6, bottom row | `python Code/figure_toy_pruning.py` | `paper_figures/MN_section5_pruning.png` |
-| 7 | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_random_rects.png`, from `results/candidate_counts/rand_rects_stats.txt` |
-| 8, Poisson point process | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_poisson.png`, from `results/candidate_counts/bunnyruns_poisson.txt` |
-| 8, random rectangles | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_random_rects_critvals.png`, from `results/candidate_counts/bunnyruns_random_rects.txt` |
-| 9–12 | archived cluster runs; new runs with `cluster/` | `results/cluster_timings/` |
+| 7 | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_random_rects.png`, from `results/candidate_counts/counts_fig7_random_rects.txt` |
+| 8, Poisson point process | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_poisson.png`, from `results/candidate_counts/counts_fig8_poisson.txt` |
+| 8, random rectangles | `python Code/figure_candidate_counts.py` | `paper_figures/candidate_counts_random_rects_critvals.png`, from `results/candidate_counts/counts_fig8_random_rects.txt` |
+| 9, 10 | charts in `results/cluster_timings/dardel_experiment_results.xlsx` | from the cluster runs (`results/cluster_timings/`) |
+| 11 | `python Code/figure_approximation_time.py` | `paper_figures/approximation_time.png`, from `results/laptop_timings/timings.csv` |
+| 12 | `python Code/figure_line_ratios.py` | `paper_figures/line_ratios.tex` (pgfplots), from `results/laptop_timings/timings.csv` |
 
 The figure scripts print the counts that belong in the caption of Figure 6. Distinct
 candidates are counted by kind: proper points by their coordinates, and points at infinity
@@ -157,13 +160,16 @@ candidate switch points (158 distinct), Algorithm 5 computes 133 slopes (31 dist
 Algorithm 7 computes 622 candidates (175 distinct points and 16 distinct slopes). With
 Section 5 pruning as well, these become 478 (87), 21 (15) and 309 (99 and 12).
 
-`figure_candidate_counts.py` draws Figures 7 and 8 from the archived logs in a few seconds and
-prints the ratios quoted after Figure 7: over all 25 runs, 0.512 of the computed candidates are
-distinct, and the computed candidates are 5.52 · 10⁻² of the worst-case bound. The bound is
+`figure_candidate_counts.py` draws Figures 7 and 8 in a few seconds from the logs that
+`Code/count_candidates.py` writes with the current code (a few minutes for the largest inputs),
+and prints the ratios quoted after Figure 7: over all 25 runs, 0.441 of the computed candidates
+are distinct, and the computed candidates are 7.0 · 10⁻² of the worst-case bound. The bound is
 C(n,4)(48 + 6 + 24) + 3 · C(n,3)(16 + 12) = (13/4) n(n − 1)(n − 2)(n + 17/13) for n critical values.
 Any log in the same format can be drawn instead, such as the output of `run_example.py --verbose`.
 
-The archived data in `results/` were computed with earlier versions of the code; see
+Figures 11 and 12 come from the rerun of the cluster jobs with the current code
+(`cluster/run_local.py`; see [cluster/README.md](cluster/README.md)). Figures 9 and 10 still show
+the cluster runs, made with an earlier version of the code. See
 [results/README.md](results/README.md) for what was produced by which script.
 
 ## Batch experiments
@@ -212,11 +218,13 @@ another directory; and the logs behind Figures 7 and 8 and the worst-case bound.
 | `Code/plot.py` | plots of candidate switch points |
 | `Code/settings.py` | global switches (output, pruning, lower bound D, candidate CSV dumps) |
 | `Code/figure_toy_combined.py`, `figure_toy_example.py`, `figure_toy_pruning.py`, `toy_example_helpers.py` | Figure 6 |
-| `Code/figure_candidate_counts.py` | Figures 7 and 8 |
+| `Code/figure_candidate_counts.py`, `count_candidates.py` | Figures 7 and 8, and the counts behind them |
+| `Code/figure_approximation_time.py` | Figure 11 |
+| `Code/figure_line_ratios.py` | Figure 12 |
 | `Code/batch_1v1.py` | batch experiments |
-| `cluster/` | SLURM job script and log parser for the timing experiments |
-| `results/` | archived data behind Figures 7–12 |
-| `paper_figures/` | Figures 6–8, and the panels of Figure 6 |
+| `cluster/` | SLURM job script, log parser, and the local rerun of the timing experiments |
+| `results/` | data behind Figures 7–12 |
+| `paper_figures/` | Figures 6–8, 11 and 12, and the panels of Figure 6 |
 | `tests/` | pytest suite |
 
 ## Authors and license
