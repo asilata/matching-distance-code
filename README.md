@@ -113,7 +113,11 @@ they use is in the folder `matching_distance/`:
 - `experiment.py`: `run_one` and the pruning variants.
 - `examples.py`, `plot.py` and `settings.py`: the examples, the pictures and a few switches.
 
-To check that everything works, run `pytest` (about 20 seconds).
+To check that everything works, run the tests (about 20 seconds):
+
+```
+pytest
+```
 
 ## Authors and license
 
