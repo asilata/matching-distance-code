@@ -81,9 +81,11 @@ Options you can add to any of these:
   only saves time.
 - `--help` lists all the options.
 
-The running time grows quickly with the number of rectangles: under a second for 2 rectangles
-in total, a few seconds for 3, under a minute for 4, a few minutes for 5, and about a quarter of
-an hour for 6.
+The running time grows quickly with the number of rectangles. With the default pruning, on a
+recent laptop (an Apple M2 Pro), it takes about a second for 2 rectangles in total, up to 10
+seconds for 3, up to 2 minutes for 4, up to 10 minutes for 5, and from a minute to about 40
+minutes for 6. Without pruning (`--pruning none`, and so also `--pruning compare`) it is many
+times slower and needs much more memory: with 5 or 6 rectangles, more than a laptop has.
 
 ## Your own modules
 
