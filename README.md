@@ -4,21 +4,19 @@ This repository contains code to compute the exact matching distance between two
 rectangle-decomposable 2-parameter persistence modules, from the paper
 
 > Robyn Brooks, Celia Hacker, Claudia Landi, Barbara I. Mahler, Elizabeth R. Stephenson.
-> *Switch points of bi-persistence matching distance.* 2026.
+> _Switch points of bi-persistence matching distance._ 2026.
 
 ## Setting up
 
-You need Python 3; the code was tested with Python 3.9.6. The commands below are typed in a
-terminal (on a Mac, the Terminal app).
+You need Python 3; the code was tested with Python 3.9.6.
 
-1. Get the code. On the GitHub page, click the green **Code** button, then **Download ZIP**,
-   and unzip it. Or, if you use git:
+1. Get the code.
 
    ```
    git clone https://github.com/asilata/matching-distance-code.git
    ```
 
-2. Go into the folder (if you downloaded the ZIP, it is called `matching-distance-code-master`):
+2. Go into the directory `matching-distance-code-master`:
 
    ```
    cd matching-distance-code
@@ -120,5 +118,5 @@ To check that everything works, run `pytest` (about 20 seconds).
 ## Authors and license
 
 The code was written by Robyn Brooks, Celia Hacker, Claudia Landi, Barbara I. Mahler and
-Elizabeth R. Stephenson. Asilata Bapat started the repository in 2021. It is released under the
+Elizabeth R. Stephenson. It is released under the
 MIT license; see [LICENSE](LICENSE).
