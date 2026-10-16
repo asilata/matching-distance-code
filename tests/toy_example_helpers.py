@@ -1,5 +1,5 @@
 """
-Helpers shared by figure_toy_example.py and figure_toy_pruning.py.
+Helpers for test_toy_example.py.
 
 They run Algorithms 3, 5 and 7 on the same configurations as omega_pts.output_alg_* and
 keep the distinct outputs apart by kind: proper points compared as coordinates, points at
