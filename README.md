@@ -202,7 +202,8 @@ pytest
 
 The suite takes about 20 seconds. It checks the candidate counts, lower bound, exact distance
 and number of lines of the small example; 13 random pairs from `results/random_1v1/`;
-CheckPts2 against a linear-programming feasibility test; `run_example.py` run from
+CheckPts2 against a linear-programming feasibility test; CheckOmega2, and Algorithm 6 as printed,
+against an exact brute-force test of Proposition 4.6; `run_example.py` run from
 another directory; and the logs behind Figures 7 and 8 and the worst-case bound.
 
 ## Layout
