@@ -117,9 +117,8 @@ To check that everything works, run `pytest` (about 20 seconds).
 
 ## Authors and license
 
-The code was written by Robyn Brooks, Celia Hacker, Claudia Landi, Barbara I. Mahler and
-Elizabeth R. Stephenson. It is released under the
-MIT license; see [LICENSE](LICENSE).
+The code was written by Asilata Bapat, Robyn Brooks, Celia Hacker, Claudia Landi, Barbara I.
+Mahler and Elizabeth R. Stephenson. It is released under the MIT license; see [LICENSE](LICENSE).
 
 ## AI Disclosure
 
