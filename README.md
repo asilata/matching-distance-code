@@ -16,7 +16,7 @@ You need Python 3; the code was tested with Python 3.9.6.
    git clone https://github.com/asilata/matching-distance-code.git
    ```
 
-2. Go into the directory `matching-distance-code-master`:
+2. Go into the directory:
 
    ```
    cd matching-distance-code
