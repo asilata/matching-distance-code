@@ -12,9 +12,9 @@ from dataclasses import dataclass
 import matplotlib
 matplotlib.use("Agg")
 
-import settings
-import matching_distance as md
-import examples as ex
+from . import settings
+from . import distance as md
+from . import examples as ex
 
 # variant -> (section4_pruning, section5_pruning)
 PRUNING = {

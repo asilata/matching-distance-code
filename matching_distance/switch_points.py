@@ -1,13 +1,13 @@
 import gudhi
 from math import cos, sin, pi
 import numpy as np
-import modules as mod
+from . import modules as mod
 import numpy.linalg
 import scipy.spatial
 from scipy.optimize import linprog
 from itertools import combinations
 from fractions import Fraction
-import settings
+from . import settings
 import csv
 import os
 

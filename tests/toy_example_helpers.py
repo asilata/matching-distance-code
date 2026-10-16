@@ -9,9 +9,9 @@ import io
 import contextlib
 from fractions import Fraction
 
-import examples as ex
-import switch_points as sp
-import matching_distance as md
+from matching_distance import examples as ex
+from matching_distance import switch_points as sp
+from matching_distance import distance as md
 
 
 def slope_key(m):

@@ -5,10 +5,10 @@ import random
 
 import pytest
 
-import examples as ex
-import experiment
-import switch_points as sp
-import settings
+from matching_distance import examples as ex
+from matching_distance import experiment
+from matching_distance import switch_points as sp
+from matching_distance import settings
 import toy_example_helpers as teh
 from conftest import FIXTURES
 

@@ -4,8 +4,8 @@ import os
 
 import pytest
 
-import matching_distance as md
-import experiment
+from matching_distance import distance as md
+from matching_distance import experiment
 from conftest import FIXTURES
 
 ROWS = list(csv.DictReader(open(os.path.join(FIXTURES, "random_1v1_expected.csv"))))

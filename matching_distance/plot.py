@@ -4,7 +4,7 @@ import matplotlib.patches as mpatches
 
 from matplotlib import rc
 
-import settings
+from . import settings
 
 rc("font", **{"family": "serif", "serif": ["Times"]})
 rc("text", usetex=settings.use_tex)

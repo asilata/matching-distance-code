@@ -2,7 +2,7 @@
 import os
 import shutil
 
-REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 output_dir = os.path.join(REPO_ROOT, "output")          # everything the scripts write; not tracked
 write_candidate_csvs = False   # also dump the candidate switch points of every run to output/candidates/
 

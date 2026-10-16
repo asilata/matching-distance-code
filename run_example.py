@@ -15,9 +15,9 @@ line, --plot-candidates the candidate switch points of each algorithm, under out
 import argparse
 import os
 
-import settings
-import matching_distance as md
-from experiment import PRUNING, add_module_args, load_modules, run_one
+from matching_distance import settings
+from matching_distance import distance as md
+from matching_distance.experiment import PRUNING, add_module_args, load_modules, run_one
 
 
 def describe_line(line):

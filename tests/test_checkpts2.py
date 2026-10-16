@@ -3,8 +3,8 @@ import random
 
 from scipy.optimize import linprog
 
-import modules as mod
-import switch_points as sp
+from matching_distance import modules as mod
+from matching_distance import switch_points as sp
 
 
 def separable(x, w, u, v):

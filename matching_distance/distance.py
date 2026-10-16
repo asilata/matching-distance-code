@@ -6,7 +6,7 @@ Section 5 pruning, and the exact computation (exact_matching_distance), which ru
 Algorithms 3, 5 and 7 (compute_switch_points) and evaluates the weighted bottleneck
 distance on every candidate line (compute_matching_dist).
 """
-import modules as mod
+from . import modules as mod
 
 import numpy as np
 import matplotlib
@@ -14,16 +14,16 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import math
 import random as rnd
-import examples as ex
-import plot as ourplot
+from . import examples as ex
+from . import plot as ourplot
 import csv
 import os
 
-import switch_points as sp
+from . import switch_points as sp
 from numpy import linalg as LA
 from math import cos, sin, pi, atan
 import time
-import settings
+from . import settings
 
 
 def make_1dim_MN_example(tr_m, bl_m, tr_n, bl_n):

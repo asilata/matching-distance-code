@@ -1,4 +1,4 @@
-"""The command-line entry point, run as a user would from an arbitrary directory."""
+"""The two scripts, run as a user would from an arbitrary directory."""
 import os
 import subprocess
 import sys
@@ -13,3 +13,11 @@ def test_run_example_from_another_directory(tmp_path):
     assert "exact matching distance, pruning = all" in out.stdout
     assert "3.206211" in out.stdout
     assert list(tmp_path.iterdir()) == []  # nothing is written into the working directory
+
+
+def test_my_example_from_another_directory(tmp_path):
+    out = subprocess.run([sys.executable, os.path.join(REPO, "my_example.py")], cwd=tmp_path,
+                         capture_output=True, text=True, timeout=300)
+    assert out.returncode == 0, out.stderr
+    assert "matching distance: 3.0" in out.stdout
+    assert list(tmp_path.iterdir()) == []

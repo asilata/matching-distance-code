@@ -10,7 +10,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 FIXTURES = os.path.join(REPO, "tests", "fixtures")
 
-import settings  # noqa: E402
+from matching_distance import settings  # noqa: E402
 
 _DEFAULTS = {k: v for k, v in vars(settings).items() if isinstance(v, (bool, int, float, str))}
 

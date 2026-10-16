@@ -91,31 +91,26 @@ A module is a list of rectangles, and each rectangle is written as its top-right
 by its bottom-left corner: `[(6, 6), (0, 0)]` is the square with corners (0, 0) and (6, 6). For
 a rectangle that is unbounded on one side, use a large number such as `10**8` for that side.
 
-To compute the matching distance between your own modules, make a file `my_example.py` in the
-folder with any text editor:
+To compute the matching distance between your own modules, open `my_example.py` in any text
+editor, replace the modules `M` and `N` with yours, save it, and run
 
-```python
-from experiment import run_one
-
-M = [[(6, 6), (0, 0)]]
-N = [[(8, 4), (4, 2)], [(2, 10), (1, 5)]]
-
-result = run_one(M, N)
-print("matching distance:", result.exact)
+```
+python my_example.py
 ```
 
-and run it with `python my_example.py`. Besides `result.exact`, `result.best_line` is the line on
-which the distance is attained, with direction `result.best_line.m` through the point
-`result.best_line.b`, and `run_one(M, N, "none")` or `run_one(M, N, "section4")` changes the
-pruning.
+It prints the matching distance and the line on which it is attained. In `my_example.py`,
+`run_one(M, N, "none")` or `run_one(M, N, "section4")` changes the pruning.
 
 ## Where things are
 
+The two files at the top, `run_example.py` and `my_example.py`, are the ones to run. The code
+they use is in the folder `matching_distance/`:
+
 - `switch_points.py`: Algorithms 1–7 of the paper, which compute the candidate switch points
   and discard the superfluous ones.
-- `matching_distance.py`: the approximations and the exact matching distance.
+- `distance.py`: the approximations and the exact matching distance.
 - `modules.py`: rectangles, modules, lines and the weighted bottleneck distance.
-- `run_example.py` and `experiment.py`: the command above and `run_one`.
+- `experiment.py`: `run_one` and the pruning variants.
 - `examples.py`, `plot.py` and `settings.py`: the examples, the pictures and a few switches.
 
 To check that everything works, run `pytest` (about 20 seconds).
