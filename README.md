@@ -89,7 +89,7 @@ times slower and needs much more memory: with 5 or 6 rectangles, more than a lap
 
 A module is a list of rectangles, and each rectangle is written as its top-right corner followed
 by its bottom-left corner: `[(6, 6), (0, 0)]` is the square with corners (0, 0) and (6, 6). For
-a rectangle that is unbounded on one side, use a large number such as `10**8` for that side.
+a rectangle that is unbounded on one side, use a large number such as 10<sup>8</sup> (written `10**8` in Python) for that side.
 
 To compute the matching distance between your own modules, open `my_example.py` in any text
 editor, replace the modules `M` and `N` with yours, save it, and run
