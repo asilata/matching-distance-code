@@ -19,7 +19,7 @@ import plot as ourplot
 import csv
 import os
 
-import omega_pts as omega
+import switch_points as sp
 from numpy import linalg as LA
 from math import cos, sin, pi, atan
 import time
@@ -93,7 +93,7 @@ def compute_switch_points(critpts, crits_no_lub, prune, figure_dir=None, title="
     # Algorithm 3 (3-vs-1); it never produces points at infinity
     if settings.print_output:
         print("______________________________________")
-    omegapts_3v1, _, _ = omega.output_alg_3_1(critpts, title, prune)
+    omegapts_3v1, _, _ = sp.output_alg_3_1(critpts, title, prune)
     if figure_dir:
         ourplot.plot_both_c_o(crits_no_lub, omegapts_3v1, title, dpi, "3v1",
                               out_path=os.path.join(figure_dir, "candidates_3v1.png"))
@@ -101,7 +101,7 @@ def compute_switch_points(critpts, crits_no_lub, prune, figure_dir=None, title="
     if settings.print_output:
         print("-------------")
     # Algorithm 5 (2paired-vs-2paired); it produces only points at infinity
-    omegapts_2v2_p, _, _, is_inf_2v2p, orderedomegas2v2p = omega.output_alg_2_2_paired(
+    omegapts_2v2_p, _, _, is_inf_2v2p, orderedomegas2v2p = sp.output_alg_2_2_paired(
         critpts, title, prune
     )
 
@@ -114,7 +114,7 @@ def compute_switch_points(critpts, crits_no_lub, prune, figure_dir=None, title="
         print("-------------")
 
     omegapts_2v2_unp, _, _, is_inf_2v2unp_orig, orderedomegas_2v2unp = (
-        omega.output_alg_2_2_unpaired(critpts, title, prune)
+        sp.output_alg_2_2_unpaired(critpts, title, prune)
     )
     if settings.print_output:
         print("______________________________________")
@@ -328,7 +328,7 @@ def exact_matching_distance(onedim_mods, graph, example, MN, prune=True):
             critval_coords.append(critical_vals[i].coords)
 
     # least upper bounds within C_M and within C_N
-    lub = omega.closure_lub(critical_vals)
+    lub = sp.closure_lub(critical_vals)
     if settings.print_output:
         print("NUMBER OF CRITVALS: ", len(critical_vals))
 

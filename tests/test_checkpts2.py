@@ -4,7 +4,7 @@ import random
 from scipy.optimize import linprog
 
 import modules as mod
-import omega_pts as omega
+import switch_points as sp
 
 
 def separable(x, w, u, v):
@@ -33,18 +33,18 @@ def test_against_oracle():
         if len(set(pts)) < 4:  # Algorithm 4 is stated for four distinct points
             continue
         x, w, u, v = (mod.critical_val(p, 0) for p in pts)
-        assert omega.check_pts_2v2_paired(x, w, u, v) == separable(*pts), pts
+        assert sp.check_pts_2v2_paired(x, w, u, v) == separable(*pts), pts
         tested += 1
 
 
 def test_order_within_each_pair_does_not_matter():
     x, w, u, v = (mod.critical_val(p, 0) for p in [(5.0, 0.0), (8.0, 2.0), (0.0, 3.0), (2.0, 7.0)])
-    assert omega.check_pts_2v2_paired(x, w, u, v)
-    assert omega.check_pts_2v2_paired(w, x, v, u)
+    assert sp.check_pts_2v2_paired(x, w, u, v)
+    assert sp.check_pts_2v2_paired(w, x, v, u)
 
 
 def test_point_in_q_is_rejected():
     # x lies upper-left of the segment uv, so no line of positive slope has x below it and u, v above
     x, w, u, v = (mod.critical_val(p, 0) for p in [(0.0, 4.0), (9.0, 1.0), (0.0, 0.0), (4.0, 4.0)])
-    assert not omega.check_pts_2v2_paired(x, w, u, v)
+    assert not sp.check_pts_2v2_paired(x, w, u, v)
     assert not separable(x.coords, w.coords, u.coords, v.coords)

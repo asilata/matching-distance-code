@@ -7,7 +7,7 @@ import pytest
 matplotlib.use("Agg")
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO, "Code"))
+sys.path.insert(0, REPO)
 FIXTURES = os.path.join(REPO, "tests", "fixtures")
 
 import settings  # noqa: E402

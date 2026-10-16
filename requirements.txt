@@ -1,7 +1,6 @@
-# Tested with Python 3.9.6; requirements-lock.txt lists the exact versions used.
-# A LaTeX installation is optional: figures use it for text when present.
+# Tested with Python 3.9.6 and gudhi 3.8.0, numpy 1.25.2, scipy 1.11.1, matplotlib 3.7.2, pytest 7.4.
 gudhi>=3.8
 numpy>=1.25,<2
 scipy>=1.11
 matplotlib>=3.7
-Pillow>=10
+pytest>=7

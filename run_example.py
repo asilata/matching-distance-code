@@ -1,23 +1,22 @@
 """
 Compute the matching distance between two rectangle-decomposable persistence modules.
 
-    python Code/run_example.py --M 2 --N 1 --seed 13             random modules
-    python Code/run_example.py --toy                              the paper's small example
-    python Code/run_example.py --example 2.13                     Examples 2.12-2.14 of arXiv:2210.12868
-    python Code/run_example.py --M 2 --N 2 --seed 3 --pruning compare
+    python run_example.py --M 2 --N 1 --seed 13             random modules
+    python run_example.py --toy                              the paper's small example
+    python run_example.py --example 2.13                     Examples 2.12-2.14 of arXiv:2210.12868
+    python run_example.py --M 2 --N 2 --seed 3 --pruning compare
 
 Prints the two approximations and the exact matching distance.  --pruning chooses which
 candidate switch points are discarded: none, section4, all (Sections 4 and 5, the default),
 or compare to run all three and tabulate them.  --figure saves the modules and the optimal
 line, --plot-candidates the candidate switch points of each algorithm, under output/figures/
-(or --out).  --verbose shows the pipeline's own progress output, in the log format that
-cluster/parse_logs.py reads.
+(or --out).  --verbose shows the pipeline's own progress output.
 """
 import argparse
 import os
 
 import settings
-import cleanup_helper_funcs as chf
+import matching_distance as md
 from experiment import PRUNING, add_module_args, load_modules, run_one
 
 
@@ -77,9 +76,9 @@ def main():
         res = results[-1]
         settings.figure_title = f"{description}: M with {len(M)}, N with {len(N)} rectangle(s)"
         modules_path = os.path.join(args.out, label + ".png")
-        chf.plot_rectangles(M, N, modules_path)
+        md.plot_rectangles(M, N, modules_path)
         result_path = os.path.join(args.out, label + "_result.png")
-        chf.save_result_figure(M, N, res.best_line, res.approx_crit_pts, res.approx_grid, res.exact,
+        md.save_result_figure(M, N, res.best_line, res.approx_crit_pts, res.approx_grid, res.exact,
                                settings.figure_title, result_path)
         print(f"figures saved to {modules_path} and {result_path}")
     if candidate_dir:

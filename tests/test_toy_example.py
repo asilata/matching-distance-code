@@ -7,7 +7,7 @@ import pytest
 
 import examples as ex
 import experiment
-import omega_pts as omega
+import switch_points as sp
 import settings
 import toy_example_helpers as teh
 from conftest import FIXTURES
@@ -53,8 +53,8 @@ def test_enumeration_size():
     """Section 6: C(n, 4) sets of four points and 3 C(n, 3) sets of three with one repetition."""
     from math import comb
     for n in (4, 7, 9):
-        assert sum(1 for _ in omega.quadruples(list(range(n)), repetition=True)) == comb(n, 4) + 3 * comb(n, 3)
-        assert sum(1 for _ in omega.quadruples(list(range(n)), repetition=False)) == comb(n, 4)
+        assert sum(1 for _ in sp.quadruples(list(range(n)), repetition=True)) == comb(n, 4) + 3 * comb(n, 3)
+        assert sum(1 for _ in sp.quadruples(list(range(n)), repetition=False)) == comb(n, 4)
 
 
 def test_candidates_do_not_depend_on_the_order_of_the_critical_values():

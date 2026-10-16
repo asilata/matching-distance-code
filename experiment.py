@@ -13,7 +13,7 @@ import matplotlib
 matplotlib.use("Agg")
 
 import settings
-import cleanup_helper_funcs as chf
+import matching_distance as md
 import examples as ex
 
 # variant -> (section4_pruning, section5_pruning)
@@ -23,8 +23,8 @@ PRUNING = {
     "all": (True, True),        # Section 4 plus Corollary 5.2 with the approximation as lower bound
 }
 
-# Headers printed before each variant in verbose mode.  cluster/parse_logs.py splits the
-# logs on them, so they are kept exactly as in the runs behind Figures 9-12 of the paper.
+# Headers printed before each variant in verbose mode, as in the logs of the timing
+# experiments of the paper (Figures 9-12).
 LOG_HEADERS = {
     "none": "~~~NO PRUNING WHATSOEVER~~~",
     "section4": "~~~ONLY OLD PRUNING~~~",
@@ -32,9 +32,9 @@ LOG_HEADERS = {
 }
 
 EXAMPLES = {
-    "2.12": chf.generate_rects_experiment_2_12,
-    "2.13": chf.generate_rects_experiment_2_13,
-    "2.14": chf.generate_rects_experiment_2_14,
+    "2.12": md.generate_rects_experiment_2_12,
+    "2.13": md.generate_rects_experiment_2_13,
+    "2.14": md.generate_rects_experiment_2_14,
 }
 
 
@@ -67,10 +67,10 @@ def run_one(M, N, variant="all", verbose=False, candidate_figure_dir=None):
         print(LOG_HEADERS[variant])
         print("Rects in M: ", len(M))
         print("Rects in N: ", len(N))
-        out = chf.compute_distances(M, N, candidate_figure_dir)
+        out = md.compute_distances(M, N, candidate_figure_dir)
     else:
         with contextlib.redirect_stdout(io.StringIO()):
-            out = chf.compute_distances(M, N, candidate_figure_dir)
+            out = md.compute_distances(M, N, candidate_figure_dir)
     exact_time, approx_time, exact, crit, grid, best_line, num_lines = out
     return RunResult(variant, exact, crit, grid, best_line, num_lines, exact_time, approx_time)
 
@@ -94,5 +94,5 @@ def load_modules(args):
         return M, N, "example_" + args.example.replace(".", "_"), f"Example {args.example} of Bapat et al., arXiv:2210.12868"
     if args.M is None or args.N is None or args.seed is None:
         raise SystemExit("give --M, --N and --seed, or --toy, or --example")
-    M, N = chf.generate_random_rectangles(args.M, args.N, seed=args.seed)
+    M, N = md.generate_random_rectangles(args.M, args.N, seed=args.seed)
     return M, N, f"m{args.M}_n{args.N}_seed{args.seed}", f"random modules, seed {args.seed}"

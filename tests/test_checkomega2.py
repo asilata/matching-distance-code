@@ -2,7 +2,7 @@
 import random
 from fractions import Fraction
 
-from omega_pts import check_omega_3
+from switch_points import check_omega_3
 
 
 def oracle(omega, u, v, w, x):

@@ -2,9 +2,8 @@
 import os
 import shutil
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 output_dir = os.path.join(REPO_ROOT, "output")          # everything the scripts write; not tracked
-figure_dir = os.path.join(REPO_ROOT, "paper_figures")   # figures reproduced for the paper; tracked
 write_candidate_csvs = False   # also dump the candidate switch points of every run to output/candidates/
 
 # Figures use LaTeX for text when a TeX installation is available; otherwise matplotlib's

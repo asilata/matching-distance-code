@@ -2,7 +2,7 @@
 Hand-made example modules.
 
 Rectangle modules are given as lists of rectangles, each rectangle as
-[(top-right), (bottom-left)]; see cleanup_helper_funcs.make_example.
+[(top-right), (bottom-left)]; see matching_distance.make_example.
 """
 import numpy as np
 
@@ -31,7 +31,7 @@ def small_socg_ex_M_N():
     """The small example of the paper as critical values and RectangleModules.
 
     Returns (critical values, the same as (coordinates, parent) pairs, M, N), in the
-    format of cleanup_helper_funcs.make_example.
+    format of matching_distance.make_example.
     """
     # the bottom-left, bottom-right and top-left corner of each rectangle
     a1 = ((0.0, 0.0), 0)
