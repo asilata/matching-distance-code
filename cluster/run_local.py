@@ -5,8 +5,8 @@ Rerun the timing experiment of Figures 9-12 on this machine, in parallel and res
     python cluster/run_local.py                  the core set (about 5 hours on an M2 Pro)
     python cluster/run_local.py --set extra      no pruning at 4 rectangles, Section 4 at 5
 
-A job is one (M, N, seed, pruning variant) of the cluster runs in results/cluster_timings,
-run as `run_example.py --pruning VARIANT --verbose`.  Its log goes to
+A job is one (M, N, seed, pruning variant) of the cluster runs in results/cluster_timings
+(or of EXTRA_CONFIGS, which the cluster never ran), run as `run_example.py --pruning VARIANT --verbose`.  Its log goes to
 OUT/logs/VARIANT/M_N_seed.txt, in the format cluster/parse_logs.py reads, and the output of
 /usr/bin/time -l (peak memory) to the .err file next to it.  The jobs run on a snapshot of
 Code/ at the current commit (OUT/src), so editing the code during a run does not affect it.
@@ -51,6 +51,10 @@ BYTES_PER_LINE = 450
 # a job missing from expected_lines.csv is budgeted at the top of that range
 LINES_PER_CLUSTER_LINE = 0.5
 BASE_GB = 0.15
+# configurations the cluster never ran, with the lines budgeted for each if expected_lines.csv
+# lacks them: six_results_3_Nov.csv has seeds 3-7 of every 6-rectangle split except seed 3 of 3+3
+# (budget: the largest 3+3 job)
+EXTRA_CONFIGS = {(3, 3, 3): 35_000_000}
 
 
 def log(out, msg):
@@ -94,12 +98,17 @@ class Job:
 def make_jobs(sets, out):
     lines, cluster = expected_lines(out), cluster_lines()
     jobs = []
-    for M, N, seed in sorted({key[:3] for key in cluster}):
+    for M, N, seed in sorted({key[:3] for key in cluster} | set(EXTRA_CONFIGS)):
         for s in sets:
             for variant, totals in SETS[s]:
                 if M + N in totals:
                     key = (M, N, seed, variant)
-                    n = lines[key] if key in lines else round(LINES_PER_CLUSTER_LINE * cluster[key])
+                    if key in lines:
+                        n = lines[key]
+                    elif key in cluster:
+                        n = round(LINES_PER_CLUSTER_LINE * cluster[key])
+                    else:
+                        n = EXTRA_CONFIGS[(M, N, seed)]
                     jobs.append(Job(M, N, seed, variant, n, out))
     return sorted(jobs, key=lambda j: -j.seconds)
 

@@ -1,17 +1,17 @@
-Local rerun: 414 finished jobs.  Cluster: 702 rows (Figures 9-12).
+Local rerun: 415 finished jobs.  Cluster: 702 rows (Figures 9-12).
 
 Finished jobs by variant and total number of rectangles (cluster runs in brackets)
   none      2:  20 ( 20)  3:  40 ( 40)  4:   0 ( 60)  5:   0 ( 80)  6:   0 ( 34)
   section4  2:  20 ( 20)  3:  40 ( 40)  4:  60 ( 60)  5:   0 ( 80)  6:   0 ( 34)
-  all       2:  20 ( 20)  3:  40 ( 40)  4:  60 ( 60)  5:  80 ( 80)  6:  34 ( 34)
+  all       2:  20 ( 20)  3:  40 ( 40)  4:  60 ( 60)  5:  80 ( 80)  6:  35 ( 34)
 
 Checks
   exact distance equal across pruning variants: 120 configurations with more than one variant, largest difference 0
-  exact distance >= both approximations (to the 3 decimals logged): 414 of 414
-  lines evaluated equal to the count-only rerun (expected_lines.csv): 410 of 410; 4 jobs not in that rerun
+  exact distance >= both approximations (to the 3 decimals logged): 415 of 415
+  lines evaluated equal to the count-only rerun (expected_lines.csv): 411 of 411; 4 jobs not in that rerun
   time: none > section4 > all in 60 of 60 configurations with all three; section4 > all in 120 of 120
-  the larger approximation already equals the exact distance (3 decimals) in 411 of 414 jobs
-  D = max(crit, grid), all pruning: {'equal': 211, 'grid larger': 16, 'crit larger': 7}
+  the larger approximation already equals the exact distance (3 decimals) in 412 of 415 jobs
+  D = max(crit, grid), all pruning: {'equal': 212, 'grid larger': 16, 'crit larger': 7}
 
 Figure 9: median total time of the exact computation (s); laptop / cluster = median over configurations of the ratio
   variant   rects    n    laptop   cluster  laptop/cluster  lines laptop/cluster
@@ -37,17 +37,17 @@ Figure 11, all pruning only: time of each approximation as % of the switch-point
       3   40    0.28 (  1.15)    0.15 (  0.55)   17.07 ( 62.55)     17.35 ( 63.18)
       4   60    0.32 (  1.43)    0.15 (  0.51)    7.35 ( 34.13)      7.84 ( 35.51)
       5   80    0.45 (  3.43)    0.20 (  1.04)    4.62 ( 21.30)      5.14 ( 24.73)
-      6   34    0.54 (  3.31)    0.37 (  1.38)    2.68 (  9.55)      3.22 ( 12.72)
+      6   35    0.55 (  3.31)    0.37 (  1.38)    2.71 (  9.55)      3.23 ( 12.72)
 
 Figure 12, all pruning: lines evaluated / lines through pairs of critical values
   2 rectangles: mean      168  SD      49  (n=20)
   3 rectangles: mean      972  SD     368  (n=40)
   4 rectangles: mean     3189  SD    1283  (n=60)
   5 rectangles: mean     7534  SD    3846  (n=80)
-  6 rectangles: mean    15287  SD    8134  (n=34)
+  6 rectangles: mean    14951  SD    8257  (n=35)
   1+5 (either order): mean    12417  (n=14)
   2+4 (either order): mean    15930  (n=14)
-  3+3 (either order): mean    20484  (n=6)
+  3+3 (either order): mean    18060  (n=7)
 
 Memory and overhead
   none      2 rects: peak memory up to  0.10 GB; wall time - exact time, median  0.6 s

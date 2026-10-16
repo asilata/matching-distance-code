@@ -418,3 +418,7 @@
 2026-10-09 14:31:28  [5/5] all 1+5 seed 2: 633 s
 2026-10-09 14:31:28  all jobs ended, 0 failed; 414 rows written to timings.csv
 2026-10-09 14:31:31  summarize_local.py exited with 0; output in summarize.log
+2026-10-09 17:59:56  code 0f61fa0; 415 jobs, 414 already finished; estimated 0.1 h with 5 workers, 22.0 GB
+2026-10-09 18:07:15  [1/1] all 3+3 seed 3: 439 s
+2026-10-09 18:07:15  all jobs ended, 0 failed; 415 rows written to timings.csv
+2026-10-09 18:07:18  summarize_local.py exited with 0; output in summarize.log
