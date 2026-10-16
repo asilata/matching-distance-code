@@ -27,7 +27,7 @@ settings.print_output = False
 settings.save_figure = False
 import examples as ex
 from toy_example_helpers import run_algorithms, exact_distance, approximation_lower_bound
-from figure_toy_example import draw_crit_vals, RED, BLACK, ORANGE, LABEL_M, LABEL_N  # same style as Figure 6
+from figure_toy_example import draw_crit_vals, ALG_TITLES, RED, BLACK, ORANGE, LABEL_M, LABEL_N  # same style as Figure 6
 
 OUT_PNG = os.path.join(settings.figure_dir, "MN_section5_pruning.png")
 VARIANTS = [("no pruning", False, False), ("Section 4", True, False), ("Sections 4 + 5", True, True)]
@@ -46,7 +46,7 @@ def draw_figure(base, pruned, crits_no_lub, D, dist, path):
         for x, y in sorted(p):
             ax.plot(x, y, "o", color=RED, alpha=0.8, markersize=4)
         draw_crit_vals(ax, crits_no_lub)
-        ax.set_title(f"{title}\n{len(b)} $\\to$ {len(p)} candidate points")
+        ax.set_title(f"{title}\n{len(b)} $\\to$ {len(p)} points")
         ax.set_aspect("equal")
 
     def slope_panel(ax, alg, title):
@@ -62,19 +62,21 @@ def draw_figure(base, pruned, crits_no_lub, D, dist, path):
         ax.set_aspect("equal")
         ax.set_title(f"{title}\n{len(b)} $\\to$ {len(p)} slopes")
 
-    fig, axs = plt.subplots(1, 4, figsize=(13, 4.2), gridspec_kw={"width_ratios": [1.15, 1, 1.15, 1], "wspace": 0.3})
-    point_panel(axs[0], "alg3", "3v1 Algorithm")
-    slope_panel(axs[1], "alg5", "2v2 Paired Algorithm")
-    point_panel(axs[2], "alg7", "2v2 Unpaired Algorithm, points")
-    slope_panel(axs[3], "alg7", "2v2 Unpaired Algorithm, slopes")
+    fig, axs = plt.subplots(1, 4, figsize=(13, 4.8), gridspec_kw={"width_ratios": [1.15, 1, 1.15, 1], "wspace": 0.3})
+    fig.subplots_adjust(top=0.75)  # room for the title and the legend above the panels
+    point_panel(axs[0], "alg3", ALG_TITLES["alg3"])
+    slope_panel(axs[1], "alg5", ALG_TITLES["alg5"])
+    point_panel(axs[2], "alg7", ALG_TITLES["alg7"])
+    slope_panel(axs[3], "alg7", ALG_TITLES["alg7"])
     for ax in axs:
         ax.set_anchor("N")
     handles = [mpatches.Patch(color=RED, label="kept after Section 5 pruning"),
                mpatches.Patch(color=GONE, label="removed by Section 5 pruning"),
                mpatches.Patch(color=BLACK, label=LABEL_M),
                mpatches.Patch(color=ORANGE, label=LABEL_N)]
-    fig.legend(handles=handles, loc="lower center", ncol=4, bbox_to_anchor=(0.5, -0.03))
-    fig.suptitle(f"Effect of Section 5 pruning for M and N ($D = {D:g}$, $d_{{match}}(M,N) = {dist:g}$)", y=1.13)
+    # title, then the legend, then the panels, as in the upper rows of Figure 6
+    fig.suptitle(f"Effect of Section 5 pruning for M and N ($D = {D:g}$, $d_{{match}}(M,N) = {dist:g}$)", y=0.99)
+    fig.legend(handles=handles, loc="upper center", ncol=4, bbox_to_anchor=(0.5, 0.925), fontsize=9)
     fig.savefig(path, dpi=300, bbox_inches="tight")
 
 if __name__ == "__main__":

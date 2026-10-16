@@ -27,9 +27,9 @@ from toy_example_helpers import run_algorithms
 
 OUT_DIR = settings.figure_dir
 DPI = 300
-TITLE = "M and N"
+# panel titles, the same in every row of the figure and named as in the caption
+ALG_TITLES = {"alg3": "Algorithm 3 (3v1)", "alg5": "Algorithm 5 (2v2 paired)", "alg7": "Algorithm 7 (2v2 unpaired)"}
 LABEL_POINTS = "candidate switch points"          # legend text; the SoCG version said "switch points"
-LABEL_SLOPES = "candidate switch points or slopes"
 LABEL_M, LABEL_N = "critical values from M", "critical values from N"
 RED, BLACK, ORANGE = "red", "black", "orange"
 
@@ -50,22 +50,31 @@ def patches(first_label):
             mpatches.Patch(color=ORANGE, label=LABEL_N)]
 
 
+def title_and_legend(fig, title, handles):
+    """Every panel: its title, then the same one-row legend under it, then the plots,
+    aligned at the top so that none floats below the legend."""
+    fig.suptitle(title, y=0.99)
+    fig.legend(handles=handles, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 0.945), fontsize=9)
+    fig.subplots_adjust(top=0.84)
+    for ax in fig.axes:
+        ax.set_anchor("N")
+
+
 def input_panel(crits_no_lub, path):
     fig, ax = plt.subplots()
     fig.set_dpi(DPI)
     fig.set_size_inches(6, 5)
-    fig.suptitle("Input rectangle modules M and N")
     for i in (0, 3, 6):  # each rectangle is given by its bottom-left, bottom-right and top-left corner
         p1, p2, p3 = (np.array(crits_no_lub[i + k][0]) for k in range(3))
         p4 = p2 + p3 - p1
         ax.plot([p1[0], p2[0], p4[0], p3[0], p1[0]], [p1[1], p2[1], p4[1], p3[1], p1[1]], "k--")
     draw_crit_vals(ax, crits_no_lub)
-    ax.legend(handles=patches(None)[1:], loc="upper right")
+    title_and_legend(fig, "Input rectangle modules M and N", patches(None)[1:])
     fig.savefig(path, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
 
 
-def points_panel(crits_no_lub, points, alg, path):
+def points_panel(crits_no_lub, points, title, path):
     fig, ax = plt.subplots()
     fig.set_dpi(DPI)
     fig.set_size_inches(6, 5)
@@ -73,13 +82,12 @@ def points_panel(crits_no_lub, points, alg, path):
     for x, y in sorted(points):
         ax.plot(x, y, "o", color=RED, alpha=0.8, markersize=4)
     draw_crit_vals(ax, crits_no_lub)
-    ax.set_title(alg + " Algorithm for " + TITLE)
-    ax.legend(handles=patches(LABEL_POINTS), loc="best")
+    title_and_legend(fig, title, patches(LABEL_POINTS))
     fig.savefig(path, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
 
 
-def points_and_slopes_panel(crits_no_lub, points, slopes, alg, path):
+def points_and_slopes_panel(crits_no_lub, points, slopes, title, path):
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
     fig.set_dpi(DPI)
     fig.set_size_inches(6, 5)
@@ -94,8 +102,7 @@ def points_and_slopes_panel(crits_no_lub, points, slopes, alg, path):
         ax2.plot([0, x], [0, float(m) * x], color=RED)
         ax2.scatter(x, float(m) * x, color=RED)
     draw_crit_vals(ax1, crits_no_lub)
-    fig.suptitle(alg + " Algorithm for " + TITLE)
-    ax1.legend(handles=patches(LABEL_SLOPES), bbox_to_anchor=(0.64, 1.31), loc="upper left")
+    title_and_legend(fig, title, patches(LABEL_POINTS))
     fig.savefig(path, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
 
@@ -127,9 +134,9 @@ if __name__ == "__main__":
 
     paths = [os.path.join(OUT_DIR, n) for n in ("MN.png", "MN3v1.png", "MN2v2p.png", "MN2v2unp.png")]
     input_panel(crits_no_lub, paths[0])
-    points_panel(crits_no_lub, a3["points"], "3v1", paths[1])
-    points_and_slopes_panel(crits_no_lub, set(), a5["slopes"], "2v2 Paired", paths[2])
-    points_and_slopes_panel(crits_no_lub, a7["points"], a7["slopes"], "2v2 Unpaired", paths[3])
+    points_panel(crits_no_lub, a3["points"], ALG_TITLES["alg3"], paths[1])
+    points_and_slopes_panel(crits_no_lub, set(), a5["slopes"], ALG_TITLES["alg5"], paths[2])
+    points_and_slopes_panel(crits_no_lub, a7["points"], a7["slopes"], ALG_TITLES["alg7"], paths[3])
     os.makedirs(settings.output_dir, exist_ok=True)
     preview(paths, os.path.join(settings.output_dir, "toy_example_preview_2x2.png"))
     print("panels written to", OUT_DIR)
